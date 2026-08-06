@@ -45,6 +45,14 @@ Run a benchmark campaign:
 python -m harness_matsci campaign --out reports/campaign.json
 ```
 
+Run the first historical-paper bootstrap experiment:
+
+```bash
+python -m harness_matsci paper-bootstrap \
+  --data /Users/huan/matsci_uncertainty/data/raw/nature_electrolyte/training_actions_500.jsonl \
+  --workdir runs/paper_bootstrap_v1
+```
+
 ## Design note
 
 This repository reuses the harness idea from recursive self-improvement systems, but the task layer is scientific: the model learns whether a materials action is worth executing, not whether code changes are good.

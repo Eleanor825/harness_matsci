@@ -11,4 +11,7 @@ dist/
 data/
 artifacts/
 reports/
-
+runs/*/*.jsonl
+runs/*/selected_gate.json
+runs/paper_bootstrap_v1/summary.json
+runs/paper_bootstrap_v1_alpha000/summary.json

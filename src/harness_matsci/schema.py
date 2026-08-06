@@ -6,11 +6,17 @@ from typing import Any
 
 ALLOWED_ACTION_TYPES = {
     "choose",
+    "choose_candidate",
+    "commit_decision",
+    "execute_tool",
+    "recommend_experiment",
     "recommend",
+    "ask_more",
     "retrieve_more",
     "simulate",
     "ask_expert",
     "experiment",
+    "summarize_literature",
     "abstain",
     "self_modify",
 }
@@ -137,4 +143,3 @@ class HarnessSpec:
             "fallback_routes": list(self.fallback_routes),
             "target_selective_risk": self.target_selective_risk,
         }
-

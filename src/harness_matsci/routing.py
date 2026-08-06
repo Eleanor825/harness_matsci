@@ -6,9 +6,12 @@ from .schema import ActionRecord, GateDecision
 def route_record(record: ActionRecord, reliability: float, threshold: float) -> GateDecision:
     selected = reliability >= threshold
     if selected:
-        if record.action_type == "experiment":
+        if record.action_type in {"experiment", "recommend_experiment", "execute_tool"}:
             route = "experiment"
             rationale = "calibrated reliability clears threshold for experiment action"
+        elif record.action_type in {"retrieve_more", "ask_more", "summarize_literature"}:
+            route = "retrieve_more"
+            rationale = "calibrated reliability clears threshold for retrieval-oriented action"
         else:
             route = "proceed"
             rationale = "calibrated reliability clears proceed threshold"
@@ -34,4 +37,3 @@ def route_record(record: ActionRecord, reliability: float, threshold: float) -> 
         route=route,
         rationale=rationale,
     )
-

@@ -7,6 +7,7 @@ from typing import Any
 from .benchmarks import BENCHMARK_BUILDERS, make_records
 from .campaign import CampaignConfig, save_campaign_report
 from .io import read_json, read_jsonl, write_json, write_jsonl
+from .paper_bootstrap import DEFAULT_PAPER_ACTIONS_PATH, run_paper_bootstrap_experiment
 from .training import TrainedGate, evaluate_gate, split_records, train_gate
 
 
@@ -66,6 +67,19 @@ def build_parser() -> argparse.ArgumentParser:
     demo_parser.add_argument("--alpha", type=float, default=0.1)
     demo_parser.add_argument("--budget-fraction", type=float, default=0.1)
     demo_parser.set_defaults(func=_cmd_demo)
+
+    paper_parser = subparsers.add_parser("paper-bootstrap", help="Run the first historical-paper bootstrap experiment")
+    paper_parser.add_argument("--data", default=str(DEFAULT_PAPER_ACTIONS_PATH))
+    paper_parser.add_argument("--workdir", default="runs/paper_bootstrap_v1")
+    paper_parser.add_argument("--seed", type=int, default=7)
+    paper_parser.add_argument("--alpha", type=float, default=0.1)
+    paper_parser.add_argument("--train-fraction", type=float, default=0.6)
+    paper_parser.add_argument("--val-fraction", type=float, default=0.2)
+    paper_parser.add_argument("--epochs", type=int, default=700)
+    paper_parser.add_argument("--learning-rate", type=float, default=0.08)
+    paper_parser.add_argument("--l2", type=float, default=0.001)
+    paper_parser.add_argument("--budget-fraction", type=float, default=0.1)
+    paper_parser.set_defaults(func=_cmd_paper_bootstrap)
 
     return parser
 
@@ -158,6 +172,31 @@ def _cmd_demo(args: argparse.Namespace) -> int:
         "test": evaluate_gate(test_records, gate, budget_fraction=args.budget_fraction),
     }
     print(report)
+    return 0
+
+
+def _cmd_paper_bootstrap(args: argparse.Namespace) -> int:
+    report = run_paper_bootstrap_experiment(
+        args.data,
+        workdir=args.workdir,
+        seed=args.seed,
+        alpha=args.alpha,
+        train_fraction=args.train_fraction,
+        val_fraction=args.val_fraction,
+        epochs=args.epochs,
+        learning_rate=args.learning_rate,
+        l2=args.l2,
+        budget_fraction=args.budget_fraction,
+    )
+    selected = report["selected_version"]
+    metrics = report["versions"][selected]["test"]["metrics"]
+    print(
+        "wrote paper bootstrap experiment to "
+        f"{args.workdir}; selected={selected}; "
+        f"test_selective_accuracy={metrics['selective_accuracy']:.3f}; "
+        f"test_selective_risk={metrics['selective_risk']:.3f}; "
+        f"coverage={metrics['coverage']:.3f}"
+    )
     return 0
 
 
