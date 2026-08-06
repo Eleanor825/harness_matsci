@@ -123,6 +123,22 @@ def validate_harness(candidate: Any, previous: dict[str, Any] | None = None, ite
         if isinstance(raw, list):
             cleaned[key] = [str(item)[:220] for item in raw[:20]]
 
+    raw_hops = candidate.get("hops", base.get("hops", []))
+    if isinstance(raw_hops, list):
+        cleaned_hops = []
+        role_ids = {str(role.get("id")) for role in cleaned.get("roles", [])}
+        allowed_endpoints = role_ids | {"orchestrator", "ask_expert"}
+        for raw in raw_hops[:12]:
+            if not isinstance(raw, dict):
+                continue
+            source = str(raw.get("from", ""))[:100]
+            target = str(raw.get("to", ""))[:100]
+            purpose = str(raw.get("purpose", ""))[:300]
+            if source in allowed_endpoints and target in allowed_endpoints and purpose:
+                cleaned_hops.append({"from": source, "to": target, "purpose": purpose})
+        if cleaned_hops:
+            cleaned["hops"] = cleaned_hops
+
     try:
         spec = to_spec(cleaned)
         if not spec.proceed_routes or not spec.fallback_routes:
@@ -158,5 +174,5 @@ def structural_metrics(harness: dict[str, Any]) -> dict[str, float]:
         "required_features": float(len(harness.get("required_features", []))),
         "routes": float(len(harness.get("proceed_routes", [])) + len(harness.get("fallback_routes", []))),
         "gates": float(len(harness.get("gates", []))),
+        "hops": float(len(harness.get("hops", []))),
     }
-

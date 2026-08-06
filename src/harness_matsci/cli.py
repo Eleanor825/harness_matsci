@@ -8,6 +8,7 @@ from .benchmarks import BENCHMARK_BUILDERS, make_records
 from .campaign import CampaignConfig, save_campaign_report
 from .io import read_json, read_jsonl, write_json, write_jsonl
 from .paper_bootstrap import DEFAULT_PAPER_ACTIONS_PATH, run_paper_bootstrap_experiment
+from .rhi import train_rhi
 from .training import TrainedGate, evaluate_gate, split_records, train_gate
 
 
@@ -80,6 +81,21 @@ def build_parser() -> argparse.ArgumentParser:
     paper_parser.add_argument("--l2", type=float, default=0.001)
     paper_parser.add_argument("--budget-fraction", type=float, default=0.1)
     paper_parser.set_defaults(func=_cmd_paper_bootstrap)
+
+    rhi_parser = subparsers.add_parser("rhi", help="Run trajectory-feedback Recursive Harness Self-Improvement")
+    rhi_parser.add_argument("--data", required=True)
+    rhi_parser.add_argument("--out", required=True)
+    rhi_parser.add_argument("--iterations", type=int, default=3)
+    rhi_parser.add_argument("--seed", type=int, default=7)
+    rhi_parser.add_argument("--alpha", type=float, default=0.1)
+    rhi_parser.add_argument("--train-fraction", type=float, default=0.6)
+    rhi_parser.add_argument("--val-fraction", type=float, default=0.2)
+    rhi_parser.add_argument("--epochs", type=int, default=700)
+    rhi_parser.add_argument("--learning-rate", type=float, default=0.08)
+    rhi_parser.add_argument("--l2", type=float, default=0.001)
+    rhi_parser.add_argument("--budget-fraction", type=float, default=0.1)
+    rhi_parser.add_argument("--epsilon", type=float, default=0.01)
+    rhi_parser.set_defaults(func=_cmd_rhi)
 
     return parser
 
@@ -196,6 +212,31 @@ def _cmd_paper_bootstrap(args: argparse.Namespace) -> int:
         f"test_selective_accuracy={metrics['selective_accuracy']:.3f}; "
         f"test_selective_risk={metrics['selective_risk']:.3f}; "
         f"coverage={metrics['coverage']:.3f}"
+    )
+    return 0
+
+
+def _cmd_rhi(args: argparse.Namespace) -> int:
+    records = _load_dataset(args.data)
+    report = train_rhi(
+        records,
+        iterations=args.iterations,
+        seed=args.seed,
+        alpha=args.alpha,
+        train_fraction=args.train_fraction,
+        val_fraction=args.val_fraction,
+        epochs=args.epochs,
+        learning_rate=args.learning_rate,
+        l2=args.l2,
+        budget_fraction=args.budget_fraction,
+        epsilon=args.epsilon,
+    )
+    write_json(report, args.out)
+    metrics = report["test"]["metrics"]
+    print(
+        f"wrote RHI report to {args.out}; "
+        f"final={report['final_harness']['name']}; "
+        f"risk={metrics['selective_risk']:.3f}; coverage={metrics['coverage']:.3f}"
     )
     return 0
 

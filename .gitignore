@@ -10,7 +10,10 @@ dist/
 *.egg-info/
 data/
 artifacts/
-reports/
+reports/*
+!reports/
+!reports/route_rhi_v3_results.md
+!reports/route_rhi_v3_results.json
 runs/*/*.jsonl
 runs/*/selected_gate.json
 runs/paper_bootstrap_v1/summary.json

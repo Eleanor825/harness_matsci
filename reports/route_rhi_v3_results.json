@@ -1,0 +1,16 @@
+{
+  "experiment": "route_rhi_harness_v3_offline_snapshot",
+  "records": {
+    "pairwise_optimization": {"total": 2730, "positive": 273, "negative": 2457},
+    "unique_materials": {"total": 10987, "positive": 1099, "negative": 9888},
+    "extreme_properties": {"total": 2000, "positive": 313, "negative": 1687},
+    "combined": {"total": 15717, "positive": 1685, "negative": 14032, "train": 7020, "validation": 1414, "test": 7283}
+  },
+  "test_metrics": {
+    "combined": {"final_version": "v1", "route_accuracy": 0.7262117259371138, "route_balanced_accuracy": 0.6386764364399244, "brier": 0.11340016105737671, "ece": 0.16675837432161228, "coverage": 0.027323904984209803, "selective_risk": 0.6482412060301508, "confidently_wrong_rate": 0.01771248112041741},
+    "pairwise_optimization": {"final_version": "v1", "route_accuracy": 0.7911111111111111, "route_balanced_accuracy": 0.5366116751269036, "brier": 0.20021400325087355, "ece": 0.3331557464962226, "coverage": 0.013333333333333334, "selective_risk": 1.0, "confidently_wrong_rate": 0.013333333333333334},
+    "unique_materials": {"final_version": "v0", "route_accuracy": 0.5844893865953535, "route_balanced_accuracy": 0.8511906857178737, "brier": 0.15836578897784756, "ece": 0.31818612633152865, "coverage": 0.26224302189537024, "selective_risk": 0.6647546207775653, "confidently_wrong_rate": 0.1743272605716196},
+    "extreme_properties": {"final_version": "v3", "route_accuracy": 0.8925, "route_balanced_accuracy": 0.45943396226415095, "brier": 0.03853254331612289, "ece": 0.1380766037884422, "coverage": 0.0, "selective_risk": 1.0, "confidently_wrong_rate": 0.0}
+  },
+  "status": "offline_proxy_only"
+}
