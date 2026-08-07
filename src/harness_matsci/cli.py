@@ -117,6 +117,21 @@ def build_parser() -> argparse.ArgumentParser:
     suite_parser.add_argument("--learning-rate", type=float, default=0.08)
     suite_parser.add_argument("--l2", type=float, default=0.001)
     suite_parser.add_argument("--epsilon", type=float, default=0.01)
+    suite_parser.add_argument(
+        "--direct-judge-model",
+        help="Enable the one-shot LLM direct-as-judge baseline with this model; requires OPENAI_API_KEY",
+    )
+    suite_parser.add_argument(
+        "--direct-judge-base-url",
+        help="OpenAI-compatible API base URL (default: OPENAI_BASE_URL or api.openai.com)",
+    )
+    suite_parser.add_argument(
+        "--direct-judge-cache",
+        default="runs/direct_judge_cache/scores.json",
+        help="JSON score cache for direct judge calls",
+    )
+    suite_parser.add_argument("--direct-judge-timeout", type=float, default=90.0)
+    suite_parser.add_argument("--direct-judge-retries", type=int, default=3)
     suite_parser.add_argument("--out", required=True)
     suite_parser.add_argument("--markdown-out")
     suite_parser.set_defaults(func=_cmd_experiment_suite)
@@ -285,6 +300,11 @@ def _cmd_experiment_suite(args: argparse.Namespace) -> int:
         learning_rate=args.learning_rate,
         l2=args.l2,
         rhi_epsilon=args.epsilon,
+        direct_judge_model=args.direct_judge_model,
+        direct_judge_base_url=args.direct_judge_base_url,
+        direct_judge_cache=args.direct_judge_cache,
+        direct_judge_timeout=args.direct_judge_timeout,
+        direct_judge_retries=args.direct_judge_retries,
     )
     report = save_experiment_suite(config, args.out, args.markdown_out)
     print(

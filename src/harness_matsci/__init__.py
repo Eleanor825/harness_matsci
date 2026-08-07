@@ -2,6 +2,7 @@
 
 from .campaign import CampaignConfig, run_campaign
 from .benchmarks import make_records
+from .direct_judge import DirectJudgeError, LLMDirectJudge
 from .experiments import ExperimentSuiteConfig, run_experiment_suite, save_experiment_suite
 from .paper_bootstrap import load_paper_action_records, run_paper_bootstrap_experiment
 from .rhi import DeterministicTrajectoryProposer, JSONLLMHarnessProposer, train_rhi
@@ -19,7 +20,9 @@ __all__ = [
     "HarnessSpec",
     "LogisticGate",
     "DeterministicTrajectoryProposer",
+    "DirectJudgeError",
     "JSONLLMHarnessProposer",
+    "LLMDirectJudge",
     "run_campaign",
     "save_experiment_suite",
     "run_experiment_suite",

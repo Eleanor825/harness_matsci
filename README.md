@@ -74,6 +74,26 @@ The suite reports: (1) single-task main results, (2) leave-one-task-out transfer
 and (3) balanced joint multi-task training with per-task slices. Each experiment is paired with a short
 design note explaining what it proves and the main reviewer challenge.
 
+Enable the optional one-shot LLM direct-as-judge baseline:
+
+```bash
+export OPENAI_API_KEY=...
+export OPENAI_MODEL=gpt-4.1-mini
+python -m harness_matsci experiment-suite \
+  --data-dir /path/to/material_discovery_tasks \
+  --direct-judge-model "$OPENAI_MODEL" \
+  --direct-judge-cache runs/direct_judge_cache/scores.json \
+  --out runs/rhi_experiments_v5_direct_judge/summary.json \
+  --markdown-out runs/rhi_experiments_v5_direct_judge/README.md
+```
+
+`llm_direct_judge` is a one-shot baseline: the LLM receives only the visible
+context, candidate action, and pre-execution evidence, returns `p_success`, and
+does not train, receive trajectory feedback, or mutate a harness. Its threshold
+is calibrated on the validation/feedback partition, while the test partition is
+used only for final evaluation. Calls are cached by model and prompt version;
+the repository does not include API keys or generated score caches.
+
 Run the first historical-paper bootstrap experiment:
 
 ```bash
@@ -105,6 +125,13 @@ The formal five-seed snapshot in `runs/rhi_experiments_v4/RESULTS.md` is the
 current reference. It is a rigorous diagnostic result, not a positive claim: RHI
 does not consistently beat strong learned baselines, transfer is unstable, and
 the data are offline benchmark proxies rather than online MatBot trajectories.
+
+In the tables, `non_rhi_seed` means a single learned logistic gate using the
+initial RHI feature contract but with no recursive harness mutation or
+trajectory-conditioned acceptance. `static_full` is a single learned gate with
+the full available feature set. `verbal_confidence` is not an LLM judge; it is a
+text/feature heuristic. The direct LLM comparison is implemented separately and
+must be run with an explicitly configured API model.
 
 ## Design note
 

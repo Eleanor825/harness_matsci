@@ -16,6 +16,8 @@ reports/*
 !reports/route_rhi_v3_results.json
 runs/*/*.jsonl
 runs/*/selected_gate.json
+runs/direct_judge_cache/
+runs/direct_judge_baseline_v1/summary.json
 runs/paper_bootstrap_v1/summary.json
 runs/paper_bootstrap_v1_alpha000/summary.json
 !runs/rhi_experiments_v4/

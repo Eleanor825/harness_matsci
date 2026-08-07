@@ -8,6 +8,7 @@ from statistics import mean, pstdev
 from typing import Any, Callable
 
 from .benchmarks import make_records
+from .direct_judge import LLMDirectJudge
 from .features import DEFAULT_FEATURES, feature_names_from_records
 from .historical import grouped_four_way_split, load_historical_task_records, random_four_way_split
 from .io import write_json
@@ -35,7 +36,14 @@ TASK_LABELS = {
     "discover_unique": "Unique-material discovery",
     "extreme_properties": "Extreme-property discovery",
 }
-CORE_METHODS = ("rhi", "non_rhi_seed", "static_full", "verbal_confidence", "evidence_heuristic")
+CORE_METHODS = (
+    "rhi",
+    "non_rhi_seed",
+    "static_full",
+    "verbal_confidence",
+    "evidence_heuristic",
+    "llm_direct_judge",
+)
 TRANSFER_REFERENCE = "target_supervised_reference"
 
 
@@ -58,6 +66,11 @@ class ExperimentSuiteConfig:
     learning_rate: float = 0.08
     l2: float = 0.001
     rhi_epsilon: float = 0.01
+    direct_judge_model: str | None = None
+    direct_judge_base_url: str | None = None
+    direct_judge_cache: str | None = None
+    direct_judge_timeout: float = 90.0
+    direct_judge_retries: int = 3
 
 
 @dataclass(frozen=True)
@@ -76,19 +89,27 @@ class RunRecord:
         return asdict(self)
 
 
-def run_experiment_suite(config: ExperimentSuiteConfig) -> dict[str, Any]:
+def run_experiment_suite(config: ExperimentSuiteConfig, *, direct_judge: Any | None = None) -> dict[str, Any]:
     _validate_config(config)
+    if direct_judge is None and config.direct_judge_model:
+        direct_judge = LLMDirectJudge.from_env(
+            model=config.direct_judge_model,
+            base_url=config.direct_judge_base_url,
+            cache_path=config.direct_judge_cache,
+            timeout=config.direct_judge_timeout,
+            max_retries=config.direct_judge_retries,
+        )
     task_cache = _build_task_cache(config)
     single_runs: list[RunRecord] = []
     transfer_runs: list[RunRecord] = []
     joint_runs: list[RunRecord] = []
     for seed in config.seeds:
         if 1 in config.experiments:
-            single_runs.extend(_run_single_task_experiment(task_cache, seed, config))
+            single_runs.extend(_run_single_task_experiment(task_cache, seed, config, direct_judge))
         if 2 in config.experiments:
-            transfer_runs.extend(_run_leave_one_out_experiment(task_cache, seed, config))
+            transfer_runs.extend(_run_leave_one_out_experiment(task_cache, seed, config, direct_judge))
         if 3 in config.experiments:
-            joint_runs.extend(_run_joint_experiment(task_cache, seed, config))
+            joint_runs.extend(_run_joint_experiment(task_cache, seed, config, direct_judge))
 
     experiments: dict[str, Any] = {}
     if single_runs:
@@ -115,6 +136,7 @@ def run_experiment_suite(config: ExperimentSuiteConfig) -> dict[str, Any]:
         "limitations": [
             "Historical outcomes are benchmark-derived offline action-worthiness proxies, not expert annotations or online MatBot trajectory outcomes.",
             "The deterministic proposer is a reproducible trajectory-conditioned RHI implementation, not evidence that an LLM proposer improves the harness.",
+            "llm_direct_judge is an optional one-shot baseline: it sees only the visible action context and does not train, mutate a harness, or receive trajectory feedback.",
             "Scientific utilities are reported per task and as macro summaries; pooled utility is not interpreted as a common physical unit.",
             "Source train, feedback, and acceptance records are disjoint but can share source regimes; final test regimes remain group-disjoint.",
         ],
@@ -129,6 +151,14 @@ def run_experiment_suite(config: ExperimentSuiteConfig) -> dict[str, Any]:
             "n_transfer_runs": len(transfer_runs),
             "n_joint_runs": len(joint_runs),
         },
+        "baselines": {
+            "llm_direct_judge": {
+                "enabled": direct_judge is not None,
+                "model": config.direct_judge_model if direct_judge is None else getattr(direct_judge, "model", "injected_scorer"),
+                "calibration": "validation/feedback split only",
+                "test_access": "visible_context, candidate_action, and pre-execution evidence only",
+            }
+        },
     }
     return report
 
@@ -137,8 +167,10 @@ def save_experiment_suite(
     config: ExperimentSuiteConfig,
     json_path: str | Path,
     markdown_path: str | Path | None = None,
+    *,
+    direct_judge: Any | None = None,
 ) -> dict[str, Any]:
-    report = run_experiment_suite(config)
+    report = run_experiment_suite(config, direct_judge=direct_judge)
     write_json(report, json_path)
     if markdown_path is not None:
         Path(markdown_path).parent.mkdir(parents=True, exist_ok=True)
@@ -157,6 +189,7 @@ def render_experiment_suite_markdown(report: dict[str, Any]) -> str:
         f"- Seeds: {', '.join(str(seed) for seed in config['seeds'])}.",
         f"- Target risk: {config['alpha']:.2f}; minimum validation coverage: {config['min_coverage']:.2f}; fixed scientific budget: {config['budget_fraction']:.2f}.",
         "- Primary score is threshold-independent and combines AURC, calibration, and oracle-normalized fixed-budget discovery efficiency; threshold risk and coverage are reported together.",
+        "- `llm_direct_judge` is included only when configured; it is a one-shot LLM judge with no training, recursive mutation, or trajectory feedback, and its threshold is calibrated on validation/feedback records.",
         "",
         "## What Each Experiment Tests",
     ]
@@ -310,6 +343,7 @@ def _run_single_task_experiment(
     task_cache: dict[str, dict[int, dict[str, list[ActionRecord]]]],
     seed: int,
     config: ExperimentSuiteConfig,
+    direct_judge: Any | None = None,
 ) -> list[RunRecord]:
     runs: list[RunRecord] = []
     for task in config.tasks:
@@ -353,7 +387,19 @@ def _run_single_task_experiment(
                 _train_feature_gate(splits["train"], splits["feedback"], splits["test"], _full_features(splits["train"]), config),
             )
         )
-        runs.extend(_weak_baseline_runs("experiment_1_single_task", "single_task", seed, task, split_sizes, splits["feedback"], splits["test"], config))
+        runs.extend(
+            _weak_baseline_runs(
+                "experiment_1_single_task",
+                "single_task",
+                seed,
+                task,
+                split_sizes,
+                splits["feedback"],
+                splits["test"],
+                config,
+                direct_judge=direct_judge,
+            )
+        )
     return runs
 
 
@@ -361,6 +407,7 @@ def _run_leave_one_out_experiment(
     task_cache: dict[str, dict[int, dict[str, list[ActionRecord]]]],
     seed: int,
     config: ExperimentSuiteConfig,
+    direct_judge: Any | None = None,
 ) -> list[RunRecord]:
     runs: list[RunRecord] = []
     for holdout_task in config.tasks:
@@ -434,6 +481,7 @@ def _run_leave_one_out_experiment(
                 source_feedback,
                 target_test,
                 config,
+                direct_judge=direct_judge,
                 source_tasks=source_tasks,
                 holdout_task=holdout_task,
                 balance_benchmarks=True,
@@ -466,6 +514,7 @@ def _run_joint_experiment(
     task_cache: dict[str, dict[int, dict[str, list[ActionRecord]]]],
     seed: int,
     config: ExperimentSuiteConfig,
+    direct_judge: Any | None = None,
 ) -> list[RunRecord]:
     train_records = _concat([task_cache[task][seed]["train"] for task in config.tasks])
     feedback_records = _concat([task_cache[task][seed]["feedback"] for task in config.tasks])
@@ -519,6 +568,16 @@ def _run_joint_experiment(
             balance_benchmarks=True,
         ),
     }
+    if direct_judge is not None:
+        weak_reports["llm_direct_judge"] = evaluate_probability_signal(
+            feedback_records,
+            pooled_test,
+            _direct_judge_score_fn(direct_judge),
+            alpha=config.alpha,
+            min_coverage=config.min_coverage,
+            budget_fraction=config.budget_fraction,
+            balance_benchmarks=True,
+        )
     runs: list[RunRecord] = []
     for task, test_records in tests.items():
         task_split = {**split_sizes, "task_test": len(test_records)}
@@ -560,6 +619,19 @@ def _run_joint_experiment(
                 "test_score": _evaluation_score(evaluation),
             }
             runs.append(_run("experiment_3_joint_training_stability", "joint_task_slice", seed, task, method, task_split, compact))
+        if direct_judge is not None:
+            method = "llm_direct_judge"
+            threshold = float(weak_reports[method]["threshold"])
+            score_fn = _direct_judge_score_fn(direct_judge)
+            evaluation = _evaluate_scores(test_records, score_fn(test_records), threshold, config.budget_fraction)
+            compact = {
+                "threshold": threshold,
+                "calibration": weak_reports[method]["calibration"],
+                "validation": _compact_eval(weak_reports[method]["validation"]),
+                "test": _compact_eval(evaluation),
+                "test_score": _evaluation_score(evaluation),
+            }
+            runs.append(_run("experiment_3_joint_training_stability", "joint_task_slice", seed, task, method, task_split, compact))
     return runs
 
 
@@ -576,6 +648,7 @@ def _weak_baseline_runs(
     source_tasks: list[str] | None = None,
     holdout_task: str = "",
     balance_benchmarks: bool = False,
+    direct_judge: Any | None = None,
 ) -> list[RunRecord]:
     runs: list[RunRecord] = []
     for method, score_fn in (
@@ -604,7 +677,49 @@ def _weak_baseline_runs(
                 holdout_task,
             )
         )
+    if direct_judge is not None:
+        method = "llm_direct_judge"
+        report = evaluate_probability_signal(
+            validation_records,
+            test_records,
+            _direct_judge_score_fn(direct_judge),
+            alpha=config.alpha,
+            min_coverage=config.min_coverage,
+            budget_fraction=config.budget_fraction,
+            balance_benchmarks=balance_benchmarks,
+        )
+        runs.append(
+            _run(
+                experiment,
+                setting,
+                seed,
+                task,
+                method,
+                split_sizes,
+                _compact_probability_report(report),
+                source_tasks or [],
+                holdout_task,
+            )
+        )
     return runs
+
+
+def _direct_judge_score_fn(direct_judge: Any) -> Callable[[list[ActionRecord]], list[float]]:
+    def score(records: list[ActionRecord]) -> list[float]:
+        if hasattr(direct_judge, "score_records"):
+            values = direct_judge.score_records(records)
+        elif callable(direct_judge):
+            values = direct_judge(records)
+        else:
+            raise TypeError("direct_judge must expose score_records(records) or be callable")
+        if isinstance(values, dict):
+            return [float(values[record.record_id]) for record in records]
+        values = list(values)
+        if len(values) != len(records):
+            raise ValueError("direct judge returned a score count different from records")
+        return [float(value) for value in values]
+
+    return score
 
 
 def _fit_gate(
