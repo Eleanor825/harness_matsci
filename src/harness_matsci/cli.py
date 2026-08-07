@@ -6,6 +6,7 @@ from typing import Any
 
 from .benchmarks import BENCHMARK_BUILDERS, make_records
 from .campaign import CampaignConfig, save_campaign_report
+from .experiments import ExperimentSuiteConfig, save_experiment_suite
 from .io import read_json, read_jsonl, write_json, write_jsonl
 from .paper_bootstrap import DEFAULT_PAPER_ACTIONS_PATH, run_paper_bootstrap_experiment
 from .rhi import train_rhi
@@ -94,8 +95,31 @@ def build_parser() -> argparse.ArgumentParser:
     rhi_parser.add_argument("--learning-rate", type=float, default=0.08)
     rhi_parser.add_argument("--l2", type=float, default=0.001)
     rhi_parser.add_argument("--budget-fraction", type=float, default=0.1)
+    rhi_parser.add_argument("--min-coverage", type=float, default=0.0)
     rhi_parser.add_argument("--epsilon", type=float, default=0.01)
     rhi_parser.set_defaults(func=_cmd_rhi)
+
+    suite_parser = subparsers.add_parser("experiment-suite", help="Run the paper-grade RHI experiments 1, 2, and 3")
+    suite_parser.add_argument("--tasks", default="preferential_bo,discover_unique,extreme_properties")
+    suite_parser.add_argument("--experiments", default="1,2,3", help="Comma-separated experiment IDs")
+    suite_parser.add_argument("--seeds", default="1,7,13,21,42")
+    suite_parser.add_argument("--n-per-task", type=int, default=300)
+    suite_parser.add_argument("--data-dir", help="Directory containing historical task JSONL files")
+    suite_parser.add_argument("--train-fraction", type=float, default=0.6)
+    suite_parser.add_argument("--val-fraction", type=float, default=0.2)
+    suite_parser.add_argument("--feedback-fraction", type=float, default=0.15)
+    suite_parser.add_argument("--acceptance-fraction", type=float, default=0.1)
+    suite_parser.add_argument("--alpha", type=float, default=0.1)
+    suite_parser.add_argument("--budget-fraction", type=float, default=0.1)
+    suite_parser.add_argument("--min-coverage", type=float, default=0.1)
+    suite_parser.add_argument("--rhi-iterations", type=int, default=3)
+    suite_parser.add_argument("--epochs", type=int, default=240)
+    suite_parser.add_argument("--learning-rate", type=float, default=0.08)
+    suite_parser.add_argument("--l2", type=float, default=0.001)
+    suite_parser.add_argument("--epsilon", type=float, default=0.01)
+    suite_parser.add_argument("--out", required=True)
+    suite_parser.add_argument("--markdown-out")
+    suite_parser.set_defaults(func=_cmd_experiment_suite)
 
     return parser
 
@@ -229,6 +253,7 @@ def _cmd_rhi(args: argparse.Namespace) -> int:
         learning_rate=args.learning_rate,
         l2=args.l2,
         budget_fraction=args.budget_fraction,
+        min_coverage=args.min_coverage,
         epsilon=args.epsilon,
     )
     write_json(report, args.out)
@@ -237,6 +262,36 @@ def _cmd_rhi(args: argparse.Namespace) -> int:
         f"wrote RHI report to {args.out}; "
         f"final={report['final_harness']['name']}; "
         f"risk={metrics['selective_risk']:.3f}; coverage={metrics['coverage']:.3f}"
+    )
+    return 0
+
+
+def _cmd_experiment_suite(args: argparse.Namespace) -> int:
+    config = ExperimentSuiteConfig(
+        tasks=tuple(_comma_list(args.tasks, str)),
+        experiments=tuple(_comma_list(args.experiments, int)),
+        seeds=tuple(_comma_list(args.seeds, int)),
+        n_per_task=args.n_per_task,
+        data_dir=args.data_dir,
+        train_fraction=args.train_fraction,
+        val_fraction=args.val_fraction,
+        feedback_fraction=args.feedback_fraction,
+        acceptance_fraction=args.acceptance_fraction,
+        alpha=args.alpha,
+        min_coverage=args.min_coverage,
+        budget_fraction=args.budget_fraction,
+        rhi_iterations=args.rhi_iterations,
+        epochs=args.epochs,
+        learning_rate=args.learning_rate,
+        l2=args.l2,
+        rhi_epsilon=args.epsilon,
+    )
+    report = save_experiment_suite(config, args.out, args.markdown_out)
+    print(
+        f"wrote experiments 1/2/3 to {args.out}; "
+        f"single={report['summary']['n_single_runs']}; "
+        f"transfer={report['summary']['n_transfer_runs']}; "
+        f"joint={report['summary']['n_joint_runs']}"
     )
     return 0
 

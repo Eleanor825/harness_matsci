@@ -18,3 +18,7 @@ runs/*/*.jsonl
 runs/*/selected_gate.json
 runs/paper_bootstrap_v1/summary.json
 runs/paper_bootstrap_v1_alpha000/summary.json
+!runs/rhi_experiments_v4/
+!runs/rhi_experiments_v4/summary.json
+!runs/rhi_experiments_v4/README.md
+!runs/rhi_experiments_v4/RESULTS.md

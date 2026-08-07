@@ -26,6 +26,16 @@ class CalibrationAndModelTests(unittest.TestCase):
         self.assertGreater(high, 0.7)
         self.assertLess(low, 0.3)
 
+    def test_infeasible_risk_contract_respects_minimum_coverage(self) -> None:
+        calibration = threshold_for_selective_risk(
+            [0, 0, 1, 0],
+            [0.9, 0.8, 0.7, 0.6],
+            alpha=0.0,
+            min_coverage=0.5,
+        )
+        self.assertGreaterEqual(calibration["coverage"], 0.5)
+        self.assertEqual(calibration["constraint_satisfied"], 0.0)
+
 
 if __name__ == "__main__":
     unittest.main()

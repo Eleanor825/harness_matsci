@@ -59,6 +59,21 @@ The default proposer is deterministic and reproducible. An OpenAI-compatible
 proposer can be supplied from Python through `JSONLLMHarnessProposer`; its
 candidate is still schema-validated and must pass the held-out acceptance gate.
 
+Run the three paper experiments:
+
+```bash
+python -m harness_matsci experiment-suite \
+  --out runs/rhi_experiments_v4/summary.json \
+  --markdown-out runs/rhi_experiments_v4/README.md \
+  --data-dir /path/to/material_discovery_tasks \
+  --seeds 1,7,13,21,42 \
+  --n-per-task 300
+```
+
+The suite reports: (1) single-task main results, (2) leave-one-task-out transfer,
+and (3) balanced joint multi-task training with per-task slices. Each experiment is paired with a short
+design note explaining what it proves and the main reviewer challenge.
+
 Run the first historical-paper bootstrap experiment:
 
 ```bash
@@ -86,11 +101,10 @@ records at action boundaries and add future utility or expert review labels.
 
 ## Current results
 
-The tracked snapshot in `reports/route_rhi_v3_results.md` summarizes the
-previous route-aware offline run on 15,717 reconstructed records. It is useful
-as a diagnostic baseline, not as a final positive claim: the route targets are
-deterministic action-worthiness proxies, coverage collapses on some tasks, and
-the data are not online MatBot trajectories.
+The formal five-seed snapshot in `runs/rhi_experiments_v4/RESULTS.md` is the
+current reference. It is a rigorous diagnostic result, not a positive claim: RHI
+does not consistently beat strong learned baselines, transfer is unstable, and
+the data are offline benchmark proxies rather than online MatBot trajectories.
 
 ## Design note
 

@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from dataclasses import asdict, dataclass, field
 from typing import Any, Protocol
 
 from .harnesses import DEFAULT_HARNESS, deterministic_fallback, harness_text, validate_harness
+from .metrics import action_worthiness_score
 from .schema import ActionRecord
-from .training import TrainedGate, evaluate_gate, split_records
+from .training import TrainedGate, evaluate_gate, split_records, train_gate_with_features
 
 
 RHI_SEED_FEATURES = [
@@ -121,13 +123,13 @@ class DeterministicTrajectoryProposer:
         if counts.get("overconfident", 0) > 0 or counts.get("calibration_error", 0) > 0:
             rationale.append("Add a calibration review contract for overconfident trajectories.")
             add_feature("verbal_confidence", "Compare verbal confidence with evidence-backed reliability.")
-            add_feature("model_disagreement", "Expose disagreement as a separate uncertainty signal.")
+            add_feature("perturbation_stability", "Expose perturbation stability as an outcome-independent uncertainty signal.")
             add_gate("Verbal confidence cannot override disagreement or missing evidence.")
             _upsert_role(
                 roles,
                 "calibration_reviewer",
                 "Check whether confidence tracks observed action reliability on the current discovery regime.",
-                ["verbal_confidence", "model_disagreement", "calibrated_probability"],
+                ["verbal_confidence", "perturbation_stability", "calibrated_probability"],
                 kind="reviewer",
             )
 
@@ -136,6 +138,7 @@ class DeterministicTrajectoryProposer:
             add_feature("ood_score", "Route out-of-distribution candidates to verification before execution.")
             add_feature("cost", "Use action cost in the promotion decision.")
             add_feature("reversibility", "Use reversibility to separate cheap probes from irreversible experiments.")
+            add_feature("action_complexity", "Treat unusually complex candidate actions as requiring verification.")
             add_gate("High OOD, high cost, or low reversibility requires an explicit verification hop.")
             _upsert_role(
                 roles,
@@ -147,8 +150,10 @@ class DeterministicTrajectoryProposer:
 
         if counts.get("over_abstention", 0) > 0:
             rationale.append("Recover useful coverage with independent tool agreement.")
-            add_feature("tool_agreement", "Recover coverage when independent tools agree on a low-risk action.")
-            add_gate("Do not abstain when evidence and tools agree and the action is cheap and reversible.")
+            add_feature("candidate_structure_complexity", "Use a normalized candidate-structure descriptor when confidence alone causes over-abstention.")
+            add_feature("candidate_composition_diversity", "Use candidate diversity to distinguish informative probes from redundant actions.")
+            add_feature("candidate_domain_position", "Use a task-normalized domain-position descriptor to recover useful coverage.")
+            add_gate("Do not abstain when visible evidence is stable and the action is cheap and reversible.")
 
         candidate["required_features"] = required_features
         candidate["gates"] = gates[:20]
@@ -211,6 +216,7 @@ def train_rhi(
     learning_rate: float = 0.08,
     l2: float = 0.001,
     budget_fraction: float = 0.1,
+    min_coverage: float = 0.0,
     epsilon: float = 0.01,
     proposer: HarnessProposer | None = None,
 ) -> dict[str, Any]:
@@ -231,28 +237,91 @@ def train_rhi(
         train_fraction=train_fraction,
         val_fraction=val_fraction,
     )
-    if not train_records or not val_records:
+    return train_rhi_from_splits(
+        train_records,
+        val_records,
+        test_records,
+        iterations=iterations,
+        seed=seed,
+        alpha=alpha,
+        train_fraction=train_fraction,
+        val_fraction=val_fraction,
+        epochs=epochs,
+        learning_rate=learning_rate,
+        l2=l2,
+        budget_fraction=budget_fraction,
+        min_coverage=min_coverage,
+        epsilon=epsilon,
+        proposer=proposer,
+    )
+
+
+def train_rhi_from_splits(
+    train_records: list[ActionRecord],
+    val_records: list[ActionRecord],
+    test_records: list[ActionRecord],
+    *,
+    iterations: int = 3,
+    seed: int = 7,
+    alpha: float = 0.1,
+    train_fraction: float | None = None,
+    val_fraction: float | None = None,
+    epochs: int = 700,
+    learning_rate: float = 0.08,
+    l2: float = 0.001,
+    budget_fraction: float = 0.1,
+    min_coverage: float = 0.0,
+    balance_benchmarks: bool = False,
+    macro_acceptance: bool = False,
+    epsilon: float = 0.01,
+    proposer: HarnessProposer | None = None,
+    acceptance_records: list[ActionRecord] | None = None,
+) -> dict[str, Any]:
+    """Run RHI with externally fixed splits.
+
+    This is the paper-grade entry point for transfer experiments: train and
+    validation records can come from source tasks while test records come from
+    a held-out target task.
+    """
+    feedback_records = val_records
+    acceptance_records = acceptance_records or val_records
+    if not train_records or not feedback_records:
         raise ValueError("RHI requires non-empty train and validation splits")
+    if not acceptance_records or not test_records:
+        raise ValueError("RHI requires a non-empty test split")
 
     active_proposer = proposer or DeterministicTrajectoryProposer()
     current_harness = copy.deepcopy(RHI_SEED_HARNESS)
     current_gate = _train_with_features(
         train_records,
-        val_records,
+        feedback_records,
         feature_names=list(current_harness["required_features"]),
         alpha=alpha,
         epochs=epochs,
         learning_rate=learning_rate,
         l2=l2,
+        min_coverage=min_coverage,
+        balance_benchmarks=balance_benchmarks,
     )
-    current_eval = evaluate_gate(val_records, current_gate, budget_fraction=budget_fraction)
+    acceptance_shards = _acceptance_shards(acceptance_records, iterations, seed)
+    reporting_acceptance = acceptance_records
+    first_acceptance = acceptance_shards[0] if acceptance_shards else reporting_acceptance
+    current_eval = evaluate_gate(
+        first_acceptance,
+        current_gate,
+        budget_fraction=budget_fraction,
+        macro_by_benchmark=macro_acceptance,
+    )
+    initial_gate = current_gate
+    initial_harness = copy.deepcopy(current_harness)
+    accepted_revisions = [copy.deepcopy(current_harness)]
     versions: list[dict[str, Any]] = [_version_report(0, current_harness, current_eval, current_gate)]
     proposals: list[dict[str, Any]] = []
     comparisons: list[dict[str, Any]] = []
 
     for iteration in range(1, iterations + 1):
         feedback = summarize_trajectory_feedback(
-            val_records,
+            feedback_records,
             current_gate,
             current_harness,
             round_index=iteration,
@@ -268,16 +337,30 @@ def train_rhi(
         feature_names = list(candidate.get("required_features", current_gate.model.feature_names))
         candidate_gate = _train_with_features(
             train_records,
-            val_records,
+            feedback_records,
             feature_names=feature_names,
             alpha=float(candidate.get("target_selective_risk", alpha)),
             epochs=epochs,
             learning_rate=learning_rate,
             l2=l2,
+            min_coverage=min_coverage,
+            balance_benchmarks=balance_benchmarks,
         )
-        candidate_eval = evaluate_gate(val_records, candidate_gate, budget_fraction=budget_fraction)
+        round_acceptance = acceptance_shards[iteration - 1]
+        predecessor_eval = evaluate_gate(
+            round_acceptance,
+            current_gate,
+            budget_fraction=budget_fraction,
+            macro_by_benchmark=macro_acceptance,
+        )
+        candidate_eval = evaluate_gate(
+            round_acceptance,
+            candidate_gate,
+            budget_fraction=budget_fraction,
+            macro_by_benchmark=macro_acceptance,
+        )
         comparison = compare_harnesses(
-            current_eval,
+            predecessor_eval,
             candidate_eval,
             epsilon=epsilon,
             iteration=iteration,
@@ -285,14 +368,23 @@ def train_rhi(
             candidate_name=str(candidate.get("name")),
         )
         comparisons.append(comparison)
+        comparison["acceptance_records"] = len(round_acceptance)
+        comparison["acceptance_record_ids"] = [record.record_id for record in round_acceptance]
         versions.append(_version_report(iteration, candidate, candidate_eval, candidate_gate))
         if comparison["winner"] != "candidate":
             continue
         current_harness = candidate
         current_gate = candidate_gate
-        current_eval = candidate_eval
+        accepted_revisions.append(copy.deepcopy(current_harness))
 
+    current_eval = evaluate_gate(
+        reporting_acceptance,
+        current_gate,
+        budget_fraction=budget_fraction,
+        macro_by_benchmark=macro_acceptance,
+    )
     final_test = evaluate_gate(test_records, current_gate, budget_fraction=budget_fraction)
+    initial_test = evaluate_gate(test_records, initial_gate, budget_fraction=budget_fraction)
     return {
         "method": {
             "name": "RHI-MatSci",
@@ -307,6 +399,7 @@ def train_rhi(
             ],
             "proposer": type(active_proposer).__name__,
             "test_is_used_only_after_selection": True,
+            "acceptance_shards_are_one_shot": True,
         },
         "config": {
             "iterations": iterations,
@@ -315,14 +408,29 @@ def train_rhi(
             "train_fraction": train_fraction,
             "val_fraction": val_fraction,
             "budget_fraction": budget_fraction,
+            "min_coverage": min_coverage,
+            "balance_benchmarks": balance_benchmarks,
+            "macro_acceptance": macro_acceptance,
             "epsilon": epsilon,
         },
-        "sizes": {"train": len(train_records), "val": len(val_records), "test": len(test_records)},
+        "sizes": {
+            "train": len(train_records),
+            "feedback": len(feedback_records),
+            "acceptance": len(acceptance_records),
+            "val": len(feedback_records),
+            "test": len(test_records),
+        },
+        "initial_harness": initial_harness,
         "final_harness": current_harness,
+        "initial_gate": initial_gate.to_json(),
+        "final_gate": current_gate.to_json(),
+        "accepted_versions": [revision.get("name", "unknown") for revision in accepted_revisions],
         "versions": versions,
         "proposals": proposals,
         "comparisons": comparisons,
+        "acceptance_shards": [[record.record_id for record in shard] for shard in acceptance_shards],
         "validation": current_eval,
+        "initial_test": initial_test,
         "test": final_test,
     }
 
@@ -387,14 +495,25 @@ def compare_harnesses(
     previous_name: str,
     candidate_name: str,
 ) -> dict[str, Any]:
-    previous_metrics = previous["metrics"]
-    candidate_metrics = candidate["metrics"]
+    previous_metrics = previous.get("macro_metrics", previous["metrics"])
+    candidate_metrics = candidate.get("macro_metrics", candidate["metrics"])
     score_previous = _score(previous)
     score_candidate = _score(candidate)
     coverage_gain = float(candidate_metrics["coverage"]) - float(previous_metrics["coverage"])
     risk_gain = float(previous_metrics["selective_risk"]) - float(candidate_metrics["selective_risk"])
     brier_gain = float(previous_metrics["brier"]) - float(candidate_metrics["brier"])
-    candidate_not_worse = coverage_gain >= -0.05 and risk_gain >= -0.01 and brier_gain >= -0.01
+    aurc_gain = float(previous_metrics["aurc"]) - float(candidate_metrics["aurc"])
+    previous_gain = previous.get("macro_discovery_gain", previous["discovery_gain"])
+    candidate_gain = candidate.get("macro_discovery_gain", candidate["discovery_gain"])
+    utility_gain = float(candidate_gain["mean_utility"]) - float(previous_gain["mean_utility"])
+    hit_rate_gain = float(candidate_gain["hit_rate"]) - float(previous_gain["hit_rate"])
+    candidate_not_worse = (
+        coverage_gain >= -0.05
+        and risk_gain >= -0.01
+        and brier_gain >= -0.01
+        and aurc_gain >= -0.01
+        and utility_gain >= -0.01
+    )
     winner = "candidate" if candidate_not_worse and score_candidate + epsilon < score_previous else "previous"
     return {
         "iteration": iteration,
@@ -407,19 +526,17 @@ def compare_harnesses(
         "coverage_gain": coverage_gain,
         "selective_risk_gain": risk_gain,
         "brier_gain": brier_gain,
-        "rationale": "candidate accepted only if composite uncertainty/action score improves while coverage and risk guards hold",
+        "aurc_gain": aurc_gain,
+        "mean_utility_gain": utility_gain,
+        "hit_rate_gain": hit_rate_gain,
+        "rationale": "candidate accepted only if fixed-budget action-worthiness improves while risk, coverage, calibration, and utility guards hold",
     }
 
 
 def _score(report: dict[str, Any]) -> float:
-    metrics = report["metrics"]
-    return (
-        float(metrics.get("selective_risk", 1.0))
-        + float(metrics.get("brier", 1.0))
-        + float(metrics.get("ece", 1.0))
-        + float(metrics.get("log_loss", 1.0))
-        + 0.25 * (1.0 - float(metrics.get("coverage", 0.0)))
-    )
+    metrics = report.get("macro_metrics", report["metrics"])
+    gain = report.get("macro_discovery_gain", report.get("discovery_gain", {}))
+    return action_worthiness_score(metrics, gain)
 
 
 def _feedback_example(record: ActionRecord, probability: float, failure: str) -> dict[str, Any]:
@@ -453,9 +570,9 @@ def _train_with_features(
     epochs: int,
     learning_rate: float,
     l2: float,
+    min_coverage: float = 0.0,
+    balance_benchmarks: bool = False,
 ) -> TrainedGate:
-    from .paper_bootstrap import train_gate_with_features
-
     return train_gate_with_features(
         train_records,
         val_records,
@@ -464,7 +581,26 @@ def _train_with_features(
         epochs=epochs,
         learning_rate=learning_rate,
         l2=l2,
+        min_coverage=min_coverage,
+        balance_benchmarks=balance_benchmarks,
     )
+
+
+def _acceptance_shards(
+    records: list[ActionRecord],
+    iterations: int,
+    seed: int,
+) -> list[list[ActionRecord]]:
+    if iterations <= 0:
+        return []
+    ordered = sorted(
+        records,
+        key=lambda record: hashlib.sha256(f"{seed}|acceptance|{record.record_id}".encode()).hexdigest(),
+    )
+    shards = [ordered[index::iterations] for index in range(iterations)]
+    if any(not shard for shard in shards):
+        raise ValueError("acceptance split is too small for one-shot RHI iteration shards")
+    return shards
 
 
 def _upsert_role(

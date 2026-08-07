@@ -6,12 +6,10 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-from .calibration import threshold_for_selective_risk
-from .features import Standardizer, clamp, matrix_from_records
+from .features import clamp
 from .io import write_json, write_jsonl
-from .models import LogisticGate
 from .schema import ActionRecord
-from .training import TrainedGate, evidence_heuristic_baseline, evaluate_gate, verbal_confidence_baseline
+from .training import TrainedGate, evidence_heuristic_baseline, evaluate_gate, train_gate_with_features, verbal_confidence_baseline
 
 
 DEFAULT_PAPER_ACTIONS_PATH = Path("/Users/huan/matsci_uncertainty/data/raw/nature_electrolyte/training_actions_500.jsonl")
@@ -293,36 +291,6 @@ def run_paper_bootstrap_experiment(
         write_json(report, target / "summary.json")
         write_json(version_reports[selected_version]["gate"], target / "selected_gate.json")
     return report
-
-
-def train_gate_with_features(
-    train_records: list[ActionRecord],
-    val_records: list[ActionRecord],
-    *,
-    feature_names: list[str],
-    alpha: float = 0.1,
-    epochs: int = 700,
-    learning_rate: float = 0.08,
-    l2: float = 0.001,
-) -> TrainedGate:
-    if not train_records:
-        raise ValueError("train_records cannot be empty")
-    if not val_records:
-        raise ValueError("val_records cannot be empty")
-    train_matrix = matrix_from_records(train_records, feature_names)
-    standardizer = Standardizer().fit(train_matrix.x)
-    model = LogisticGate.fresh(feature_names)
-    model.fit(
-        standardizer.transform(train_matrix.x),
-        train_matrix.y,
-        epochs=epochs,
-        learning_rate=learning_rate,
-        l2=l2,
-    )
-    val_matrix = matrix_from_records(val_records, feature_names)
-    val_probs = model.predict_proba(standardizer.transform(val_matrix.x))
-    calibration = threshold_for_selective_risk(val_matrix.y, val_probs, alpha=alpha)
-    return TrainedGate(model, standardizer, calibration["threshold"], calibration)
 
 
 def summarize_paper_records(records: list[ActionRecord]) -> dict[str, Any]:

@@ -48,6 +48,10 @@ class RhiTests(unittest.TestCase):
         self.assertIn("failure_counts", report["proposals"][0]["feedback"])
         self.assertIn("required_features", report["proposals"][0]["candidate"])
         self.assertIn(report["comparisons"][0]["winner"], {"candidate", "previous"})
+        shard_ids = [set(shard) for shard in report["acceptance_shards"]]
+        self.assertEqual(len(shard_ids), 2)
+        self.assertTrue(shard_ids[0].isdisjoint(shard_ids[1]))
+        self.assertTrue(report["method"]["acceptance_shards_are_one_shot"])
 
     def test_rhi_cli_writes_report(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -89,7 +93,6 @@ class RhiTests(unittest.TestCase):
             report = json.loads(output.read_text())
             self.assertEqual(report["method"]["name"], "RHI-MatSci")
             self.assertIn("test", report)
-
 
 if __name__ == "__main__":
     unittest.main()
