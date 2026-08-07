@@ -17,7 +17,10 @@ TASK_RUBRICS = {
     "discover_unique": "whether screening this candidate is likely to produce a scientifically useful and chemically or structurally unique material discovery",
     "extreme_properties": "whether advancing this candidate is likely to satisfy the stated extreme-property target rather than consume the discovery budget without useful evidence",
 }
-PROMPT_VERSION = "direct-judge-v1"
+DEFAULT_MODEL = "gpt-5.4"
+DEFAULT_BASE_URL = "https://coding.beehears.com"
+DEFAULT_REASONING_EFFORT = "xhigh"
+PROMPT_VERSION = "direct-judge-responses-v2"
 
 
 class DirectJudgeError(RuntimeError):
@@ -32,7 +35,8 @@ class LLMDirectJudge:
         *,
         model: str,
         api_key: str,
-        base_url: str = "https://api.openai.com/v1",
+        base_url: str = DEFAULT_BASE_URL,
+        reasoning_effort: str = DEFAULT_REASONING_EFFORT,
         cache_path: str | Path | None = None,
         timeout: float = 90.0,
         max_retries: int = 3,
@@ -46,9 +50,12 @@ class LLMDirectJudge:
             raise ValueError("timeout must be positive")
         if max_retries < 0:
             raise ValueError("max_retries cannot be negative")
+        if reasoning_effort not in {"minimal", "low", "medium", "high", "xhigh"}:
+            raise ValueError("reasoning_effort must be one of minimal, low, medium, high, xhigh")
         self.model = model
         self.api_key = api_key
         self.base_url = base_url.rstrip("/")
+        self.reasoning_effort = reasoning_effort
         self.cache_path = Path(cache_path) if cache_path else None
         self.timeout = timeout
         self.max_retries = max_retries
@@ -68,9 +75,10 @@ class LLMDirectJudge:
         request_fn: Callable[[Request, float], bytes] | None = None,
     ) -> "LLMDirectJudge":
         values = environ if environ is not None else os.environ
-        resolved_model = model or values.get("OPENAI_MODEL", "")
+        resolved_model = model or values.get("OPENAI_MODEL", DEFAULT_MODEL)
         api_key = values.get("OPENAI_API_KEY", "")
-        resolved_base_url = base_url or values.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
+        resolved_base_url = base_url or values.get("OPENAI_BASE_URL", DEFAULT_BASE_URL)
+        resolved_reasoning_effort = values.get("OPENAI_REASONING_EFFORT", DEFAULT_REASONING_EFFORT)
         if not resolved_model:
             raise ValueError("set --direct-judge-model or OPENAI_MODEL")
         if not api_key:
@@ -79,6 +87,7 @@ class LLMDirectJudge:
             model=resolved_model,
             api_key=api_key,
             base_url=resolved_base_url,
+            reasoning_effort=resolved_reasoning_effort,
             cache_path=cache_path,
             timeout=timeout,
             max_retries=max_retries,
@@ -114,18 +123,33 @@ class LLMDirectJudge:
     def _request(self, prompt: str) -> dict[str, Any]:
         payload = {
             "model": self.model,
-            "temperature": 0,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "You are a calibrated scientific action-worthiness judge. Return only valid JSON.",
-                },
-                {"role": "user", "content": prompt},
-            ],
-            "response_format": {"type": "json_object"},
+            "instructions": "You are a calibrated scientific action-worthiness judge. Return only the requested JSON object.",
+            "input": prompt,
+            "reasoning": {"effort": self.reasoning_effort},
+            "store": False,
+            "text": {
+                "format": {
+                    "type": "json_schema",
+                    "name": "action_worthiness_judgement",
+                    "strict": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "p_success": {"type": "number", "minimum": 0, "maximum": 1},
+                            "route": {
+                                "type": "string",
+                                "enum": ["proceed", "retrieve_more", "simulate", "ask_expert", "abstain"],
+                            },
+                            "rationale": {"type": "string"},
+                        },
+                        "required": ["p_success", "route", "rationale"],
+                        "additionalProperties": False,
+                    },
+                }
+            },
         }
         request = Request(
-            f"{self.base_url}/chat/completions",
+            f"{self.base_url}/responses",
             data=json.dumps(payload).encode("utf-8"),
             headers={
                 "Authorization": f"Bearer {self.api_key}",
@@ -155,7 +179,11 @@ class LLMDirectJudge:
         if self.cache_path is None or not self.cache_path.exists():
             return {}
         payload = json.loads(self.cache_path.read_text(encoding="utf-8"))
-        if payload.get("model") != self.model or payload.get("prompt_version") != PROMPT_VERSION:
+        if (
+            payload.get("model") != self.model
+            or payload.get("prompt_version") != PROMPT_VERSION
+            or payload.get("reasoning_effort") != self.reasoning_effort
+        ):
             return {}
         scores = payload.get("scores", {})
         if not isinstance(scores, dict):
@@ -169,6 +197,7 @@ class LLMDirectJudge:
         payload = {
             "model": self.model,
             "prompt_version": PROMPT_VERSION,
+            "reasoning_effort": self.reasoning_effort,
             "scores": dict(sorted(self._cache.items())),
         }
         temporary_path = self.cache_path.with_suffix(self.cache_path.suffix + ".tmp")
@@ -206,6 +235,24 @@ Interpret p_success as your probability that executing this action will be scien
 
 
 def _response_content(response: dict[str, Any]) -> str:
+    output_text = response.get("output_text")
+    if isinstance(output_text, str) and output_text.strip():
+        return output_text
+    output = response.get("output")
+    if isinstance(output, list):
+        text_parts: list[str] = []
+        for item in output:
+            if not isinstance(item, dict):
+                continue
+            content = item.get("content", [])
+            if isinstance(content, str):
+                text_parts.append(content)
+            elif isinstance(content, list):
+                for part in content:
+                    if isinstance(part, dict) and isinstance(part.get("text"), str):
+                        text_parts.append(part["text"])
+        if text_parts and "".join(text_parts).strip():
+            return "".join(text_parts)
     choices = response.get("choices")
     if not isinstance(choices, list) or not choices:
         raise DirectJudgeError("direct judge API response has no choices")

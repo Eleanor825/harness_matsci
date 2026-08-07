@@ -71,6 +71,7 @@ class ExperimentSuiteConfig:
     direct_judge_cache: str | None = None
     direct_judge_timeout: float = 90.0
     direct_judge_retries: int = 3
+    direct_judge_reasoning_effort: str = "xhigh"
 
 
 @dataclass(frozen=True)
@@ -98,6 +99,7 @@ def run_experiment_suite(config: ExperimentSuiteConfig, *, direct_judge: Any | N
             cache_path=config.direct_judge_cache,
             timeout=config.direct_judge_timeout,
             max_retries=config.direct_judge_retries,
+            reasoning_effort=config.direct_judge_reasoning_effort,
         )
     task_cache = _build_task_cache(config)
     single_runs: list[RunRecord] = []

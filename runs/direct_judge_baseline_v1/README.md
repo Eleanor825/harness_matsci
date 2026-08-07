@@ -23,11 +23,15 @@ used to calibrate the direct judge.
 
 ```bash
 export OPENAI_API_KEY=...
-export OPENAI_MODEL=gpt-4.1-mini
+export OPENAI_MODEL=gpt-5.4
+export OPENAI_BASE_URL=https://coding.beehears.com
+export OPENAI_REASONING_EFFORT=xhigh
 PYTHONPATH=src python3 -m harness_matsci experiment-suite \
   --data-dir /path/to/material_discovery_tasks \
   --seeds 1,7,13,21,42 \
   --direct-judge-model "$OPENAI_MODEL" \
+  --direct-judge-base-url "$OPENAI_BASE_URL" \
+  --direct-judge-reasoning-effort "$OPENAI_REASONING_EFFORT" \
   --direct-judge-cache runs/direct_judge_cache/scores.json \
   --out runs/direct_judge_baseline_v1/summary.json \
   --markdown-out runs/direct_judge_baseline_v1/README.md

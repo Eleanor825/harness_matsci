@@ -123,7 +123,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     suite_parser.add_argument(
         "--direct-judge-base-url",
-        help="OpenAI-compatible API base URL (default: OPENAI_BASE_URL or api.openai.com)",
+        help="OpenAI-compatible Responses API base URL (default: OPENAI_BASE_URL or coding.beehears.com)",
     )
     suite_parser.add_argument(
         "--direct-judge-cache",
@@ -132,6 +132,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     suite_parser.add_argument("--direct-judge-timeout", type=float, default=90.0)
     suite_parser.add_argument("--direct-judge-retries", type=int, default=3)
+    suite_parser.add_argument("--direct-judge-reasoning-effort", default="xhigh", choices=["minimal", "low", "medium", "high", "xhigh"])
     suite_parser.add_argument("--out", required=True)
     suite_parser.add_argument("--markdown-out")
     suite_parser.set_defaults(func=_cmd_experiment_suite)
@@ -305,6 +306,7 @@ def _cmd_experiment_suite(args: argparse.Namespace) -> int:
         direct_judge_cache=args.direct_judge_cache,
         direct_judge_timeout=args.direct_judge_timeout,
         direct_judge_retries=args.direct_judge_retries,
+        direct_judge_reasoning_effort=args.direct_judge_reasoning_effort,
     )
     report = save_experiment_suite(config, args.out, args.markdown_out)
     print(

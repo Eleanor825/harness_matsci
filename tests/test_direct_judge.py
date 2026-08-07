@@ -53,6 +53,31 @@ class DirectJudgeTests(unittest.TestCase):
             self.assertEqual(len(calls), 1)
             self.assertEqual(json.loads(cache.read_text())["scores"]["r1"], 0.73)
 
+    def test_uses_responses_wire_and_gpt54_defaults(self) -> None:
+        requests: list[Request] = []
+
+        def request(request: Request, timeout: float) -> bytes:
+            requests.append(request)
+            return json.dumps(
+                {
+                    "output_text": '{"p_success": 0.61, "route": "retrieve_more", "rationale": "uncertain"}',
+                }
+            ).encode()
+
+        judge = LLMDirectJudge.from_env(
+            environ={"OPENAI_API_KEY": "test-key"},
+            request_fn=request,
+        )
+        self.assertEqual(judge.model, "gpt-5.4")
+        self.assertEqual(judge.base_url, "https://coding.beehears.com")
+        self.assertEqual(judge.reasoning_effort, "xhigh")
+        self.assertEqual(judge.score_records([self._record()]), {"r1": 0.61})
+        self.assertTrue(requests[0].full_url.endswith("/responses"))
+        body = json.loads(requests[0].data)
+        self.assertEqual(body["model"], "gpt-5.4")
+        self.assertEqual(body["reasoning"], {"effort": "xhigh"})
+        self.assertFalse(body["store"])
+
     def test_fake_direct_judge_is_reported_in_suite(self) -> None:
         def fake_judge(records: list[ActionRecord]) -> dict[str, float]:
             return {record.record_id: 0.8 if record.features.get("verbal_confidence", 0.0) > 0.5 else 0.2 for record in records}

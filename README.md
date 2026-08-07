@@ -78,10 +78,14 @@ Enable the optional one-shot LLM direct-as-judge baseline:
 
 ```bash
 export OPENAI_API_KEY=...
-export OPENAI_MODEL=gpt-4.1-mini
+export OPENAI_MODEL=gpt-5.4
+export OPENAI_BASE_URL=https://coding.beehears.com
+export OPENAI_REASONING_EFFORT=xhigh
 python -m harness_matsci experiment-suite \
   --data-dir /path/to/material_discovery_tasks \
   --direct-judge-model "$OPENAI_MODEL" \
+  --direct-judge-base-url "$OPENAI_BASE_URL" \
+  --direct-judge-reasoning-effort "$OPENAI_REASONING_EFFORT" \
   --direct-judge-cache runs/direct_judge_cache/scores.json \
   --out runs/rhi_experiments_v5_direct_judge/summary.json \
   --markdown-out runs/rhi_experiments_v5_direct_judge/README.md
