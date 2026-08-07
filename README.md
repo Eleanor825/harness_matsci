@@ -78,7 +78,7 @@ Enable the optional one-shot LLM direct-as-judge baseline:
 
 ```bash
 export OPENAI_API_KEY=...
-export OPENAI_MODEL=gpt-5.4
+export OPENAI_MODEL=gpt-5.6-luna
 export OPENAI_BASE_URL=https://coding.beehears.com
 export OPENAI_REASONING_EFFORT=xhigh
 python -m harness_matsci experiment-suite \

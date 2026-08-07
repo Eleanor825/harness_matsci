@@ -68,13 +68,13 @@ class DirectJudgeTests(unittest.TestCase):
             environ={"OPENAI_API_KEY": "test-key"},
             request_fn=request,
         )
-        self.assertEqual(judge.model, "gpt-5.4")
+        self.assertEqual(judge.model, "gpt-5.6-luna")
         self.assertEqual(judge.base_url, "https://coding.beehears.com")
         self.assertEqual(judge.reasoning_effort, "xhigh")
         self.assertEqual(judge.score_records([self._record()]), {"r1": 0.61})
         self.assertTrue(requests[0].full_url.endswith("/responses"))
         body = json.loads(requests[0].data)
-        self.assertEqual(body["model"], "gpt-5.4")
+        self.assertEqual(body["model"], "gpt-5.6-luna")
         self.assertEqual(body["reasoning"], {"effort": "xhigh"})
         self.assertFalse(body["store"])
 

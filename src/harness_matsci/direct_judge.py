@@ -17,7 +17,7 @@ TASK_RUBRICS = {
     "discover_unique": "whether screening this candidate is likely to produce a scientifically useful and chemically or structurally unique material discovery",
     "extreme_properties": "whether advancing this candidate is likely to satisfy the stated extreme-property target rather than consume the discovery budget without useful evidence",
 }
-DEFAULT_MODEL = "gpt-5.4"
+DEFAULT_MODEL = "gpt-5.6-luna"
 DEFAULT_BASE_URL = "https://coding.beehears.com"
 DEFAULT_REASONING_EFFORT = "xhigh"
 PROMPT_VERSION = "direct-judge-responses-v2"
