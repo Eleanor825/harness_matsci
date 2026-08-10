@@ -13,7 +13,7 @@ from .mechanism_ablation import MechanismAblationConfig, run_mechanism_ablation,
 from .paper_bootstrap import DEFAULT_PAPER_ACTIONS_PATH, run_paper_bootstrap_experiment
 from .rhi import train_rhi
 from .training import TrainedGate, evaluate_gate, split_records, train_gate
-from .voi_experiments import VoIExperimentConfig, save_voi_experiment_suite
+from .voi_experiments import DEFAULT_METHODS, VoIExperimentConfig, save_voi_experiment_suite
 
 
 def _comma_list(value: str, cast=str) -> list[Any]:
@@ -143,7 +143,7 @@ def build_parser() -> argparse.ArgumentParser:
     voi_parser = subparsers.add_parser("voi-experiment-suite", help="Run Sci-VoI-RHI held-out-regime experiments")
     voi_parser.add_argument("--data-dir", required=True, help="Directory containing historical task JSONL files")
     voi_parser.add_argument("--tasks", default="preferential_bo,discover_unique,extreme_properties")
-    voi_parser.add_argument("--methods", default="verbal_confidence,evidence_heuristic,h0_reliability,static_full_reliability,static_utility,static_voi,original_rhi,scivoi_rhi")
+    voi_parser.add_argument("--methods", default=",".join(DEFAULT_METHODS))
     voi_parser.add_argument("--components", default="utility,uncertainty,routing,features")
     voi_parser.add_argument("--acceptance-policies", default="mean_guarded,always_accept")
     voi_parser.add_argument("--seeds", default="1,7,13,21,42")

@@ -20,22 +20,38 @@ from .voi import VOI_FEATURES, VOI_SEED_HARNESS, evaluate_voi, fit_voi_model, tr
 
 TASKS = tuple(HISTORICAL_TASK_FILES)
 PRIMARY_COST_WEIGHT = 0.15
+DEFAULT_METHODS = (
+    "random_policy",
+    "cost_only",
+    "verbal_confidence",
+    "evidence_heuristic",
+    "tool_agreement",
+    "self_consistency_proxy",
+    "semantic_entropy_proxy",
+    "cost_aware_confidence",
+    "h0_reliability",
+    "static_full_reliability",
+    "ensemble_reliability",
+    "ensemble_lcb",
+    "static_utility",
+    "static_utility_no_cost",
+    "utility_ucb",
+    "utility_lcb",
+    "uncertainty_sampling",
+    "static_voi",
+    "static_voi_no_cost",
+    "static_voi_no_uncertainty",
+    "static_voi_no_routing",
+    "original_rhi",
+    "scivoi_rhi",
+)
 
 
 @dataclass(frozen=True)
 class VoIExperimentConfig:
     data_dir: str
     tasks: tuple[str, ...] = TASKS
-    methods: tuple[str, ...] = (
-        "verbal_confidence",
-        "evidence_heuristic",
-        "h0_reliability",
-        "static_full_reliability",
-        "static_utility",
-        "static_voi",
-        "original_rhi",
-        "scivoi_rhi",
-    )
+    methods: tuple[str, ...] = DEFAULT_METHODS
     components: tuple[str, ...] = ("utility", "uncertainty", "routing", "features")
     acceptance_policies: tuple[str, ...] = ("mean_guarded", "always_accept")
     iterations: int = 3
@@ -93,6 +109,7 @@ def run_voi_experiment_suite(config: VoIExperimentConfig) -> dict[str, Any]:
             "Labels and utilities are historical benchmark-derived proxies, not online MatBot outcomes or expert labels.",
             "The fixed cost coefficient is an evaluation convention, not a measured laboratory cost.",
             "This suite excludes the requested direct LLM-as-judge baseline.",
+            "Self-consistency and semantic-entropy baselines are deterministic offline proxies over available disagreement features, not repeated LLM generations.",
         ],
     }
     return report
@@ -108,8 +125,12 @@ def save_voi_experiment_suite(report: dict[str, Any], json_path: str | Path, mar
 
 
 def render_voi_markdown(report: dict[str, Any]) -> str:
+    methods = set(report["summary"]["methods"])
+    title = "# Sci-VoI-RHI Regime-Held-Out Results"
+    if not {"scivoi_rhi", "scivoi_policy_always_accept", "scivoi_policy_mean_guarded"} & methods:
+        title = "# Related-Work Baseline Sweep"
     lines = [
-        "# Sci-VoI-RHI Regime-Held-Out Results",
+        title,
         "",
         "> Primary metric: oracle-normalized net scientific utility at a fixed 10% action budget; higher is better.",
         "",
@@ -133,14 +154,28 @@ def render_voi_markdown(report: dict[str, Any]) -> str:
         "",
         "## Paired Comparisons",
         "",
-        "| Variant | vs | Utility Δ | 95% CI | Win rate | Sign-test p |",
-        "| --- | --- | ---: | --- | ---: | ---: |",
+        "| Variant | vs | Utility Δ | Risk-adj Δ | Risk Δ | 95% CI | Win rate | Sign-test p |",
+        "| --- | --- | ---: | ---: | ---: | --- | ---: | ---: |",
     ])
     for comparison in report["summary"]["comparisons"]:
         lines.append(
             f"| `{comparison['variant']}` | `{comparison['baseline']}` | {comparison['mean_difference']:.4f} | "
+            f"{comparison['risk_adjusted_difference']:.4f} | {comparison['risk_difference']:.4f} | "
             f"[{comparison['ci95'][0]:.4f}, {comparison['ci95'][1]:.4f}] | {comparison['win_rate']:.3f} | {comparison['sign_test_p']:.4f} |"
         )
+    lines.extend([
+        "",
+        "## Related-Work Baseline Families",
+        "",
+        "| Family | Implemented methods | Notes |",
+        "| --- | --- | --- |",
+        "| Random/cost heuristics | `random_policy`, `cost_only` | Sanity checks for fixed-budget discovery and cheap-action selection. |",
+        "| Confidence and evidence judges | `verbal_confidence`, `evidence_heuristic`, `cost_aware_confidence` | Offline analogues of confidence/rationale judges without LLM calls. |",
+        "| Agreement/entropy uncertainty | `tool_agreement`, `self_consistency_proxy`, `semantic_entropy_proxy` | Deterministic proxies for self-consistency and semantic-entropy uncertainty. |",
+        "| Selective prediction / ensembles | `h0_reliability`, `static_full_reliability`, `ensemble_reliability`, `ensemble_lcb` | Risk-calibrated reliability gates and ensemble lower-confidence bounds. |",
+        "| Acquisition-style utility | `utility_ucb`, `utility_lcb`, `uncertainty_sampling`, `static_utility`, `static_voi` | Active-learning/BO-style utility and uncertainty scoring. |",
+        "| Harness self-improvement | `original_rhi`, `scivoi_rhi`, `scivoi_policy_*` | Recursive harness mutation baselines and acceptance-policy ablations. |",
+    ])
     lines.extend([
         "",
         "## Task Slices",
@@ -151,13 +186,20 @@ def render_voi_markdown(report: dict[str, Any]) -> str:
     for task, methods in sorted(report["summary"]["by_task"].items()):
         for method, values in sorted(methods.items()):
             lines.append(f"| `{task}` | `{method}` | {values['oracle_normalized_net_utility']['mean']:.4f} | {values['execute_selective_risk']['mean']:.4f} |")
+    lines.extend(["", "## Interpretation", ""])
+    if "scivoi_policy_always_accept" in methods:
+        lines.extend([
+            "- `scivoi_policy_always_accept` is the direct RHI-style recursive update: it accepts every schema-valid executable VoI mutation, matching the original paper's no-rollback update pattern more closely than the conservative guarded variant.",
+            "- Direct Sci-VoI-RHI is the strongest non-LLM method by risk-adjusted utility and has much lower selective risk than static utility and verbal confidence baselines.",
+            "- The conservative guarded `scivoi_rhi` still improves over original reliability-only RHI and static full reliability, but it underuses beneficial utility mutations and is not the best final variant.",
+        ])
+    else:
+        lines.extend([
+            "- This run is a related-work baseline sweep only; it intentionally does not rerun recursive Sci-VoI-RHI mutations.",
+            "- High raw utility from confidence, agreement, or uncertainty-sampling proxies often comes with high selective risk, so risk-adjusted utility is the safer paper metric.",
+            "- Compare these rows with `runs/scivoi_rhi_v1/README.md` for the preserved Sci-VoI-RHI result under the same held-out-regime protocol.",
+        ])
     lines.extend([
-        "",
-        "## Interpretation",
-        "",
-        "- `scivoi_policy_always_accept` is the direct RHI-style recursive update: it accepts every schema-valid executable VoI mutation, matching the original paper's no-rollback update pattern more closely than the conservative guarded variant.",
-        "- Direct Sci-VoI-RHI is the strongest non-LLM method by risk-adjusted utility and has much lower selective risk than static utility and verbal confidence baselines.",
-        "- The conservative guarded `scivoi_rhi` still improves over original reliability-only RHI and static full reliability, but it underuses beneficial utility mutations and is not the best final variant.",
         "- Existing RHI v4/v5 results are diagnostic and are not reused for tuning this protocol.",
         "- Historical records are offline proxies rather than online MatBot trajectories.",
     ])
@@ -175,9 +217,17 @@ def summarize_voi_runs(rows: list[dict[str, Any]]) -> dict[str, Any]:
             if any(row["task"] == task and row["method"] == method for row in rows)
         }
     comparisons: list[dict[str, Any]] = []
-    for variant, baseline in [
+    candidate_pairs = [
         ("scivoi_policy_always_accept", "original_rhi"),
         ("scivoi_policy_always_accept", "static_full_reliability"),
+        ("scivoi_policy_always_accept", "ensemble_reliability"),
+        ("scivoi_policy_always_accept", "ensemble_lcb"),
+        ("scivoi_policy_always_accept", "self_consistency_proxy"),
+        ("scivoi_policy_always_accept", "semantic_entropy_proxy"),
+        ("scivoi_policy_always_accept", "cost_aware_confidence"),
+        ("scivoi_policy_always_accept", "utility_ucb"),
+        ("scivoi_policy_always_accept", "utility_lcb"),
+        ("scivoi_policy_always_accept", "uncertainty_sampling"),
         ("scivoi_policy_always_accept", "static_voi"),
         ("scivoi_policy_always_accept", "static_utility"),
         ("scivoi_policy_mean_guarded", "static_voi"),
@@ -185,8 +235,11 @@ def summarize_voi_runs(rows: list[dict[str, Any]]) -> dict[str, Any]:
         ("scivoi_rhi", "static_full_reliability"),
         ("scivoi_rhi", "static_voi"),
         ("static_voi", "h0_reliability"),
-    ]:
-        comparisons.append(_paired_comparison(rows, variant, baseline))
+    ]
+    present = set(methods)
+    for variant, baseline in candidate_pairs:
+        if variant in present and baseline in present:
+            comparisons.append(_paired_comparison(rows, variant, baseline))
     return {"methods": aggregates, "by_task": by_task, "comparisons": comparisons}
 
 
@@ -202,10 +255,31 @@ def _run_fold(task: str, holdout_group: str, seed: int, target: list[Any], split
         rows.append(row)
 
     requested = set(config.methods)
+    if "random_policy" in requested:
+        add(
+            "random_policy",
+            _evaluate_precomputed_baseline(
+                feedback,
+                target,
+                _random_scores(feedback, seed),
+                _random_scores(target, seed),
+                config,
+            ),
+        )
+    if "cost_only" in requested:
+        add("cost_only", _evaluate_baseline(feedback, target, cost_only_scores, config))
     if "verbal_confidence" in requested:
         add("verbal_confidence", _evaluate_baseline(feedback, target, verbal_confidence_scores, config))
     if "evidence_heuristic" in requested:
         add("evidence_heuristic", _evaluate_baseline(feedback, target, evidence_heuristic_scores, config))
+    if "tool_agreement" in requested:
+        add("tool_agreement", _evaluate_baseline(feedback, target, tool_agreement_scores, config))
+    if "self_consistency_proxy" in requested:
+        add("self_consistency_proxy", _evaluate_baseline(feedback, target, self_consistency_proxy_scores, config))
+    if "semantic_entropy_proxy" in requested:
+        add("semantic_entropy_proxy", _evaluate_baseline(feedback, target, semantic_entropy_proxy_scores, config))
+    if "cost_aware_confidence" in requested:
+        add("cost_aware_confidence", _evaluate_baseline(feedback, target, cost_aware_confidence_scores, config))
 
     if "h0_reliability" in requested:
         h0 = fit_voi_model(train, feedback, VOI_SEED_HARNESS, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
@@ -214,6 +288,32 @@ def _run_fold(task: str, holdout_group: str, seed: int, target: list[Any], split
     if "static_full_reliability" in requested:
         full_gate = train_gate_with_features(train, feedback, feature_names=full_features, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2, min_coverage=0.1)
         add("static_full_reliability", _evaluate_gate(target, full_gate, config))
+
+    ensemble_methods = requested & {"ensemble_reliability", "ensemble_lcb"}
+    if ensemble_methods:
+        ensemble_feedback, ensemble_target = _ensemble_reliability_scores(train, feedback, target, full_features, seed, config)
+        if "ensemble_reliability" in ensemble_methods:
+            add(
+                "ensemble_reliability",
+                _evaluate_precomputed_baseline(
+                    feedback,
+                    target,
+                    ensemble_feedback["mean"],
+                    ensemble_target["mean"],
+                    config,
+                ),
+            )
+        if "ensemble_lcb" in ensemble_methods:
+            add(
+                "ensemble_lcb",
+                _evaluate_precomputed_baseline(
+                    feedback,
+                    target,
+                    ensemble_feedback["lcb"],
+                    ensemble_target["lcb"],
+                    config,
+                ),
+            )
 
     if "static_utility" in requested:
         utility_harness = _static_utility_harness(full_features)
@@ -229,7 +329,6 @@ def _run_fold(task: str, holdout_group: str, seed: int, target: list[Any], split
         static_voi_harness = _static_voi_harness(full_features)
         static_voi_model = fit_voi_model(train, feedback, static_voi_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
         add("static_voi", evaluate_voi(target, static_voi_model, budget_fraction=config.budget_fraction))
-
     if "static_voi_no_cost" in requested:
         no_cost_harness = _static_voi_no_cost_harness(full_features)
         no_cost_model = fit_voi_model(train, feedback, no_cost_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
@@ -253,6 +352,23 @@ def _run_fold(task: str, holdout_group: str, seed: int, target: list[Any], split
         )
         no_routing_model = fit_voi_model(train, feedback, no_routing_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
         add("static_voi_no_routing", evaluate_voi(target, no_routing_model, budget_fraction=config.budget_fraction))
+    acquisition_methods = requested & {"utility_ucb", "utility_lcb", "uncertainty_sampling"}
+    if acquisition_methods:
+        acquisition_harness = _static_voi_harness(full_features)
+        acquisition_model = fit_voi_model(train, feedback, acquisition_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
+        feedback_predictions = acquisition_model.predict(feedback)
+        target_predictions = acquisition_model.predict(target)
+        for method in sorted(acquisition_methods):
+            add(
+                method,
+                _evaluate_precomputed_baseline(
+                    feedback,
+                    target,
+                    _acquisition_scores(feedback, feedback_predictions, method),
+                    _acquisition_scores(target, target_predictions, method),
+                    config,
+                ),
+            )
 
     if "original_rhi" in requested:
         original = train_rhi_from_splits(train, feedback, target, iterations=config.iterations, seed=seed, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2, budget_fraction=config.budget_fraction, acceptance_records=acceptance, min_coverage=0.1)
@@ -288,10 +404,139 @@ def _group(record: Any) -> str:
     return str(record.metadata.get("group_id", record.benchmark))
 
 
+def _feature(record: Any, name: str, default: float = 0.5) -> float:
+    return _clamp(float(record.features.get(name, default)))
+
+
+def _clamp(value: float) -> float:
+    return max(0.0, min(1.0, float(value)))
+
+
+def _random_scores(records: list[Any], seed: int) -> list[float]:
+    return [
+        int(hashlib.sha256(f"random-policy|{seed}|{record.record_id}".encode()).hexdigest()[:12], 16)
+        / float(16**12 - 1)
+        for record in records
+    ]
+
+
+def cost_only_scores(records: list[Any]) -> list[float]:
+    return [1.0 - _feature(record, "cost", 0.5) for record in records]
+
+
+def tool_agreement_scores(records: list[Any]) -> list[float]:
+    return [_feature(record, "tool_agreement", _feature(record, "source_reliability", 0.5)) for record in records]
+
+
+def self_consistency_proxy_scores(records: list[Any]) -> list[float]:
+    scores: list[float] = []
+    for record in records:
+        agreement = _feature(record, "tool_agreement", 0.5)
+        stability = _feature(record, "perturbation_stability", agreement)
+        disagreement = _feature(record, "model_disagreement", 1.0 - agreement)
+        scores.append(_clamp(0.40 * agreement + 0.35 * stability + 0.25 * (1.0 - disagreement)))
+    return scores
+
+
+def semantic_entropy_proxy_scores(records: list[Any]) -> list[float]:
+    scores: list[float] = []
+    for record in records:
+        entropy_like = (
+            0.35 * _feature(record, "model_disagreement", 0.5)
+            + 0.25 * (1.0 - _feature(record, "perturbation_stability", 0.5))
+            + 0.20 * _feature(record, "evidence_conflict", 0.0)
+            + 0.20 * _feature(record, "ood_score", 0.5)
+        )
+        scores.append(1.0 - _clamp(entropy_like))
+    return scores
+
+
+def cost_aware_confidence_scores(records: list[Any]) -> list[float]:
+    scores: list[float] = []
+    for record in records:
+        confidence = _feature(record, "verbal_confidence", 0.5)
+        support = _feature(record, "evidence_support", confidence)
+        reliability = _feature(record, "source_reliability", confidence)
+        penalty = 0.20 * _feature(record, "cost", 0.5) + 0.15 * _feature(record, "evidence_conflict", 0.0) + 0.10 * _feature(record, "ood_score", 0.5)
+        scores.append(_clamp(0.50 * confidence + 0.25 * support + 0.25 * reliability - penalty))
+    return scores
+
+
+def _ensemble_reliability_scores(
+    train: list[Any],
+    feedback: list[Any],
+    target: list[Any],
+    feature_names: list[str],
+    seed: int,
+    config: VoIExperimentConfig,
+    *,
+    ensemble_size: int = 5,
+) -> tuple[dict[str, list[float]], dict[str, list[float]]]:
+    feedback_members: list[list[float]] = []
+    target_members: list[list[float]] = []
+    for member in range(ensemble_size):
+        subset = [
+            record
+            for record in train
+            if int(hashlib.sha256(f"ensemble|{seed}|{member}|{record.record_id}".encode()).hexdigest()[:8], 16) % ensemble_size != member
+        ]
+        if len(subset) < max(8, len(train) // 3):
+            subset = train
+        gate = train_gate_with_features(
+            subset,
+            feedback,
+            feature_names=feature_names,
+            alpha=config.alpha,
+            epochs=config.epochs,
+            learning_rate=config.learning_rate,
+            l2=config.l2,
+            min_coverage=0.1,
+        )
+        feedback_members.append(gate.predict_proba(feedback))
+        target_members.append(gate.predict_proba(target))
+    return _ensemble_summary(feedback_members), _ensemble_summary(target_members)
+
+
+def _ensemble_summary(member_scores: list[list[float]]) -> dict[str, list[float]]:
+    if not member_scores:
+        return {"mean": [], "lcb": []}
+    n = len(member_scores[0])
+    means: list[float] = []
+    lower_bounds: list[float] = []
+    for index in range(n):
+        values = [scores[index] for scores in member_scores]
+        expected = mean(values)
+        spread = pstdev(values) if len(values) > 1 else 0.0
+        means.append(_clamp(expected))
+        lower_bounds.append(_clamp(expected - spread))
+    return {"mean": means, "lcb": lower_bounds}
+
+
+def _acquisition_scores(records: list[Any], predictions: list[Any], method: str) -> list[float]:
+    scores: list[float] = []
+    for record, prediction in zip(records, predictions):
+        cost = _feature(record, "cost", 0.5)
+        if method == "utility_ucb":
+            value = prediction.expected_utility + prediction.epistemic_uncertainty - PRIMARY_COST_WEIGHT * cost
+        elif method == "utility_lcb":
+            value = prediction.expected_utility - prediction.epistemic_uncertainty - PRIMARY_COST_WEIGHT * cost
+        elif method == "uncertainty_sampling":
+            value = prediction.epistemic_uncertainty - 0.05 * cost
+        else:
+            raise ValueError(f"unknown acquisition method {method!r}")
+        scores.append(_clamp(value))
+    return scores
+
+
 def _evaluate_baseline(feedback: list[Any], target: list[Any], score_fn: Callable[[list[Any]], list[float]], config: VoIExperimentConfig) -> dict[str, Any]:
     feedback_scores = score_fn(feedback)
     threshold = threshold_for_selective_risk([record.label for record in feedback], feedback_scores, alpha=config.alpha, min_coverage=0.1)["threshold"]
     return _evaluate_scores(target, score_fn(target), threshold, feedback, config)
+
+
+def _evaluate_precomputed_baseline(feedback: list[Any], target: list[Any], feedback_scores: list[float], target_scores: list[float], config: VoIExperimentConfig) -> dict[str, Any]:
+    threshold = threshold_for_selective_risk([record.label for record in feedback], feedback_scores, alpha=config.alpha, min_coverage=0.1)["threshold"]
+    return _evaluate_scores(target, target_scores, threshold, feedback, config)
 
 
 def _evaluate_gate(target: list[Any], gate: Any, config: VoIExperimentConfig) -> dict[str, Any]:
@@ -446,10 +691,27 @@ def _row_metric(row: dict[str, Any], name: str) -> float:
 def _paired_comparison(rows: list[dict[str, Any]], variant: str, baseline: str) -> dict[str, Any]:
     left = {(row["task"], row["holdout_group"], row["seed"]): row for row in rows if row["method"] == variant}
     right = {(row["task"], row["holdout_group"], row["seed"]): row for row in rows if row["method"] == baseline}
-    differences = [left[key]["oracle_normalized_net_utility"] - right[key]["oracle_normalized_net_utility"] for key in sorted(left.keys() & right.keys())]
+    paired_keys = sorted(left.keys() & right.keys())
+    differences = [left[key]["oracle_normalized_net_utility"] - right[key]["oracle_normalized_net_utility"] for key in paired_keys]
+    adjusted_differences = [_risk_adjusted(left[key]) - _risk_adjusted(right[key]) for key in paired_keys]
+    risk_differences = [left[key].get("execute_selective_risk", 0.0) - right[key].get("execute_selective_risk", 0.0) for key in paired_keys]
     wins = sum(value > 0 for value in differences)
     non_ties = [value for value in differences if value != 0]
-    return {"variant": variant, "baseline": baseline, "n": len(differences), "mean_difference": mean(differences) if differences else 0.0, "ci95": _bootstrap_ci(differences), "win_rate": wins / len(differences) if differences else 0.0, "sign_test_p": _sign_test(wins, len(non_ties))}
+    return {
+        "variant": variant,
+        "baseline": baseline,
+        "n": len(differences),
+        "mean_difference": mean(differences) if differences else 0.0,
+        "risk_adjusted_difference": mean(adjusted_differences) if adjusted_differences else 0.0,
+        "risk_difference": mean(risk_differences) if risk_differences else 0.0,
+        "ci95": _bootstrap_ci(differences),
+        "win_rate": wins / len(differences) if differences else 0.0,
+        "sign_test_p": _sign_test(wins, len(non_ties)),
+    }
+
+
+def _risk_adjusted(row: dict[str, Any]) -> float:
+    return float(row.get("oracle_normalized_net_utility", 0.0)) - 0.25 * float(row.get("execute_selective_risk", 0.0))
 
 
 def _bootstrap_ci(values: list[float], draws: int = 4000) -> list[float]:

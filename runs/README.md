@@ -18,6 +18,7 @@ MatBot trajectory outcomes.
 | --- | --- | --- |
 | `rhi_experiments_v4/` | Five-seed reliability-only RHI evaluation on 15,717 historical benchmark-derived records. | Diagnostic negative result: reliability-only RHI is comparable to learned baselines but does not establish a positive self-improvement claim. |
 | `rhi_experiments_v5_evolution/` | Self-evolution checkpoint ablation for `H0`–`H3` under guarded and always-accept policies. | Shows recursive mutation is active, but aggregate H0-to-H3 primary score worsens; useful contrast for why Sci-VoI is needed. |
+| `related_work_baselines_v1/` | Non-LLM related-work baseline sweep over confidence, evidence, self-consistency proxies, semantic-entropy proxy, ensembles, and acquisition-style policies. | Shows many raw-utility baselines are high-risk; merged comparison keeps Sci-VoI-RHI best by risk-adjusted utility (`0.6043`) with much lower risk (`0.1600`). |
 | `paper_bootstrap_v1_multiseed/` | First paper-derived weak-label bootstrap on 500 electrolyte action records across five seeds. | Demonstrates feasibility of historical-paper action labels and records domain/group-shift limitations. |
 | `label_audit_v1/` | Full historical label/utility consistency and leakage audit. | Confirms the proxy labels and utilities are internally reproducible and that oracle fields are withheld from visible text. |
 | `direct_judge_baseline_v1/` | One-shot direct LLM-as-judge baseline protocol. | Preserves the baseline definition without publishing mock scores; generated score caches are intentionally not committed. |
@@ -27,10 +28,11 @@ MatBot trajectory outcomes.
 For paper writing or result comparison, read:
 
 1. `scivoi_rhi_v1/README.md` for the current Sci-VoI result.
-2. `rhi_experiments_v5_evolution/RESULTS.md` for the prior self-evolution ablation.
-3. `rhi_experiments_v4/RESULTS.md` for the broader reliability-only diagnostic suite.
-4. `paper_bootstrap_v1_multiseed/README.md` for historical-paper weak-label evidence.
-5. `direct_judge_baseline_v1/README.md` for the direct LLM judge baseline protocol.
+2. `related_work_baselines_v1/SCIVOI_COMPARISON.md` for the combined related-work baseline table.
+3. `rhi_experiments_v5_evolution/RESULTS.md` for the prior self-evolution ablation.
+4. `rhi_experiments_v4/RESULTS.md` for the broader reliability-only diagnostic suite.
+5. `paper_bootstrap_v1_multiseed/README.md` for historical-paper weak-label evidence.
+6. `direct_judge_baseline_v1/README.md` for the direct LLM judge baseline protocol.
 
 ## Claim Boundaries
 

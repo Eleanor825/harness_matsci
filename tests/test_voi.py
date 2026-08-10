@@ -84,7 +84,7 @@ class VoIRhiTests(unittest.TestCase):
                 "--tasks",
                 "discover_unique",
                 "--methods",
-                "h0_reliability,static_voi,scivoi_rhi",
+                "self_consistency_proxy,ensemble_lcb,utility_ucb,h0_reliability,static_voi,scivoi_rhi",
                 "--components",
                 "",
                 "--acceptance-policies",
@@ -101,6 +101,9 @@ class VoIRhiTests(unittest.TestCase):
             subprocess.run(command, cwd=ROOT, env=env, check=True, capture_output=True, text=True)
             report = json.loads(json_path.read_text())
             self.assertEqual(report["protocol"]["direct_llm_judge"], False)
+            self.assertIn("self_consistency_proxy", report["summary"]["methods"])
+            self.assertIn("ensemble_lcb", report["summary"]["methods"])
+            self.assertIn("utility_ucb", report["summary"]["methods"])
             self.assertIn("scivoi_rhi", report["summary"]["methods"])
             self.assertIn("Sci-VoI-RHI", markdown_path.read_text())
 

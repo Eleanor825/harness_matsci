@@ -78,6 +78,12 @@ Primary metric is oracle-normalized continuous net scientific utility at a fixed
 10% action budget. Guardrails are selective risk, hit rate, outcome-conditioned
 utility, simple regret, verification rate, and worst-slice behavior.
 
+The related-work baseline sweep covers random and cost-only policies, confidence
+and evidence judges, self-consistency and semantic-entropy proxies, calibrated
+selective-prediction gates, ensemble lower-confidence bounds, and acquisition
+functions such as utility UCB/LCB and uncertainty sampling. True direct LLM and
+multi-call agentic judge baselines are protocol-ready but require API calls.
+
 ## Expected Reviewer Questions
 
 - **Is this just feature engineering?** No. The new `voi.py` runtime consumes the
@@ -108,6 +114,13 @@ Compared with strong static utility/VoI heads, direct Sci-VoI-RHI is roughly
 tied on continuous utility but much safer: static VoI risk is `0.3845`, while
 direct Sci-VoI-RHI risk is `0.1600`. Verbal confidence has high raw utility but
 unacceptable risk (`0.7889`), so it is not a safe scientific action policy.
+
+The non-LLM related-work sweep in
+`runs/related_work_baselines_v1/SCIVOI_COMPARISON.md` strengthens this pattern.
+`verbal_confidence`, `tool_agreement`, `cost_only`, and `uncertainty_sampling`
+can obtain high raw utility by selecting aggressive actions, but their risks are
+around `0.79`. Sci-VoI-RHI remains best by risk-adjusted utility (`0.6043`) and
+has the lowest risk among competitive methods (`0.1600`).
 
 The conservative guarded variant improves over original RHI but is not the best
 variant. This is useful scientifically: in this benchmark, once the executable

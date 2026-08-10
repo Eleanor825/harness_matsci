@@ -107,6 +107,26 @@ This suite excludes the direct LLM-as-judge baseline. It evaluates 21 complete
 scientific regimes held out one at a time over five seeds, with component and
 acceptance-policy ablations.
 
+Run the non-LLM related-work baseline sweep without rerunning recursive RHI
+mutations:
+
+```bash
+python -m harness_matsci voi-experiment-suite \
+  --data-dir /path/to/material_discovery_tasks \
+  --methods random_policy,cost_only,verbal_confidence,evidence_heuristic,tool_agreement,self_consistency_proxy,semantic_entropy_proxy,cost_aware_confidence,h0_reliability,static_full_reliability,ensemble_reliability,ensemble_lcb,static_utility,utility_ucb,utility_lcb,uncertainty_sampling,static_voi \
+  --components '' \
+  --acceptance-policies '' \
+  --seeds 1,7,13,21,42 \
+  --epochs 60 \
+  --out runs/related_work_baselines_v1/summary.json \
+  --markdown-out runs/related_work_baselines_v1/README.md
+```
+
+This sweep covers offline analogues of confidence judges, self-consistency,
+semantic entropy, ensemble uncertainty, selective prediction, and BO-style
+acquisition policies. True direct LLM judge and multi-call agentic judge
+baselines still require API calls.
+
 Enable the optional one-shot LLM direct-as-judge baseline:
 
 ```bash
@@ -179,12 +199,23 @@ original RHI by `+0.0808` utility and over static full reliability by `+0.0809`.
 It is utility-comparable to static utility/VoI heads while being substantially
 safer.
 
+The related-work baseline sweep in
+`runs/related_work_baselines_v1/SCIVOI_COMPARISON.md` adds random/cost sanity
+checks, confidence/evidence judges, agreement and semantic-entropy proxies,
+ensemble lower-confidence bounds, and acquisition-style utility policies. The
+strongest raw-utility heuristics (`verbal_confidence`, `tool_agreement`,
+`uncertainty_sampling`) are high-risk, while Sci-VoI-RHI remains best by
+risk-adjusted utility (`0.6043`) with much lower selective risk (`0.1600`).
+
 In the tables, `non_rhi_seed` means a single learned logistic gate using the
 initial RHI feature contract but with no recursive harness mutation or
 trajectory-conditioned acceptance. `static_full` is a single learned gate with
 the full available feature set. `verbal_confidence` is not an LLM judge; it is a
 text/feature heuristic. The direct LLM comparison is implemented separately and
 must be run with an explicitly configured API model.
+
+The current related-work baseline checklist is in
+`docs/research/RELATED_WORK_BASELINES.md`.
 
 ## Design note
 
