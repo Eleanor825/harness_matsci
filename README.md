@@ -158,6 +158,11 @@ records at action boundaries and add future utility or expert review labels.
 
 ## Current results
 
+The experiment index in `runs/README.md` lists the current Sci-VoI result and
+preserves earlier comparison runs so reliability-only RHI, self-evolution
+ablations, paper-bootstrap data, and direct-judge protocol artifacts remain
+easy to compare.
+
 The reliability-only five-seed snapshots in `runs/rhi_experiments_v4/RESULTS.md`
 and `runs/rhi_experiments_v5_evolution/RESULTS.md` remain important diagnostic
 references. They show that the original reliability-only RHI mutation is active
