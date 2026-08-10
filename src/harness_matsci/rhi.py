@@ -219,6 +219,7 @@ def train_rhi(
     min_coverage: float = 0.0,
     epsilon: float = 0.01,
     proposer: HarnessProposer | None = None,
+    acceptance_policy: str = "guarded",
 ) -> dict[str, Any]:
     """Run recursive, trajectory-feedback-conditioned harness improvement.
 
@@ -253,6 +254,7 @@ def train_rhi(
         min_coverage=min_coverage,
         epsilon=epsilon,
         proposer=proposer,
+        acceptance_policy=acceptance_policy,
     )
 
 
@@ -276,6 +278,7 @@ def train_rhi_from_splits(
     epsilon: float = 0.01,
     proposer: HarnessProposer | None = None,
     acceptance_records: list[ActionRecord] | None = None,
+    acceptance_policy: str = "guarded",
 ) -> dict[str, Any]:
     """Run RHI with externally fixed splits.
 
@@ -283,6 +286,8 @@ def train_rhi_from_splits(
     validation records can come from source tasks while test records come from
     a held-out target task.
     """
+    if acceptance_policy not in {"guarded", "always_accept"}:
+        raise ValueError("acceptance_policy must be 'guarded' or 'always_accept'")
     feedback_records = val_records
     acceptance_records = acceptance_records or val_records
     if not train_records or not feedback_records:
@@ -316,6 +321,16 @@ def train_rhi_from_splits(
     initial_harness = copy.deepcopy(current_harness)
     accepted_revisions = [copy.deepcopy(current_harness)]
     versions: list[dict[str, Any]] = [_version_report(0, current_harness, current_eval, current_gate)]
+    active_checkpoints: list[dict[str, Any]] = [
+        _active_checkpoint(
+            round_index=0,
+            harness=current_harness,
+            gate=current_gate,
+            acceptance_eval=current_eval,
+            accepted_revision=True,
+            acceptance_policy=acceptance_policy,
+        )
+    ]
     proposals: list[dict[str, Any]] = []
     comparisons: list[dict[str, Any]] = []
 
@@ -371,11 +386,23 @@ def train_rhi_from_splits(
         comparison["acceptance_records"] = len(round_acceptance)
         comparison["acceptance_record_ids"] = [record.record_id for record in round_acceptance]
         versions.append(_version_report(iteration, candidate, candidate_eval, candidate_gate))
-        if comparison["winner"] != "candidate":
-            continue
-        current_harness = candidate
-        current_gate = candidate_gate
-        accepted_revisions.append(copy.deepcopy(current_harness))
+        accepted_revision = comparison["winner"] == "candidate" or acceptance_policy == "always_accept"
+        comparison["acceptance_policy"] = acceptance_policy
+        comparison["accepted_revision"] = accepted_revision
+        if accepted_revision:
+            current_harness = candidate
+            current_gate = candidate_gate
+            accepted_revisions.append(copy.deepcopy(current_harness))
+        active_checkpoints.append(
+            _active_checkpoint(
+                round_index=iteration,
+                harness=current_harness,
+                gate=current_gate,
+                acceptance_eval=candidate_eval if accepted_revision else predecessor_eval,
+                accepted_revision=accepted_revision,
+                acceptance_policy=acceptance_policy,
+            )
+        )
 
     current_eval = evaluate_gate(
         reporting_acceptance,
@@ -385,6 +412,11 @@ def train_rhi_from_splits(
     )
     final_test = evaluate_gate(test_records, current_gate, budget_fraction=budget_fraction)
     initial_test = evaluate_gate(test_records, initial_gate, budget_fraction=budget_fraction)
+    for checkpoint in active_checkpoints:
+        checkpoint_gate = TrainedGate.from_json(checkpoint["gate"])
+        test_eval = evaluate_gate(test_records, checkpoint_gate, budget_fraction=budget_fraction)
+        checkpoint["test"] = test_eval
+        checkpoint["test_score"] = _score(test_eval)
     return {
         "method": {
             "name": "RHI-MatSci",
@@ -412,6 +444,7 @@ def train_rhi_from_splits(
             "balance_benchmarks": balance_benchmarks,
             "macro_acceptance": macro_acceptance,
             "epsilon": epsilon,
+            "acceptance_policy": acceptance_policy,
         },
         "sizes": {
             "train": len(train_records),
@@ -428,6 +461,7 @@ def train_rhi_from_splits(
         "versions": versions,
         "proposals": proposals,
         "comparisons": comparisons,
+        "active_checkpoints": active_checkpoints,
         "acceptance_shards": [[record.record_id for record in shard] for shard in acceptance_shards],
         "validation": current_eval,
         "initial_test": initial_test,
@@ -558,6 +592,26 @@ def _version_report(version: int, harness: dict[str, Any], evaluation: dict[str,
         "harness": copy.deepcopy(harness),
         "gate": gate.to_json(),
         "validation": evaluation,
+    }
+
+
+def _active_checkpoint(
+    *,
+    round_index: int,
+    harness: dict[str, Any],
+    gate: TrainedGate,
+    acceptance_eval: dict[str, Any],
+    accepted_revision: bool,
+    acceptance_policy: str,
+) -> dict[str, Any]:
+    return {
+        "round": round_index,
+        "name": str(harness.get("name", f"H{round_index}")),
+        "harness": copy.deepcopy(harness),
+        "gate": gate.to_json(),
+        "acceptance": acceptance_eval,
+        "accepted_revision": accepted_revision,
+        "acceptance_policy": acceptance_policy,
     }
 
 

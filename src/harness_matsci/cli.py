@@ -99,9 +99,9 @@ def build_parser() -> argparse.ArgumentParser:
     rhi_parser.add_argument("--epsilon", type=float, default=0.01)
     rhi_parser.set_defaults(func=_cmd_rhi)
 
-    suite_parser = subparsers.add_parser("experiment-suite", help="Run the paper-grade RHI experiments 1, 2, and 3")
+    suite_parser = subparsers.add_parser("experiment-suite", help="Run the paper-grade RHI experiments 1, 2, 3, and 4")
     suite_parser.add_argument("--tasks", default="preferential_bo,discover_unique,extreme_properties")
-    suite_parser.add_argument("--experiments", default="1,2,3", help="Comma-separated experiment IDs")
+    suite_parser.add_argument("--experiments", default="1,2,3", help="Comma-separated experiment IDs; 4 is self-evolution ablation")
     suite_parser.add_argument("--seeds", default="1,7,13,21,42")
     suite_parser.add_argument("--n-per-task", type=int, default=300)
     suite_parser.add_argument("--data-dir", help="Directory containing historical task JSONL files")
@@ -310,7 +310,7 @@ def _cmd_experiment_suite(args: argparse.Namespace) -> int:
     )
     report = save_experiment_suite(config, args.out, args.markdown_out)
     print(
-        f"wrote experiments 1/2/3 to {args.out}; "
+        f"wrote requested experiments to {args.out}; "
         f"single={report['summary']['n_single_runs']}; "
         f"transfer={report['summary']['n_transfer_runs']}; "
         f"joint={report['summary']['n_joint_runs']}"

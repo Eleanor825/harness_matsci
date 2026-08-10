@@ -53,6 +53,15 @@ class RhiTests(unittest.TestCase):
         self.assertTrue(shard_ids[0].isdisjoint(shard_ids[1]))
         self.assertTrue(report["method"]["acceptance_shards_are_one_shot"])
 
+    def test_rhi_records_active_checkpoints_and_always_accept_policy(self) -> None:
+        records = make_records("preferential_bo", n=120, seed=9)
+        report = train_rhi(records, iterations=3, seed=9, epochs=60, acceptance_policy="always_accept")
+
+        self.assertEqual([item["round"] for item in report["active_checkpoints"]], [0, 1, 2, 3])
+        self.assertEqual(report["config"]["acceptance_policy"], "always_accept")
+        self.assertTrue(all(item["accepted_revision"] for item in report["active_checkpoints"]))
+        self.assertTrue(all("test_score" in item for item in report["active_checkpoints"]))
+
     def test_rhi_cli_writes_report(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             tmpdir = Path(tmp)

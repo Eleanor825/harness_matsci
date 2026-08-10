@@ -57,7 +57,7 @@ class ExperimentSuiteTests(unittest.TestCase):
     def test_suite_contains_three_protocols_and_fixed_target_split(self) -> None:
         config = ExperimentSuiteConfig(seeds=(3,), n_per_task=60, rhi_iterations=1, epochs=60)
         report = run_experiment_suite(config)
-        self.assertEqual(report["summary"], {"n_joint_runs": 15, "n_single_runs": 15, "n_transfer_runs": 18})
+        self.assertEqual(report["summary"], {"n_evolution_runs": 0, "n_joint_runs": 15, "n_single_runs": 15, "n_transfer_runs": 18})
         single_rows = report["runs"]["single_task"]
         for row in single_rows:
             self.assertEqual(row["split"]["train"] + row["split"]["feedback"] + row["split"]["acceptance"] + row["split"]["test"], 60)
@@ -80,8 +80,17 @@ class ExperimentSuiteTests(unittest.TestCase):
     def test_suite_can_run_only_experiments_one_and_two(self) -> None:
         config = ExperimentSuiteConfig(experiments=(1, 2), seeds=(3,), n_per_task=60, rhi_iterations=0, epochs=20)
         report = run_experiment_suite(config)
-        self.assertEqual(report["summary"], {"n_joint_runs": 0, "n_single_runs": 15, "n_transfer_runs": 18})
+        self.assertEqual(report["summary"], {"n_evolution_runs": 0, "n_joint_runs": 0, "n_single_runs": 15, "n_transfer_runs": 18})
         self.assertNotIn("experiment_3_joint_training_stability", report["experiments"])
+
+    def test_evolution_ablation_reports_checkpoints_and_paired_h0(self) -> None:
+        config = ExperimentSuiteConfig(experiments=(4,), seeds=(3,), n_per_task=60, rhi_iterations=2, epochs=30)
+        report = run_experiment_suite(config)
+        summary = report["experiments"]["experiment_4_self_evolution_ablation"]
+        self.assertEqual(summary["n_runs"], 18)
+        self.assertEqual(sorted(summary["by_policy"]), ["always_accept", "guarded"])
+        self.assertEqual(sorted(summary["by_policy"]["guarded"]), ["h0", "h1", "h2"])
+        self.assertEqual(summary["paired_to_h0"]["guarded"]["h1"]["n"], 3)
 
     def test_historical_converter_excludes_post_outcome_signals(self) -> None:
         from harness_matsci.historical import _convert_historical_record

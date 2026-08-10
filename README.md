@@ -71,8 +71,24 @@ python -m harness_matsci experiment-suite \
 ```
 
 The suite reports: (1) single-task main results, (2) leave-one-task-out transfer,
-and (3) balanced joint multi-task training with per-task slices. Each experiment is paired with a short
+(3) balanced joint multi-task training with per-task slices, and (4) self-evolution
+checkpoint ablations. Each experiment is paired with a short
 design note explaining what it proves and the main reviewer challenge.
+
+Run the self-evolution ablation without an external model:
+
+```bash
+python -m harness_matsci experiment-suite \
+  --experiments 4 \
+  --data-dir /path/to/material_discovery_tasks \
+  --seeds 1,7,13,21,42 \
+  --rhi-iterations 3 \
+  --out runs/rhi_experiments_v5_evolution/summary.json \
+  --markdown-out runs/rhi_experiments_v5_evolution/README.md
+```
+
+Experiment 4 reports untouched-test performance for active `H0`–`H3` checkpoints
+under both guarded acceptance and an always-accept mutation control.
 
 Enable the optional one-shot LLM direct-as-judge baseline:
 
@@ -125,10 +141,10 @@ records at action boundaries and add future utility or expert review labels.
 
 ## Current results
 
-The formal five-seed snapshot in `runs/rhi_experiments_v4/RESULTS.md` is the
-current reference. It is a rigorous diagnostic result, not a positive claim: RHI
-does not consistently beat strong learned baselines, transfer is unstable, and
-the data are offline benchmark proxies rather than online MatBot trajectories.
+The formal five-seed snapshots in `runs/rhi_experiments_v4/RESULTS.md` and
+`runs/rhi_experiments_v5_evolution/RESULTS.md` are the current references. The
+self-evolution ablation does not show a positive H0-to-H3 improvement: current
+RHI mutation is active but aggregate score worsens relative to H0.
 
 In the tables, `non_rhi_seed` means a single learned logistic gate using the
 initial RHI feature contract but with no recursive harness mutation or

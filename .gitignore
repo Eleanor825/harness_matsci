@@ -24,3 +24,7 @@ runs/paper_bootstrap_v1_alpha000/summary.json
 !runs/rhi_experiments_v4/summary.json
 !runs/rhi_experiments_v4/README.md
 !runs/rhi_experiments_v4/RESULTS.md
+!runs/rhi_experiments_v5_evolution/
+!runs/rhi_experiments_v5_evolution/summary.json
+!runs/rhi_experiments_v5_evolution/README.md
+!runs/rhi_experiments_v5_evolution/RESULTS.md

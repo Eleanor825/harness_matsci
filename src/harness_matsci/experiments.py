@@ -105,6 +105,7 @@ def run_experiment_suite(config: ExperimentSuiteConfig, *, direct_judge: Any | N
     single_runs: list[RunRecord] = []
     transfer_runs: list[RunRecord] = []
     joint_runs: list[RunRecord] = []
+    evolution_runs: list[RunRecord] = []
     for seed in config.seeds:
         if 1 in config.experiments:
             single_runs.extend(_run_single_task_experiment(task_cache, seed, config, direct_judge))
@@ -112,6 +113,8 @@ def run_experiment_suite(config: ExperimentSuiteConfig, *, direct_judge: Any | N
             transfer_runs.extend(_run_leave_one_out_experiment(task_cache, seed, config, direct_judge))
         if 3 in config.experiments:
             joint_runs.extend(_run_joint_experiment(task_cache, seed, config, direct_judge))
+        if 4 in config.experiments:
+            evolution_runs.extend(_run_evolution_ablation(task_cache, seed, config))
 
     experiments: dict[str, Any] = {}
     if single_runs:
@@ -120,6 +123,8 @@ def run_experiment_suite(config: ExperimentSuiteConfig, *, direct_judge: Any | N
         experiments["experiment_2_leave_one_task_out"] = _summarize_runs(transfer_runs, config)
     if joint_runs:
         experiments["experiment_3_joint_training_stability"] = _summarize_runs(joint_runs, config)
+    if evolution_runs:
+        experiments["experiment_4_self_evolution_ablation"] = _summarize_evolution_runs(evolution_runs, config)
 
     report = {
         "config": asdict(config),
@@ -152,6 +157,7 @@ def run_experiment_suite(config: ExperimentSuiteConfig, *, direct_judge: Any | N
             "n_single_runs": len(single_runs),
             "n_transfer_runs": len(transfer_runs),
             "n_joint_runs": len(joint_runs),
+            "n_evolution_runs": len(evolution_runs),
         },
         "baselines": {
             "llm_direct_judge": {
@@ -195,7 +201,7 @@ def render_experiment_suite_markdown(report: dict[str, Any]) -> str:
         "",
         "## What Each Experiment Tests",
     ]
-    for key in ("experiment_1", "experiment_2", "experiment_3"):
+    for key in ("experiment_1", "experiment_2", "experiment_3", "experiment_4"):
         design = report["experimental_design"][key]
         lines.extend(
             [
@@ -218,11 +224,15 @@ def render_experiment_suite_markdown(report: dict[str, Any]) -> str:
         ("experiment_1_single_task", "Experiment 1: Single-Task Action Worthiness"),
         ("experiment_2_leave_one_task_out", "Experiment 2: Leave-One-Task-Out Transfer"),
         ("experiment_3_joint_training_stability", "Experiment 3: Joint Training and Stability"),
+        ("experiment_4_self_evolution_ablation", "Experiment 4: Self-Evolution Ablation"),
     ]:
         if key not in report["experiments"]:
             continue
         lines.extend([f"## {title}"])
-        lines.extend(_render_experiment_section(report["experiments"][key]))
+        if key == "experiment_4_self_evolution_ablation":
+            lines.extend(_render_evolution_section(report["experiments"][key]))
+        else:
+            lines.extend(_render_experiment_section(report["experiments"][key]))
     lines.extend(["## Limitations"] + [f"- {item}" for item in report["limitations"]])
     return "\n".join(lines) + "\n"
 
@@ -280,13 +290,48 @@ def _render_experiment_section(summary: dict[str, Any]) -> list[str]:
     return lines
 
 
+def _render_evolution_section(summary: dict[str, Any]) -> list[str]:
+    lines = [
+        f"- Runs: {summary['n_runs']}; seeds: {summary['seed_count']}; tasks: {summary['task_count']}; policies: {summary['policy_count']}.",
+        "- `guarded` uses the held-out acceptance gate; `always_accept` accepts every schema-valid mutation without consulting test data.",
+        "",
+        "| Checkpoint | Policy | Primary score ↓ | Budget hit rate ↑ | Oracle-normalized utility ↑ |",
+        "| --- | --- | ---: | ---: | ---: |",
+    ]
+    for checkpoint, policies in sorted(summary["by_round"].items(), key=lambda item: int(item[0][1:])):
+        for policy, aggregate in sorted(policies.items()):
+            lines.append(
+                f"| `{checkpoint}` | `{policy}` | {_mean_std(aggregate.get('score'))} | "
+                f"{_mean_std(aggregate.get('hit_rate'))} | {_mean_std(aggregate.get('utility_efficiency'))} |"
+            )
+    lines.extend(["", "Paired comparisons against H0 (negative score difference favors the checkpoint):"])
+    for policy, checkpoints in sorted(summary["paired_to_h0"].items()):
+        for checkpoint, comparison in sorted(checkpoints.items(), key=lambda item: int(item[0][1:])):
+            interval = comparison["score_difference_95ci"]
+            lines.append(
+                f"- `{policy}/{checkpoint}`: Δscore={comparison['score_difference_mean']:.4f} "
+                f"[{interval[0]:.4f}, {interval[1]:.4f}], wins={comparison['win_rate']:.3f}, "
+                f"exact sign p={comparison['sign_test_p']:.4f}, n={comparison['n']}."
+            )
+    lines.extend(["", "Task-specific checkpoint scores:"])
+    for task, policies in sorted(summary["by_task"].items()):
+        lines.append(f"### {TASK_LABELS.get(task, task)}")
+        for policy, checkpoints in sorted(policies.items()):
+            values = ", ".join(
+                f"{checkpoint}={_mean_std(aggregate.get('score'))}"
+                for checkpoint, aggregate in sorted(checkpoints.items(), key=lambda item: int(item[0][1:]))
+            )
+            lines.append(f"- `{policy}`: {values}.")
+    return lines
+
+
 def _validate_config(config: ExperimentSuiteConfig) -> None:
     if not config.tasks or any(task not in TASKS for task in config.tasks):
         raise ValueError(f"tasks must be a non-empty subset of {TASKS}")
     if not config.seeds:
         raise ValueError("seeds cannot be empty")
-    if not config.experiments or any(experiment not in {1, 2, 3} for experiment in config.experiments):
-        raise ValueError("experiments must contain one or more of 1, 2, and 3")
+    if not config.experiments or any(experiment not in {1, 2, 3, 4} for experiment in config.experiments):
+        raise ValueError("experiments must contain one or more of 1, 2, 3, and 4")
     if 2 in config.experiments and len(config.tasks) < 2:
         raise ValueError("leave-one-task-out requires at least two tasks")
     if not 0.0 < config.min_coverage <= 1.0:
@@ -314,6 +359,12 @@ def _experimental_design() -> dict[str, dict[str, str]]:
             "claim": "one jointly trained harness remains stable across seeds and does not sacrifice a smaller task to optimize the largest dataset",
             "reviewer_challenge": "pooled metrics are dominated by the 10,987-record unique-material task",
             "response": "use inverse-frequency task weighting, macro acceptance, apply exactly the same selected joint gate to every task slice, and report per-task and macro-over-task results",
+        },
+        "experiment_4": {
+            "title": "Experiment 4 — self-evolution ablation",
+            "claim": "recursive checkpoint selection, rather than a single learned gate, improves the scientific action-worthiness decision",
+            "reviewer_challenge": "an accepted revision may be selected by acceptance noise, or a final score may hide regressions across intermediate harness versions",
+            "response": "evaluate active H0, H1, H2, and H3 checkpoints on one untouched test split, compare guarded acceptance with always-accept mutation, and report paired change from H0 by task and policy",
         },
     }
 
@@ -637,6 +688,62 @@ def _run_joint_experiment(
     return runs
 
 
+def _run_evolution_ablation(
+    task_cache: dict[str, dict[int, dict[str, list[ActionRecord]]]],
+    seed: int,
+    config: ExperimentSuiteConfig,
+) -> list[RunRecord]:
+    runs: list[RunRecord] = []
+    for task in config.tasks:
+        splits = task_cache[task][seed]
+        split_sizes = _split_sizes(splits)
+        for policy in ("guarded", "always_accept"):
+            report = train_rhi_from_splits(
+                splits["train"],
+                splits["feedback"],
+                splits["test"],
+                acceptance_records=splits["acceptance"],
+                iterations=config.rhi_iterations,
+                seed=seed,
+                alpha=config.alpha,
+                min_coverage=config.min_coverage,
+                epochs=config.epochs,
+                learning_rate=config.learning_rate,
+                l2=config.l2,
+                budget_fraction=config.budget_fraction,
+                epsilon=config.rhi_epsilon,
+                acceptance_policy=policy,
+            )
+            for checkpoint in report["active_checkpoints"]:
+                round_index = int(checkpoint["round"])
+                test_eval = checkpoint["test"]
+                compact = {
+                    "round": round_index,
+                    "checkpoint_name": checkpoint["name"],
+                    "acceptance_policy": policy,
+                    "accepted_revision": checkpoint["accepted_revision"],
+                    "test": _compact_eval(test_eval),
+                    "test_score": float(checkpoint["test_score"]),
+                    "acceptance": _compact_eval(checkpoint["acceptance"]),
+                    "n_accepted_total": sum(
+                        bool(item["accepted_revision"])
+                        for item in report["active_checkpoints"][1 : round_index + 1]
+                    ),
+                }
+                runs.append(
+                    _run(
+                        "experiment_4_self_evolution_ablation",
+                        f"{policy}_checkpoint",
+                        seed,
+                        task,
+                        f"{policy}_h{round_index}",
+                        split_sizes,
+                        compact,
+                    )
+                )
+    return runs
+
+
 def _weak_baseline_runs(
     experiment: str,
     setting: str,
@@ -890,6 +997,101 @@ def _summarize_runs(runs: list[RunRecord], config: ExperimentSuiteConfig) -> dic
         if method != "rhi":
             summary["paired_comparisons"][method] = _paired_comparison(rhi_rows, method_rows)
     return summary
+
+
+def _summarize_evolution_runs(runs: list[RunRecord], config: ExperimentSuiteConfig) -> dict[str, Any]:
+    rows = [run.to_dict() for run in runs]
+    by_policy_round: dict[str, dict[str, list[dict[str, Any]]]] = {}
+    by_task: dict[str, dict[str, dict[str, list[dict[str, Any]]]]] = {}
+    for row in rows:
+        policy, checkpoint = row["method"].rsplit("_h", 1)
+        by_policy_round.setdefault(policy, {}).setdefault(checkpoint, []).append(row)
+        by_task.setdefault(row["task"], {}).setdefault(policy, {}).setdefault(checkpoint, []).append(row)
+
+    by_policy = {
+        policy: {
+            f"h{checkpoint}": _aggregate_method(checkpoint_rows)
+            for checkpoint, checkpoint_rows in sorted(rounds.items(), key=lambda item: int(item[0]))
+        }
+        for policy, rounds in sorted(by_policy_round.items())
+    }
+    by_round = {
+        f"h{checkpoint}": {
+            policy: _aggregate_method(rounds[checkpoint])
+            for policy, rounds in sorted(by_policy_round.items())
+            if checkpoint in rounds
+        }
+        for checkpoint in sorted(
+            {checkpoint for rounds in by_policy_round.values() for checkpoint in rounds},
+            key=int,
+        )
+    }
+    paired_to_h0: dict[str, dict[str, Any]] = {}
+    for policy, rounds in sorted(by_policy_round.items()):
+        baseline_rows = rounds.get("0", [])
+        paired_to_h0[policy] = {}
+        for checkpoint, checkpoint_rows in sorted(rounds.items(), key=lambda item: int(item[0])):
+            if checkpoint == "0":
+                continue
+            paired_to_h0[policy][f"h{checkpoint}"] = _paired_checkpoint_comparison(
+                checkpoint_rows,
+                baseline_rows,
+            )
+    task_summary: dict[str, Any] = {}
+    for task, policies in sorted(by_task.items()):
+        task_summary[task] = {
+            policy: {
+                f"h{checkpoint}": _aggregate_method(checkpoint_rows)
+                for checkpoint, checkpoint_rows in sorted(rounds.items(), key=lambda item: int(item[0]))
+            }
+            for policy, rounds in sorted(policies.items())
+        }
+    return {
+        "n_runs": len(rows),
+        "seed_count": len({row["seed"] for row in rows}),
+        "task_count": len({row["task"] for row in rows}),
+        "checkpoint_count": len({row["report"]["round"] for row in rows}),
+        "policy_count": len(by_policy),
+        "by_policy": by_policy,
+        "by_round": by_round,
+        "by_task": task_summary,
+        "paired_to_h0": paired_to_h0,
+        "protocol": {
+            "test_selection": "all H0-Hk checkpoints are evaluated on the untouched test split after selection; test is never used for acceptance",
+            "guarded_policy": "accept candidate only when the held-out acceptance gate selects candidate",
+            "always_accept_policy": "accept every schema-valid candidate without using test performance",
+            "primary_metric": "threshold-independent action-worthiness score (lower is better)",
+        },
+        "seed_protocol": list(config.seeds),
+    }
+
+
+def _paired_checkpoint_comparison(
+    checkpoint_rows: list[dict[str, Any]],
+    baseline_rows: list[dict[str, Any]],
+) -> dict[str, Any]:
+    baseline_index = {(row["seed"], row["task"]): row for row in baseline_rows}
+    pairs = [
+        (row, baseline_index[(row["seed"], row["task"])])
+        for row in checkpoint_rows
+        if (row["seed"], row["task"]) in baseline_index
+    ]
+    differences = [_row_score(row) - _row_score(base) for row, base in pairs]
+    non_ties = [difference for difference in differences if difference != 0]
+    return {
+        "n": len(pairs),
+        "score_difference_mean": mean(differences) if differences else 0.0,
+        "score_difference_95ci": _bootstrap_mean_ci(differences),
+        "win_rate": sum(difference < 0 for difference in differences) / len(pairs) if pairs else 0.0,
+        "sign_test_p": _exact_sign_test(sum(difference < 0 for difference in non_ties), len(non_ties)),
+        "utility_difference_mean": mean(
+            _test_evaluation(row)["discovery_gain"]["mean_utility"]
+            - _test_evaluation(base)["discovery_gain"]["mean_utility"]
+            for row, base in pairs
+        )
+        if pairs
+        else 0.0,
+    }
 
 
 def _aggregate_method(rows: list[dict[str, Any]]) -> dict[str, Any]:
