@@ -53,6 +53,9 @@ VOI_SEED_HARNESS: dict[str, Any] = {
     "min_execute_reliability": 0.0,
     "verification_uncertainty_floor": 1.0,
     "verification_support_weight": 0.0,
+    "allow_verification": True,
+    "use_cost_signal": True,
+    "use_uncertainty_signal": True,
     "decision_mode": "reliability",
 }
 
@@ -124,7 +127,10 @@ class VoIModel:
             expected = sum(utilities) / len(utilities)
             epistemic = pstdev(utilities) if len(utilities) > 1 else 0.0
             features = record.features
-            cost = max(0.0, min(1.0, float(features.get("cost", 0.5))))
+            use_cost_signal = bool(self.harness.get("use_cost_signal", True))
+            use_uncertainty_signal = bool(self.harness.get("use_uncertainty_signal", True))
+            allow_verification = bool(self.harness.get("allow_verification", True))
+            cost = max(0.0, min(1.0, float(features.get("cost", 0.5)))) if use_cost_signal else 0.0
             support = max(0.0, min(1.0, float(features.get("evidence_support", 0.5))))
             conflict = max(0.0, min(1.0, float(features.get("evidence_conflict", 0.0))))
             ood = max(0.0, min(1.0, float(features.get("ood_score", 0.0))))
@@ -133,6 +139,8 @@ class VoIModel:
             decision_mode = str(self.harness.get("decision_mode", "reliability"))
             execute_value = expected - float(self.harness.get("execute_cost_weight", 0.0)) * cost
             execute_value -= float(self.harness.get("failure_cost_weight", 0.0)) * failure
+            if not use_uncertainty_signal:
+                epistemic = 0.0
             execute_value -= float(self.harness.get("epistemic_weight", 0.0)) * epistemic
             reducibility = max(
                 0.0,
@@ -164,7 +172,7 @@ class VoIModel:
             elif execute_value > 0.0 and p_success >= min_reliability:
                 decision = "execute"
                 route = "experiment" if record.action_type in {"experiment", "recommend_experiment"} else "proceed"
-            elif verify_value > max(0.0, execute_value) and epistemic >= uncertainty_floor:
+            elif allow_verification and verify_value > max(0.0, execute_value) and epistemic >= uncertainty_floor:
                 decision = "verify"
                 route = _verification_route(record, cost)
             else:
@@ -442,7 +450,7 @@ def train_voi_rhi(
     component: str = "full",
     acceptance_policy: str = "robust_guarded",
 ) -> dict[str, Any]:
-    if acceptance_policy not in {"robust_guarded", "mean_guarded", "always_accept"}:
+    if acceptance_policy not in {"robust_guarded", "mean_guarded", "always_accept", "never_accept"}:
         raise ValueError("unknown acceptance policy")
     if not train_records or not feedback_records or not acceptance_records or not test_records:
         raise ValueError("all VoI-RHI partitions must be non-empty")
@@ -481,7 +489,7 @@ def train_voi_rhi(
             all_acceptance=acceptance_records,
             budget_fraction=budget_fraction,
         )
-        accepted = acceptance_policy == "always_accept" or comparison["winner"] == "candidate"
+        accepted = acceptance_policy == "always_accept" or (acceptance_policy != "never_accept" and comparison["winner"] == "candidate")
         if accepted:
             current_harness = candidate_harness
             current_model = candidate_model

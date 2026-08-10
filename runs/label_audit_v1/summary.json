@@ -1,0 +1,850 @@
+{
+  "aggregate": {
+    "all_label_consistency_passed": true,
+    "all_raw_oracle_keys_recorded_as_excluded": true,
+    "all_utility_consistency_passed": true,
+    "all_visible_leakage_free": true,
+    "total_action_records": 15717,
+    "total_raw_records": 15717
+  },
+  "config": {
+    "data_dir": "/Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks",
+    "sample_per_task": 8,
+    "seed": 1729,
+    "tasks": [
+      "preferential_bo",
+      "discover_unique",
+      "extreme_properties"
+    ],
+    "tolerance": 1e-08
+  },
+  "limitations": [
+    "This audit proves internal proxy-label consistency and leakage sanitation; it is not a human expert annotation study.",
+    "Preferential BO labels are simulated noisy duels derived from published latent objectives, not real online BO trajectories.",
+    "Unique-material and extreme-property labels inherit the validity of the historical benchmark builders and should still be spot-checked by domain experts before a final paper claim."
+  ],
+  "sample_manifest": [
+    {
+      "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+      "evidence_excerpt": [
+        "surrogate_margin=0.0831",
+        "estimated_noise=0.1003",
+        "domain_edge_score=0.2241"
+      ],
+      "group_id": "gonzalez17a::six_hump_camel",
+      "label": 1,
+      "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+      "record_id": "pairwise-duel::six_hump_camel::00344",
+      "task": "preferential_bo",
+      "utility": 0.010782860935189542,
+      "visible_context_excerpt": "Preferential optimization duel on six_hump_camel. Candidate A: x0=-0.724138, x1=-0.0689655; candidate B: x0=0.517241, x1=-0.896552. The agent observes only a noisy surrogate ordering, not the latent objective."
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+      "evidence_excerpt": [
+        "surrogate_margin=0.0153",
+        "estimated_noise=0.0941",
+        "domain_edge_score=0.1897"
+      ],
+      "group_id": "gonzalez17a::goldstein_price",
+      "label": 1,
+      "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+      "record_id": "pairwise-duel::goldstein_price::00408",
+      "task": "preferential_bo",
+      "utility": 0.005731933328559369,
+      "visible_context_excerpt": "Preferential optimization duel on goldstein_price. Candidate A: x0=-0.206897, x1=0.482759; candidate B: x0=-0.758621, x1=-0.0689655. The agent observes only a noisy surrogate ordering, not the latent objective."
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for the next preferential comparison.",
+      "evidence_excerpt": [
+        "surrogate_margin=0.6697",
+        "estimated_noise=0.2059",
+        "domain_edge_score=0.8103"
+      ],
+      "group_id": "gonzalez17a::goldstein_price",
+      "label": 1,
+      "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+      "record_id": "pairwise-duel::goldstein_price::00151",
+      "task": "preferential_bo",
+      "utility": 0.743900791126059,
+      "visible_context_excerpt": "Preferential optimization duel on goldstein_price. Candidate A: x0=-1.31034, x1=-1.86207; candidate B: x0=-1.44828, x1=1.86207. The agent observes only a noisy surrogate ordering, not the latent objective."
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+      "evidence_excerpt": [
+        "surrogate_margin=0.0378",
+        "estimated_noise=0.0941",
+        "domain_edge_score=0.1897"
+      ],
+      "group_id": "gonzalez17a::goldstein_price",
+      "label": 1,
+      "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+      "record_id": "pairwise-duel::goldstein_price::00435",
+      "task": "preferential_bo",
+      "utility": 0.0005201801922863902,
+      "visible_context_excerpt": "Preferential optimization duel on goldstein_price. Candidate A: x0=-0.0689655, x1=0.0689655; candidate B: x0=1.31034, x1=-0.0689655. The agent observes only a noisy surrogate ordering, not the latent objective."
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+      "evidence_excerpt": [
+        "surrogate_margin=0.0076",
+        "estimated_noise=0.1531",
+        "domain_edge_score=0.5172"
+      ],
+      "group_id": "gonzalez17a::levy",
+      "label": 0,
+      "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+      "record_id": "pairwise-duel::levy::00696",
+      "task": "preferential_bo",
+      "utility": 0.0,
+      "visible_context_excerpt": "Preferential optimization duel on levy. Candidate A: x0=5.86207, x1=-5.86207; candidate B: x0=-7.24138, x1=-1.72414. The agent observes only a noisy surrogate ordering, not the latent objective."
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+      "evidence_excerpt": [
+        "surrogate_margin=0.0671",
+        "estimated_noise=0.1407",
+        "domain_edge_score=0.4483"
+      ],
+      "group_id": "gonzalez17a::six_hump_camel",
+      "label": 0,
+      "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+      "record_id": "pairwise-duel::six_hump_camel::00305",
+      "task": "preferential_bo",
+      "utility": 0.0,
+      "visible_context_excerpt": "Preferential optimization duel on six_hump_camel. Candidate A: x0=-0.931034, x1=-1.31034; candidate B: x0=-0.310345, x1=1.44828. The agent observes only a noisy surrogate ordering, not the latent objective."
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+      "evidence_excerpt": [
+        "surrogate_margin=0.1442",
+        "estimated_noise=0.1872",
+        "domain_edge_score=0.7069"
+      ],
+      "group_id": "gonzalez17a::goldstein_price",
+      "label": 0,
+      "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+      "record_id": "pairwise-duel::goldstein_price::00892",
+      "task": "preferential_bo",
+      "utility": 0.0,
+      "visible_context_excerpt": "Preferential optimization duel on goldstein_price. Candidate A: x0=2, x1=1.03448; candidate B: x0=1.44828, x1=-1.17241. The agent observes only a noisy surrogate ordering, not the latent objective."
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for the next preferential comparison.",
+      "evidence_excerpt": [
+        "surrogate_margin=0.1994",
+        "estimated_noise=0.2152",
+        "domain_edge_score=0.8621"
+      ],
+      "group_id": "gonzalez17a::six_hump_camel",
+      "label": 0,
+      "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+      "record_id": "pairwise-duel::six_hump_camel::00865",
+      "task": "preferential_bo",
+      "utility": 0.0,
+      "visible_context_excerpt": "Preferential optimization duel on six_hump_camel. Candidate A: x0=2.7931, x1=1.44828; candidate B: x0=2.58621, x1=-1.86207. The agent observes only a noisy surrogate ordering, not the latent objective."
+    },
+    {
+      "candidate_action_excerpt": "Screen Be1 Al1 Ir2 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Be1 Al1 Ir2",
+        "property estimate",
+        "space_group=225"
+      ],
+      "group_id": "discover::matbench_log_kvrh::cubic",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-00992",
+      "task": "discover_unique",
+      "utility": 0.486619,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Be1 Al1 Ir2; crystal system: cubic; space group: 225."
+    },
+    {
+      "candidate_action_excerpt": "Screen Np1 Rh3 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Np1 Rh3",
+        "property estimate",
+        "space_group=221"
+      ],
+      "group_id": "discover::matbench_log_kvrh::cubic",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-00678",
+      "task": "discover_unique",
+      "utility": 0.593249,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Np1 Rh3; crystal system: cubic; space group: 221."
+    },
+    {
+      "candidate_action_excerpt": "Screen Tb2 B4 C4 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Tb2 B4 C4",
+        "property estimate",
+        "space_group=127"
+      ],
+      "group_id": "discover::matbench_log_kvrh::tetragonal",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-04102",
+      "task": "discover_unique",
+      "utility": 0.490855,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Tb2 B4 C4; crystal system: tetragonal; space group: 127."
+    },
+    {
+      "candidate_action_excerpt": "Screen Ta4 Fe8 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Ta4 Fe8",
+        "property estimate",
+        "space_group=194"
+      ],
+      "group_id": "discover::matbench_log_kvrh::hexagonal",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-05343",
+      "task": "discover_unique",
+      "utility": 0.487476,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ta4 Fe8; crystal system: hexagonal; space group: 194."
+    },
+    {
+      "candidate_action_excerpt": "Screen Ti2 Tc1 Ni1 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Ti2 Tc1 Ni1",
+        "property estimate",
+        "space_group=225"
+      ],
+      "group_id": "discover::matbench_log_kvrh::cubic",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-05890",
+      "task": "discover_unique",
+      "utility": 0.46235,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti2 Tc1 Ni1; crystal system: cubic; space group: 225."
+    },
+    {
+      "candidate_action_excerpt": "Screen Si2 Ru1 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Si2 Ru1",
+        "property estimate",
+        "space_group=123"
+      ],
+      "group_id": "discover::matbench_log_kvrh::tetragonal",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-10833",
+      "task": "discover_unique",
+      "utility": 0.450448,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Si2 Ru1; crystal system: tetragonal; space group: 123."
+    },
+    {
+      "candidate_action_excerpt": "Screen Yb2 Au6 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Yb2 Au6",
+        "property estimate",
+        "space_group=59"
+      ],
+      "group_id": "discover::matbench_log_kvrh::orthorhombic",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-02398",
+      "task": "discover_unique",
+      "utility": 0.428881,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Yb2 Au6; crystal system: orthorhombic; space group: 59."
+    },
+    {
+      "candidate_action_excerpt": "Screen Ti2 Ni2 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Ti2 Ni2",
+        "property estimate",
+        "space_group=51"
+      ],
+      "group_id": "discover::matbench_log_kvrh::orthorhombic",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-08665",
+      "task": "discover_unique",
+      "utility": 0.426447,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti2 Ni2; crystal system: orthorhombic; space group: 51."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C3: CN(C)C1C(O)C(O)C(O)CN1C1OC(c2nnc(-c3ccc4[nH]nc(C5OC(C6CNC6)C(O)C(O)C5N)c4c3)n2NC(=O)C2OC(N3CC(O)C(O)C(O)C3C(=O)[O-])C(O)C(O)C2O)C(O)C(O)C1O",
+      "evidence_excerpt": [
+        "target=C3",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C3",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C3::80cdd970dc65",
+      "task": "extreme_properties",
+      "utility": 0.944917,
+      "visible_context_excerpt": "RL-CC extrapolation target C3 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C3: CN(C)CC#CCN1CC(c2nnc(C(=O)Nn3c(C4OCC(O)C(O)C4O)nnc3C3OC(C(O)O)C(O)C(O)C3O)n2NC(=O)C2OCC(O)C(O)C2O)(C2OC(NC(N)=S)C(O)C(O)C2O)C1",
+      "evidence_excerpt": [
+        "target=C3",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C3",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C3::43023d91fd0d",
+      "task": "extreme_properties",
+      "utility": 0.951155,
+      "visible_context_excerpt": "RL-CC extrapolation target C3 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2NC(c3cc[nH]c(=N)n3)CCN(C3OC(C4C(c5c(-n6cnc7c(=N)[nH]cnc76)sc(N)c5-c5n[nH]c(=NC(=O)N6CC6)s5)OC(c5c(-c6n[nH]c(=NC(=O)N7CCNC(=O)C7)s6)sc(N)c5C5CNC5)C4O)C(O)C3N3CC(C4CNC(=O)C",
+      "evidence_excerpt": [
+        "target=C6",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C6",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C6::4a42870a01cb",
+      "task": "extreme_properties",
+      "utility": 0.864521,
+      "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(-c2c(C3NC(c4cc(O)c(C5OC(c6n[nH]c(=NC(=O)N7CCNC(=O)C7)s6)C(F)C5O)c(-n5cnc6c(=N)[nH]cnc65)c4)CCN(C(=O)CCC(=O)N4CCC(c5n[nH]c(=NC(=O)N6CCNC(=O)C6)s5)NC(C5CNC5)C4=O)C3=O)sc(N)c2",
+      "evidence_excerpt": [
+        "target=C6",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C6",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C6::0516fb7f9648",
+      "task": "extreme_properties",
+      "utility": 0.92968,
+      "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2C(O)C(c3c(-c4n[nH]c(=NC(=O)N5CC5)s4)nc(-c4n[nH]c(=NC(=O)N5CCCC5C(=O)N=CCN5CC5)s4)[nH]c3=O)OC2C2C(C3OC(c4sc(N)c(CS)c4-n4c(=O)[nH]c5ccccc54)C(O)C3F)C(c3ccc4o[nH]c(=N)c4c3)O",
+      "evidence_excerpt": [
+        "target=C6",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C6",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C6::d8c7121ceafc",
+      "task": "extreme_properties",
+      "utility": 0.30368,
+      "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C8: Cc1ccc2[nH]c(=O)c(-c3nccc(-c4ccc5c(c4)c4ccccc4n5-c4cnc5[nH]c(=N)[nH]c(=N)c5n4)c3N3CCc4c(sc(-c5ccc6c(cc5=O)C(NC(=O)CN5C(=O)COc7ccc(S(=O)(=O)NC(=S)NNC(=O)c8nc(=N)[nH][nH]8)cc75)CCc5c",
+      "evidence_excerpt": [
+        "target=C8",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C8",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C8::2291586da3b7",
+      "task": "extreme_properties",
+      "utility": 0.22332,
+      "visible_context_excerpt": "RL-CC extrapolation target C8 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C10: C=CC1CC1C1C(c2cc(C=Cc3cccnc3)cc(-n3c(-c4ccc(C)cn4)nc4c3c(=O)n(C3(C)CC(C5C(N6CC(O)C(O)CNC6=O)CC(C)(c6cc(=NCO)[nH][nH]6)C(=O)N5C(=O)CCC(F)(F)F)C(n5c(O)c6c(c5O)C5C=CC6C5)N(C5NC(=O)C(C",
+      "evidence_excerpt": [
+        "target=C10",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C10",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C10::a9a378ca469c",
+      "task": "extreme_properties",
+      "utility": 0.464061,
+      "visible_context_excerpt": "RL-CC extrapolation target C10 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C5: CCCCC(=O)N1C(=O)N(C(=O)C(Cc2ccc(N=c3nc4c(ccn4-c4c(C5NC(=O)N(c6cc(=NC=O)n(-c7cc(=NC(O)n8ccc(=NCO)[nH]8)[nH][nH]7)[nH]6)C(c6ccc7ncnn7c6)C(O)C5O)ccc(C=Cc5ccncc5)c4NC4=NC(=O)C(=Cc5ccnc",
+      "evidence_excerpt": [
+        "target=C5",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C5",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C5::0e122f145379",
+      "task": "extreme_properties",
+      "utility": 0.678385,
+      "visible_context_excerpt": "RL-CC extrapolation target C5 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    }
+  ],
+  "schema": "label-utility-audit-v1",
+  "tasks": {
+    "discover_unique": {
+      "consistency": {
+        "label_failures_preview": [],
+        "label_mismatch_count": 0,
+        "negative_records_with_positive_utility": 9888,
+        "pairwise_tie_count": 0,
+        "positive_records_with_zero_utility": 0,
+        "utility_failures_preview": [],
+        "utility_mismatch_count": 0
+      },
+      "converted_records": 10987,
+      "groups": 7,
+      "label_sources": [
+        "top_decile_discover_unique_score_proxy"
+      ],
+      "leakage": {
+        "missing_excluded_oracle_key_count": 0,
+        "missing_excluded_oracle_key_preview": [],
+        "raw_oracle_key_count": 109870,
+        "visible_text_forbidden_count": 0,
+        "visible_text_forbidden_preview": []
+      },
+      "positive_rate": 0.10002730499681442,
+      "raw_records": 10987,
+      "sample_records": [
+        {
+          "candidate_action_excerpt": "Screen Be1 Al1 Ir2 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Be1 Al1 Ir2",
+            "property estimate",
+            "space_group=225"
+          ],
+          "group_id": "discover::matbench_log_kvrh::cubic",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-00992",
+          "task": "discover_unique",
+          "utility": 0.486619,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Be1 Al1 Ir2; crystal system: cubic; space group: 225."
+        },
+        {
+          "candidate_action_excerpt": "Screen Np1 Rh3 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Np1 Rh3",
+            "property estimate",
+            "space_group=221"
+          ],
+          "group_id": "discover::matbench_log_kvrh::cubic",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-00678",
+          "task": "discover_unique",
+          "utility": 0.593249,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Np1 Rh3; crystal system: cubic; space group: 221."
+        },
+        {
+          "candidate_action_excerpt": "Screen Tb2 B4 C4 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Tb2 B4 C4",
+            "property estimate",
+            "space_group=127"
+          ],
+          "group_id": "discover::matbench_log_kvrh::tetragonal",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-04102",
+          "task": "discover_unique",
+          "utility": 0.490855,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Tb2 B4 C4; crystal system: tetragonal; space group: 127."
+        },
+        {
+          "candidate_action_excerpt": "Screen Ta4 Fe8 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Ta4 Fe8",
+            "property estimate",
+            "space_group=194"
+          ],
+          "group_id": "discover::matbench_log_kvrh::hexagonal",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-05343",
+          "task": "discover_unique",
+          "utility": 0.487476,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ta4 Fe8; crystal system: hexagonal; space group: 194."
+        },
+        {
+          "candidate_action_excerpt": "Screen Ti2 Tc1 Ni1 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Ti2 Tc1 Ni1",
+            "property estimate",
+            "space_group=225"
+          ],
+          "group_id": "discover::matbench_log_kvrh::cubic",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-05890",
+          "task": "discover_unique",
+          "utility": 0.46235,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti2 Tc1 Ni1; crystal system: cubic; space group: 225."
+        },
+        {
+          "candidate_action_excerpt": "Screen Si2 Ru1 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Si2 Ru1",
+            "property estimate",
+            "space_group=123"
+          ],
+          "group_id": "discover::matbench_log_kvrh::tetragonal",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-10833",
+          "task": "discover_unique",
+          "utility": 0.450448,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Si2 Ru1; crystal system: tetragonal; space group: 123."
+        },
+        {
+          "candidate_action_excerpt": "Screen Yb2 Au6 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Yb2 Au6",
+            "property estimate",
+            "space_group=59"
+          ],
+          "group_id": "discover::matbench_log_kvrh::orthorhombic",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-02398",
+          "task": "discover_unique",
+          "utility": 0.428881,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Yb2 Au6; crystal system: orthorhombic; space group: 59."
+        },
+        {
+          "candidate_action_excerpt": "Screen Ti2 Ni2 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Ti2 Ni2",
+            "property estimate",
+            "space_group=51"
+          ],
+          "group_id": "discover::matbench_log_kvrh::orthorhombic",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-08665",
+          "task": "discover_unique",
+          "utility": 0.426447,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti2 Ni2; crystal system: orthorhombic; space group: 51."
+        }
+      ],
+      "utility_distribution": {
+        "max": 0.738414,
+        "mean": 0.3998419365613907,
+        "min": 0.046231,
+        "std": 0.06701701543007077
+      }
+    },
+    "extreme_properties": {
+      "consistency": {
+        "label_failures_preview": [],
+        "label_mismatch_count": 0,
+        "negative_records_with_positive_utility": 1682,
+        "pairwise_tie_count": 0,
+        "positive_records_with_zero_utility": 0,
+        "utility_failures_preview": [],
+        "utility_mismatch_count": 0
+      },
+      "converted_records": 2000,
+      "groups": 10,
+      "label_sources": [
+        "rlcc_table1_target_hit_bounds"
+      ],
+      "leakage": {
+        "missing_excluded_oracle_key_count": 0,
+        "missing_excluded_oracle_key_preview": [],
+        "raw_oracle_key_count": 18000,
+        "visible_text_forbidden_count": 0,
+        "visible_text_forbidden_preview": []
+      },
+      "positive_rate": 0.1565,
+      "raw_records": 2000,
+      "sample_records": [
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C3: CN(C)C1C(O)C(O)C(O)CN1C1OC(c2nnc(-c3ccc4[nH]nc(C5OC(C6CNC6)C(O)C(O)C5N)c4c3)n2NC(=O)C2OC(N3CC(O)C(O)C(O)C3C(=O)[O-])C(O)C(O)C2O)C(O)C(O)C1O",
+          "evidence_excerpt": [
+            "target=C3",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C3",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C3::80cdd970dc65",
+          "task": "extreme_properties",
+          "utility": 0.944917,
+          "visible_context_excerpt": "RL-CC extrapolation target C3 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C3: CN(C)CC#CCN1CC(c2nnc(C(=O)Nn3c(C4OCC(O)C(O)C4O)nnc3C3OC(C(O)O)C(O)C(O)C3O)n2NC(=O)C2OCC(O)C(O)C2O)(C2OC(NC(N)=S)C(O)C(O)C2O)C1",
+          "evidence_excerpt": [
+            "target=C3",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C3",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C3::43023d91fd0d",
+          "task": "extreme_properties",
+          "utility": 0.951155,
+          "visible_context_excerpt": "RL-CC extrapolation target C3 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2NC(c3cc[nH]c(=N)n3)CCN(C3OC(C4C(c5c(-n6cnc7c(=N)[nH]cnc76)sc(N)c5-c5n[nH]c(=NC(=O)N6CC6)s5)OC(c5c(-c6n[nH]c(=NC(=O)N7CCNC(=O)C7)s6)sc(N)c5C5CNC5)C4O)C(O)C3N3CC(C4CNC(=O)C",
+          "evidence_excerpt": [
+            "target=C6",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C6",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C6::4a42870a01cb",
+          "task": "extreme_properties",
+          "utility": 0.864521,
+          "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(-c2c(C3NC(c4cc(O)c(C5OC(c6n[nH]c(=NC(=O)N7CCNC(=O)C7)s6)C(F)C5O)c(-n5cnc6c(=N)[nH]cnc65)c4)CCN(C(=O)CCC(=O)N4CCC(c5n[nH]c(=NC(=O)N6CCNC(=O)C6)s5)NC(C5CNC5)C4=O)C3=O)sc(N)c2",
+          "evidence_excerpt": [
+            "target=C6",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C6",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C6::0516fb7f9648",
+          "task": "extreme_properties",
+          "utility": 0.92968,
+          "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2C(O)C(c3c(-c4n[nH]c(=NC(=O)N5CC5)s4)nc(-c4n[nH]c(=NC(=O)N5CCCC5C(=O)N=CCN5CC5)s4)[nH]c3=O)OC2C2C(C3OC(c4sc(N)c(CS)c4-n4c(=O)[nH]c5ccccc54)C(O)C3F)C(c3ccc4o[nH]c(=N)c4c3)O",
+          "evidence_excerpt": [
+            "target=C6",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C6",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C6::d8c7121ceafc",
+          "task": "extreme_properties",
+          "utility": 0.30368,
+          "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C8: Cc1ccc2[nH]c(=O)c(-c3nccc(-c4ccc5c(c4)c4ccccc4n5-c4cnc5[nH]c(=N)[nH]c(=N)c5n4)c3N3CCc4c(sc(-c5ccc6c(cc5=O)C(NC(=O)CN5C(=O)COc7ccc(S(=O)(=O)NC(=S)NNC(=O)c8nc(=N)[nH][nH]8)cc75)CCc5c",
+          "evidence_excerpt": [
+            "target=C8",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C8",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C8::2291586da3b7",
+          "task": "extreme_properties",
+          "utility": 0.22332,
+          "visible_context_excerpt": "RL-CC extrapolation target C8 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C10: C=CC1CC1C1C(c2cc(C=Cc3cccnc3)cc(-n3c(-c4ccc(C)cn4)nc4c3c(=O)n(C3(C)CC(C5C(N6CC(O)C(O)CNC6=O)CC(C)(c6cc(=NCO)[nH][nH]6)C(=O)N5C(=O)CCC(F)(F)F)C(n5c(O)c6c(c5O)C5C=CC6C5)N(C5NC(=O)C(C",
+          "evidence_excerpt": [
+            "target=C10",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C10",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C10::a9a378ca469c",
+          "task": "extreme_properties",
+          "utility": 0.464061,
+          "visible_context_excerpt": "RL-CC extrapolation target C10 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C5: CCCCC(=O)N1C(=O)N(C(=O)C(Cc2ccc(N=c3nc4c(ccn4-c4c(C5NC(=O)N(c6cc(=NC=O)n(-c7cc(=NC(O)n8ccc(=NCO)[nH]8)[nH][nH]7)[nH]6)C(c6ccc7ncnn7c6)C(O)C5O)ccc(C=Cc5ccncc5)c4NC4=NC(=O)C(=Cc5ccnc",
+          "evidence_excerpt": [
+            "target=C5",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C5",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C5::0e122f145379",
+          "task": "extreme_properties",
+          "utility": 0.678385,
+          "visible_context_excerpt": "RL-CC extrapolation target C5 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        }
+      ],
+      "utility_distribution": {
+        "max": 1.0,
+        "mean": 0.687824305,
+        "min": 0.0,
+        "std": 0.21172371622638067
+      }
+    },
+    "preferential_bo": {
+      "consistency": {
+        "label_failures_preview": [],
+        "label_mismatch_count": 0,
+        "negative_records_with_positive_utility": 0,
+        "pairwise_tie_count": 1,
+        "positive_records_with_zero_utility": 1,
+        "utility_failures_preview": [],
+        "utility_mismatch_count": 0
+      },
+      "converted_records": 2730,
+      "groups": 4,
+      "label_sources": [
+        "simulated_noisy_preferential_duel_from_published_objective"
+      ],
+      "leakage": {
+        "missing_excluded_oracle_key_count": 0,
+        "missing_excluded_oracle_key_preview": [],
+        "raw_oracle_key_count": 0,
+        "visible_text_forbidden_count": 0,
+        "visible_text_forbidden_preview": []
+      },
+      "positive_rate": 0.5073260073260073,
+      "raw_records": 2730,
+      "sample_records": [
+        {
+          "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+          "evidence_excerpt": [
+            "surrogate_margin=0.0831",
+            "estimated_noise=0.1003",
+            "domain_edge_score=0.2241"
+          ],
+          "group_id": "gonzalez17a::six_hump_camel",
+          "label": 1,
+          "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+          "record_id": "pairwise-duel::six_hump_camel::00344",
+          "task": "preferential_bo",
+          "utility": 0.010782860935189542,
+          "visible_context_excerpt": "Preferential optimization duel on six_hump_camel. Candidate A: x0=-0.724138, x1=-0.0689655; candidate B: x0=0.517241, x1=-0.896552. The agent observes only a noisy surrogate ordering, not the latent objective."
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+          "evidence_excerpt": [
+            "surrogate_margin=0.0153",
+            "estimated_noise=0.0941",
+            "domain_edge_score=0.1897"
+          ],
+          "group_id": "gonzalez17a::goldstein_price",
+          "label": 1,
+          "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+          "record_id": "pairwise-duel::goldstein_price::00408",
+          "task": "preferential_bo",
+          "utility": 0.005731933328559369,
+          "visible_context_excerpt": "Preferential optimization duel on goldstein_price. Candidate A: x0=-0.206897, x1=0.482759; candidate B: x0=-0.758621, x1=-0.0689655. The agent observes only a noisy surrogate ordering, not the latent objective."
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for the next preferential comparison.",
+          "evidence_excerpt": [
+            "surrogate_margin=0.6697",
+            "estimated_noise=0.2059",
+            "domain_edge_score=0.8103"
+          ],
+          "group_id": "gonzalez17a::goldstein_price",
+          "label": 1,
+          "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+          "record_id": "pairwise-duel::goldstein_price::00151",
+          "task": "preferential_bo",
+          "utility": 0.743900791126059,
+          "visible_context_excerpt": "Preferential optimization duel on goldstein_price. Candidate A: x0=-1.31034, x1=-1.86207; candidate B: x0=-1.44828, x1=1.86207. The agent observes only a noisy surrogate ordering, not the latent objective."
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+          "evidence_excerpt": [
+            "surrogate_margin=0.0378",
+            "estimated_noise=0.0941",
+            "domain_edge_score=0.1897"
+          ],
+          "group_id": "gonzalez17a::goldstein_price",
+          "label": 1,
+          "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+          "record_id": "pairwise-duel::goldstein_price::00435",
+          "task": "preferential_bo",
+          "utility": 0.0005201801922863902,
+          "visible_context_excerpt": "Preferential optimization duel on goldstein_price. Candidate A: x0=-0.0689655, x1=0.0689655; candidate B: x0=1.31034, x1=-0.0689655. The agent observes only a noisy surrogate ordering, not the latent objective."
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+          "evidence_excerpt": [
+            "surrogate_margin=0.0076",
+            "estimated_noise=0.1531",
+            "domain_edge_score=0.5172"
+          ],
+          "group_id": "gonzalez17a::levy",
+          "label": 0,
+          "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+          "record_id": "pairwise-duel::levy::00696",
+          "task": "preferential_bo",
+          "utility": 0.0,
+          "visible_context_excerpt": "Preferential optimization duel on levy. Candidate A: x0=5.86207, x1=-5.86207; candidate B: x0=-7.24138, x1=-1.72414. The agent observes only a noisy surrogate ordering, not the latent objective."
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+          "evidence_excerpt": [
+            "surrogate_margin=0.0671",
+            "estimated_noise=0.1407",
+            "domain_edge_score=0.4483"
+          ],
+          "group_id": "gonzalez17a::six_hump_camel",
+          "label": 0,
+          "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+          "record_id": "pairwise-duel::six_hump_camel::00305",
+          "task": "preferential_bo",
+          "utility": 0.0,
+          "visible_context_excerpt": "Preferential optimization duel on six_hump_camel. Candidate A: x0=-0.931034, x1=-1.31034; candidate B: x0=-0.310345, x1=1.44828. The agent observes only a noisy surrogate ordering, not the latent objective."
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate B for the next preferential comparison.",
+          "evidence_excerpt": [
+            "surrogate_margin=0.1442",
+            "estimated_noise=0.1872",
+            "domain_edge_score=0.7069"
+          ],
+          "group_id": "gonzalez17a::goldstein_price",
+          "label": 0,
+          "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+          "record_id": "pairwise-duel::goldstein_price::00892",
+          "task": "preferential_bo",
+          "utility": 0.0,
+          "visible_context_excerpt": "Preferential optimization duel on goldstein_price. Candidate A: x0=2, x1=1.03448; candidate B: x0=1.44828, x1=-1.17241. The agent observes only a noisy surrogate ordering, not the latent objective."
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for the next preferential comparison.",
+          "evidence_excerpt": [
+            "surrogate_margin=0.1994",
+            "estimated_noise=0.2152",
+            "domain_edge_score=0.8621"
+          ],
+          "group_id": "gonzalez17a::six_hump_camel",
+          "label": 0,
+          "label_source": "simulated_noisy_preferential_duel_from_published_objective",
+          "record_id": "pairwise-duel::six_hump_camel::00865",
+          "task": "preferential_bo",
+          "utility": 0.0,
+          "visible_context_excerpt": "Preferential optimization duel on six_hump_camel. Candidate A: x0=2.7931, x1=1.44828; candidate B: x0=2.58621, x1=-1.86207. The agent observes only a noisy surrogate ordering, not the latent objective."
+        }
+      ],
+      "utility_distribution": {
+        "max": 0.9850371153457745,
+        "mean": 0.08239275245489854,
+        "min": 0.0,
+        "std": 0.1618116140471671
+      }
+    }
+  }
+}

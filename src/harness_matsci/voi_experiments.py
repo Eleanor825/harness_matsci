@@ -220,10 +220,39 @@ def _run_fold(task: str, holdout_group: str, seed: int, target: list[Any], split
         utility_model = fit_voi_model(train, feedback, utility_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
         add("static_utility", evaluate_voi(target, utility_model, budget_fraction=config.budget_fraction))
 
+    if "static_utility_no_cost" in requested:
+        utility_no_cost_harness = _static_utility_harness(full_features, use_cost_signal=False, name="static_utility_no_cost")
+        utility_no_cost_model = fit_voi_model(train, feedback, utility_no_cost_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
+        add("static_utility_no_cost", evaluate_voi(target, utility_no_cost_model, budget_fraction=config.budget_fraction))
+
     if "static_voi" in requested:
         static_voi_harness = _static_voi_harness(full_features)
         static_voi_model = fit_voi_model(train, feedback, static_voi_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
         add("static_voi", evaluate_voi(target, static_voi_model, budget_fraction=config.budget_fraction))
+
+    if "static_voi_no_cost" in requested:
+        no_cost_harness = _static_voi_no_cost_harness(full_features)
+        no_cost_model = fit_voi_model(train, feedback, no_cost_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
+        add("static_voi_no_cost", evaluate_voi(target, no_cost_model, budget_fraction=config.budget_fraction))
+
+    if "static_voi_no_uncertainty" in requested:
+        no_uncertainty_harness = _static_voi_harness(
+            full_features,
+            use_uncertainty_signal=False,
+            allow_verification=False,
+            name="static_voi_no_uncertainty",
+        )
+        no_uncertainty_model = fit_voi_model(train, feedback, no_uncertainty_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
+        add("static_voi_no_uncertainty", evaluate_voi(target, no_uncertainty_model, budget_fraction=config.budget_fraction))
+
+    if "static_voi_no_routing" in requested:
+        no_routing_harness = _static_voi_harness(
+            full_features,
+            allow_verification=False,
+            name="static_voi_no_routing",
+        )
+        no_routing_model = fit_voi_model(train, feedback, no_routing_harness, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2)
+        add("static_voi_no_routing", evaluate_voi(target, no_routing_model, budget_fraction=config.budget_fraction))
 
     if "original_rhi" in requested:
         original = train_rhi_from_splits(train, feedback, target, iterations=config.iterations, seed=seed, alpha=config.alpha, epochs=config.epochs, learning_rate=config.learning_rate, l2=config.l2, budget_fraction=config.budget_fraction, acceptance_records=acceptance, min_coverage=0.1)
@@ -328,15 +357,65 @@ def _compact_evaluation(evaluation: dict[str, Any]) -> dict[str, Any]:
     return compact
 
 
-def _static_utility_harness(features: list[str]) -> dict[str, Any]:
+def _static_utility_harness(
+    features: list[str],
+    *,
+    use_cost_signal: bool = True,
+    name: str = "static_utility",
+) -> dict[str, Any]:
+    active_features = [feature for feature in features if feature != "cost"] if not use_cost_signal else list(features)
     harness = dict(VOI_SEED_HARNESS)
-    harness.update({"name": "static_utility", "decision_mode": "utility", "utility_features": list(features), "execute_cost_weight": 0.15, "failure_cost_weight": 0.25, "min_execute_reliability": 0.0})
+    harness.update({
+        "name": name,
+        "decision_mode": "utility",
+        "utility_features": active_features,
+        "required_features": active_features,
+        "execute_cost_weight": 0.15,
+        "failure_cost_weight": 0.25,
+        "min_execute_reliability": 0.0,
+        "allow_verification": False,
+        "use_cost_signal": use_cost_signal,
+        "use_uncertainty_signal": False,
+    })
     return harness
 
 
-def _static_voi_harness(features: list[str]) -> dict[str, Any]:
-    harness = _static_utility_harness(features)
-    harness.update({"name": "static_voi", "decision_mode": "voi", "epistemic_weight": 0.20, "verification_cost_weight": 0.05, "verification_support_weight": 0.15, "verification_uncertainty_floor": 0.20})
+def _static_voi_harness(
+    features: list[str],
+    *,
+    use_cost_signal: bool = True,
+    use_uncertainty_signal: bool = True,
+    allow_verification: bool = True,
+    name: str = "static_voi",
+) -> dict[str, Any]:
+    excluded = set()
+    if not use_cost_signal:
+        excluded.add("cost")
+    if not use_uncertainty_signal:
+        excluded.update({"model_disagreement", "perturbation_stability", "evidence_conflict", "ood_score"})
+    active_features = [feature for feature in features if feature not in excluded]
+    harness = dict(VOI_SEED_HARNESS)
+    harness.update({
+        "name": name,
+        "decision_mode": "voi",
+        "required_features": active_features,
+        "utility_features": active_features,
+        "execute_cost_weight": 0.15,
+        "failure_cost_weight": 0.25,
+        "epistemic_weight": 0.20,
+        "verification_cost_weight": 0.05,
+        "verification_support_weight": 0.15,
+        "verification_uncertainty_floor": 0.20,
+        "allow_verification": allow_verification,
+        "use_cost_signal": use_cost_signal,
+        "use_uncertainty_signal": use_uncertainty_signal,
+    })
+    return harness
+
+
+def _static_voi_no_cost_harness(features: list[str]) -> dict[str, Any]:
+    harness = _static_voi_harness(features, use_cost_signal=False, name="static_voi_no_cost")
+    harness.update({"execute_cost_weight": 0.0, "verification_cost_weight": 0.0})
     return harness
 
 

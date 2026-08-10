@@ -163,6 +163,9 @@ preserves earlier comparison runs so reliability-only RHI, self-evolution
 ablations, paper-bootstrap data, and direct-judge protocol artifacts remain
 easy to compare.
 
+It now also includes the full label/utility audit in `runs/label_audit_v1/`
+and the cleaner mechanism ablation in `runs/mechanism_ablation_v2/`.
+
 The reliability-only five-seed snapshots in `runs/rhi_experiments_v4/RESULTS.md`
 and `runs/rhi_experiments_v5_evolution/RESULTS.md` remain important diagnostic
 references. They show that the original reliability-only RHI mutation is active

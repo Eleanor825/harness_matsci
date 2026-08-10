@@ -7,7 +7,9 @@ from typing import Any
 from .benchmarks import BENCHMARK_BUILDERS, make_records
 from .campaign import CampaignConfig, save_campaign_report
 from .experiments import ExperimentSuiteConfig, save_experiment_suite
+from .audit_experiments import LabelAuditConfig, run_label_utility_audit, save_label_utility_audit
 from .io import read_json, read_jsonl, write_json, write_jsonl
+from .mechanism_ablation import MechanismAblationConfig, run_mechanism_ablation, save_mechanism_ablation
 from .paper_bootstrap import DEFAULT_PAPER_ACTIONS_PATH, run_paper_bootstrap_experiment
 from .rhi import train_rhi
 from .training import TrainedGate, evaluate_gate, split_records, train_gate
@@ -154,6 +156,29 @@ def build_parser() -> argparse.ArgumentParser:
     voi_parser.add_argument("--out", required=True)
     voi_parser.add_argument("--markdown-out", required=True)
     voi_parser.set_defaults(func=_cmd_voi_experiment_suite)
+
+    audit_parser = subparsers.add_parser("label-audit", help="Audit historical proxy labels and utilities")
+    audit_parser.add_argument("--data-dir", required=True, help="Directory containing historical task JSONL files")
+    audit_parser.add_argument("--tasks", default="preferential_bo,discover_unique,extreme_properties")
+    audit_parser.add_argument("--sample-per-task", type=int, default=12)
+    audit_parser.add_argument("--seed", type=int, default=1729)
+    audit_parser.add_argument("--out", required=True)
+    audit_parser.add_argument("--markdown-out", required=True)
+    audit_parser.set_defaults(func=_cmd_label_audit)
+
+    mechanism_parser = subparsers.add_parser("mechanism-ablation", help="Run Sci-VoI mechanism ablations without an LLM judge")
+    mechanism_parser.add_argument("--data-dir", required=True, help="Directory containing historical task JSONL files")
+    mechanism_parser.add_argument("--tasks", default="preferential_bo,discover_unique,extreme_properties")
+    mechanism_parser.add_argument("--seeds", default="1,7,13,21,42")
+    mechanism_parser.add_argument("--iterations", type=int, default=3)
+    mechanism_parser.add_argument("--budget-fraction", type=float, default=0.1)
+    mechanism_parser.add_argument("--alpha", type=float, default=0.1)
+    mechanism_parser.add_argument("--epochs", type=int, default=60)
+    mechanism_parser.add_argument("--learning-rate", type=float, default=0.08)
+    mechanism_parser.add_argument("--l2", type=float, default=0.01)
+    mechanism_parser.add_argument("--out", required=True)
+    mechanism_parser.add_argument("--markdown-out", required=True)
+    mechanism_parser.set_defaults(func=_cmd_mechanism_ablation)
 
     return parser
 
@@ -360,6 +385,48 @@ def _cmd_voi_experiment_suite(args: argparse.Namespace) -> int:
         f"wrote Sci-VoI-RHI suite to {args.out}; "
         f"fold-runs={len(report['runs'])}; "
         f"scivoi_utility={primary.get('mean', 0.0):.4f}"
+    )
+    return 0
+
+
+def _cmd_label_audit(args: argparse.Namespace) -> int:
+    config = LabelAuditConfig(
+        data_dir=args.data_dir,
+        tasks=tuple(_comma_list(args.tasks, str)),
+        sample_per_task=args.sample_per_task,
+        seed=args.seed,
+    )
+    report = run_label_utility_audit(config)
+    save_label_utility_audit(report, args.out, args.markdown_out)
+    aggregate = report["aggregate"]
+    print(
+        f"wrote label/utility audit to {args.out}; "
+        f"records={aggregate['total_action_records']}; "
+        f"labels_ok={aggregate['all_label_consistency_passed']}; "
+        f"utilities_ok={aggregate['all_utility_consistency_passed']}"
+    )
+    return 0
+
+
+def _cmd_mechanism_ablation(args: argparse.Namespace) -> int:
+    config = MechanismAblationConfig(
+        data_dir=args.data_dir,
+        tasks=tuple(_comma_list(args.tasks, str)),
+        seeds=tuple(_comma_list(args.seeds, int)),
+        iterations=args.iterations,
+        budget_fraction=args.budget_fraction,
+        alpha=args.alpha,
+        epochs=args.epochs,
+        learning_rate=args.learning_rate,
+        l2=args.l2,
+    )
+    report = run_mechanism_ablation(config)
+    save_mechanism_ablation(report, args.out, args.markdown_out)
+    primary = report["summary"]["methods"].get("scivoi_policy_always_accept", {}).get("oracle_normalized_net_utility", {})
+    print(
+        f"wrote mechanism ablation to {args.out}; "
+        f"fold-runs={len(report['runs'])}; "
+        f"direct_scivoi_utility={primary.get('mean', 0.0):.4f}"
     )
     return 0
 
