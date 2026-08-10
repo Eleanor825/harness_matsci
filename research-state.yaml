@@ -1,0 +1,41 @@
+project: scientific-value-of-information-rhi
+status: active
+research_question: >-
+  Can a scientific agent recursively improve an executable uncertainty harness
+  so that it knows whether the next action is worth its cost under scientific
+  utility, epistemic uncertainty, and distribution shift?
+primary_hypothesis: >-
+  Executable value-of-information contracts with regime-robust recursive
+  acceptance improve held-out-regime discovery utility over reliability-only
+  RHI and static learned gates.
+frozen_primary_protocol:
+  tasks:
+    - preferential_bo
+    - discover_unique
+    - extreme_properties
+  outer_unit: scientific_regime
+  outer_folds: 21
+  test_policy: each complete regime is held out once
+  model_selection: source-regime train/feedback/acceptance only
+  primary_metric: macro_continuous_oracle_normalized_net_utility_at_10_percent_budget_with_risk_guardrails
+  guardrails:
+    - selective_risk
+    - hit_efficiency
+    - simple_regret
+    - worst_regime_utility_efficiency
+  failure_criterion: >-
+    The method is not a positive result unless paired held-out-regime utility
+    improves over both reliability-only RHI and static full-feature learning
+    without a material selective-risk regression.
+completed:
+  - reproduced RHI-MatSci v4 and self-evolution v5 evidence
+  - identified inert role/gate/hop contracts in the current offline runtime
+  - identified binary-label degeneracy in five extreme-property regimes
+  - implemented executable utility and epistemic contracts
+  - implemented source-regime recursive acceptance and direct RHI-style update ablations
+  - ran five-seed 21-regime non-LLM Sci-VoI-RHI evaluation with component and acceptance ablations
+  - wrote ICLR-style proposal and claim-evidence matrix
+next:
+  - add online MatBot trajectory logging and expert labels
+  - run direct LLM-as-judge baseline separately when provider access is stable
+  - convert the proposal into an ICLR-format manuscript

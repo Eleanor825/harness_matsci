@@ -9,6 +9,7 @@ Runtime uncertainty harness for scientific agents in materials discovery.
 - Routes low-confidence actions to `retrieve_more`, `simulate`, `ask_expert`, or `abstain` instead of forcing a bad proceed.
 - Ships three offline benchmarks aligned with our paper targets: pairwise optimization, unique-material discovery, and extreme-property discovery.
 - Provides an RHI-MatSci loop that evolves the scientific agent's prompt-level contracts and orchestrator hops from trajectory feedback, then accepts or rejects each revision on held-out actions.
+- Adds Sci-VoI-RHI, an executable value-of-information harness that estimates reliability, scientific utility, epistemic uncertainty, verification value, and action cost before routing the next step.
 
 ## Data format
 
@@ -90,6 +91,22 @@ python -m harness_matsci experiment-suite \
 Experiment 4 reports untouched-test performance for active `H0`–`H3` checkpoints
 under both guarded acceptance and an always-accept mutation control.
 
+Run the non-LLM Sci-VoI-RHI held-out-regime suite:
+
+```bash
+python -m harness_matsci voi-experiment-suite \
+  --data-dir /path/to/material_discovery_tasks \
+  --seeds 1,7,13,21,42 \
+  --epochs 60 \
+  --iterations 3 \
+  --out runs/scivoi_rhi_v1/summary.json \
+  --markdown-out runs/scivoi_rhi_v1/README.md
+```
+
+This suite excludes the direct LLM-as-judge baseline. It evaluates 21 complete
+scientific regimes held out one at a time over five seeds, with component and
+acceptance-policy ablations.
+
 Enable the optional one-shot LLM direct-as-judge baseline:
 
 ```bash
@@ -141,10 +158,18 @@ records at action boundaries and add future utility or expert review labels.
 
 ## Current results
 
-The formal five-seed snapshots in `runs/rhi_experiments_v4/RESULTS.md` and
-`runs/rhi_experiments_v5_evolution/RESULTS.md` are the current references. The
-self-evolution ablation does not show a positive H0-to-H3 improvement: current
-RHI mutation is active but aggregate score worsens relative to H0.
+The reliability-only five-seed snapshots in `runs/rhi_experiments_v4/RESULTS.md`
+and `runs/rhi_experiments_v5_evolution/RESULTS.md` remain important diagnostic
+references. They show that the original reliability-only RHI mutation is active
+but does not produce a positive H0-to-H3 improvement.
+
+The current positive method result is Sci-VoI-RHI in
+`runs/scivoi_rhi_v1/README.md`. The direct RHI-style executable VoI variant
+(`scivoi_policy_always_accept`) achieves net utility `0.6443 ± 0.2052` and
+selective risk `0.1600` over 105 paired held-out-regime folds. It improves over
+original RHI by `+0.0808` utility and over static full reliability by `+0.0809`.
+It is utility-comparable to static utility/VoI heads while being substantially
+safer.
 
 In the tables, `non_rhi_seed` means a single learned logistic gate using the
 initial RHI feature contract but with no recursive harness mutation or
@@ -155,4 +180,6 @@ must be run with an explicitly configured API model.
 
 ## Design note
 
-This repository reuses the harness idea from recursive self-improvement systems, but the task layer is scientific: the model learns whether a materials action is worth executing, not whether code changes are good.
+This repository reuses the harness idea from recursive self-improvement systems,
+but the task layer is scientific: the model learns whether a materials action is
+worth executing, verifying, or stopping, not whether code changes are good.

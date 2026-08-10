@@ -11,6 +11,7 @@ from .io import read_json, read_jsonl, write_json, write_jsonl
 from .paper_bootstrap import DEFAULT_PAPER_ACTIONS_PATH, run_paper_bootstrap_experiment
 from .rhi import train_rhi
 from .training import TrainedGate, evaluate_gate, split_records, train_gate
+from .voi_experiments import VoIExperimentConfig, save_voi_experiment_suite
 
 
 def _comma_list(value: str, cast=str) -> list[Any]:
@@ -136,6 +137,23 @@ def build_parser() -> argparse.ArgumentParser:
     suite_parser.add_argument("--out", required=True)
     suite_parser.add_argument("--markdown-out")
     suite_parser.set_defaults(func=_cmd_experiment_suite)
+
+    voi_parser = subparsers.add_parser("voi-experiment-suite", help="Run Sci-VoI-RHI held-out-regime experiments")
+    voi_parser.add_argument("--data-dir", required=True, help="Directory containing historical task JSONL files")
+    voi_parser.add_argument("--tasks", default="preferential_bo,discover_unique,extreme_properties")
+    voi_parser.add_argument("--methods", default="verbal_confidence,evidence_heuristic,h0_reliability,static_full_reliability,static_utility,static_voi,original_rhi,scivoi_rhi")
+    voi_parser.add_argument("--components", default="utility,uncertainty,routing,features")
+    voi_parser.add_argument("--acceptance-policies", default="mean_guarded,always_accept")
+    voi_parser.add_argument("--seeds", default="1,7,13,21,42")
+    voi_parser.add_argument("--iterations", type=int, default=3)
+    voi_parser.add_argument("--budget-fraction", type=float, default=0.1)
+    voi_parser.add_argument("--alpha", type=float, default=0.1)
+    voi_parser.add_argument("--epochs", type=int, default=90)
+    voi_parser.add_argument("--learning-rate", type=float, default=0.08)
+    voi_parser.add_argument("--l2", type=float, default=0.01)
+    voi_parser.add_argument("--out", required=True)
+    voi_parser.add_argument("--markdown-out", required=True)
+    voi_parser.set_defaults(func=_cmd_voi_experiment_suite)
 
     return parser
 
@@ -314,6 +332,34 @@ def _cmd_experiment_suite(args: argparse.Namespace) -> int:
         f"single={report['summary']['n_single_runs']}; "
         f"transfer={report['summary']['n_transfer_runs']}; "
         f"joint={report['summary']['n_joint_runs']}"
+    )
+    return 0
+
+
+def _cmd_voi_experiment_suite(args: argparse.Namespace) -> int:
+    config = VoIExperimentConfig(
+        data_dir=args.data_dir,
+        tasks=tuple(_comma_list(args.tasks, str)),
+        methods=tuple(_comma_list(args.methods, str)),
+        components=tuple(_comma_list(args.components, str)),
+        acceptance_policies=tuple(_comma_list(args.acceptance_policies, str)),
+        iterations=args.iterations,
+        budget_fraction=args.budget_fraction,
+        alpha=args.alpha,
+        epochs=args.epochs,
+        learning_rate=args.learning_rate,
+        l2=args.l2,
+        seeds=tuple(_comma_list(args.seeds, int)),
+    )
+    from .voi_experiments import run_voi_experiment_suite
+
+    report = run_voi_experiment_suite(config)
+    save_voi_experiment_suite(report, args.out, args.markdown_out)
+    primary = report["summary"]["methods"].get("scivoi_rhi", {}).get("oracle_normalized_net_utility", {})
+    print(
+        f"wrote Sci-VoI-RHI suite to {args.out}; "
+        f"fold-runs={len(report['runs'])}; "
+        f"scivoi_utility={primary.get('mean', 0.0):.4f}"
     )
     return 0
 
