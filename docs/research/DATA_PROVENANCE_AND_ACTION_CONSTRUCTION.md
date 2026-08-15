@@ -1,31 +1,41 @@
 # Data Provenance and Action Construction
 
-This document is the reproducibility map for the current offline MatSci uncertainty-harness experiments. It answers exactly where the data came from, what was visible to the agent, what was hidden as oracle outcome, and how `label` and `utility` were computed.
+This is the reproducibility map for the offline MatSci uncertainty-harness data. It states exactly which public artifacts are used, how each material record becomes an action-level decision, what the harness can see, and how hidden `label` / `utility` are computed.
 
 ## Core Boundary
 
-- The main benchmark is **not** live MatBot trajectory logging and is **not** 15,717 manually extracted PDF actions.
-- The main benchmark contains **paper-artifact / benchmark-derived action proxies** from three public scientific task families.
-- Each row is converted into the same action-level `ActionRecord` interface that MatBot should emit online: context, candidate action, evidence, uncertainty features, hidden outcome label, and hidden utility.
-- The 500 electrolyte-paper dataset is a separate pilot for paper-derived weak labels; it is not part of the 15,717-record main benchmark.
+- The main benchmark is **not** live MatBot trajectory logging and is **not** manual PDF extraction.
+- The main materials benchmark now uses **20,987 action records** from three materials / chemical discovery task families.
+- `preferential_bo` is retained only as an **auxiliary controlled optimization sanity check**. It is not counted as a main materials benchmark.
+- The 500 electrolyte-paper dataset is a separate historical-paper pilot; it is not part of the 20,987-record main materials benchmark.
 
-## Dataset Inventory
+## Main Materials Benchmark Inventory
 
-| Task family | Scientific question | Public source | Raw file expected by this repo | Raw rows | Converted action records | Converted positives | Groups / regimes | Label source |
-| --- | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
-| `preferential_bo` | Is candidate A better than candidate B? | González et al., Preferential Bayesian Optimization, ICML 2017, `https://proceedings.mlr.press/v70/gonzalez17a.html` | `pairwise_optimization_actions.jsonl` | 2,730 | 2,730 pairwise duels | 1,385 | 4 objectives | Noisy visible duel choice checked against hidden latent objective utility |
-| `discover_unique` | Which material is both high-performing and chemically unique? | DiSCoVeR, DOI `10.1039/d1dd00028d`; code `https://github.com/sparks-baird/mat_discover`; open Matbench artifact `https://raw.githubusercontent.com/materialsproject/matbench/main/scripts/artifacts/matbench_log_kvrh.json.bz2` | `unique_materials_actions.jsonl` | 10,987 | 10,987 screening actions | 1,099 | 7 crystal systems | Top-decile combined performance + uniqueness proxy |
-| `extreme_properties` | Which generated molecule hits extreme target properties? | RL-CC extreme-property discovery, DOI `10.1039/d3sc05281h`; code `https://github.com/Haeyeon-Choi/RL-CC` | `extreme_properties_actions.jsonl` | 2,000 | 2,000 molecule-advance actions | 313 | 10 targets | All seven generated properties within Table 1 RMSE bounds |
+| Task family | Scientific question | Public source | Raw file | Records | Positives | Groups / regimes | Label source |
+| --- | --- | --- | --- | ---: | ---: | ---: | --- |
+| `matbench_pairwise` | Which real material in A/B is better for high-bulk-modulus follow-up? | Matbench `log10(K_VRH)`, derived from Materials Project elasticity data, `https://raw.githubusercontent.com/materialsproject/matbench/main/scripts/artifacts/matbench_log_kvrh.json.bz2` | `matbench_pairwise_actions.jsonl` | 8,000 | 4,427 | 28 crystal-system pairs | Hidden normalized `log10(K_VRH)` comparison |
+| `discover_unique` | Which material is high-performing and chemically unique? | DiSCoVeR, DOI `10.1039/d1dd00028d`; code `https://github.com/sparks-baird/mat_discover`; Matbench `log10(K_VRH)` | `unique_materials_actions.jsonl` | 10,987 | 1,099 | 7 crystal systems | Top-decile performance + uniqueness proxy |
+| `extreme_properties` | Which generated molecule hits extreme target properties? | RL-CC, DOI `10.1039/d3sc05281h`; code `https://github.com/Haeyeon-Choi/RL-CC` | `extreme_properties_actions.jsonl` | 2,000 | 313 | 10 targets | Seven-property target hit within Table 1 RMSE bounds |
 
-The local raw-data directory used for the current runs is `/Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks`. It contains:
+Main materials total: `20,987` action records across `45` scientific regimes.
 
-- `pairwise_optimization_actions.jsonl`: 2,730 raw candidate rows.
-- `unique_materials_actions.jsonl`: 10,987 raw material rows.
-- `extreme_properties_actions.jsonl`: 2,000 raw molecule rows.
-- `all_three_tasks_actions.jsonl`: concatenated raw rows for inspection only.
-- `summary.json`: source manifest and raw-record summary.
+## Auxiliary Sanity Check
 
-Important count distinction: `summary.json` reports raw candidate positives for the PBO candidate-builder stage (`273` top-decile candidates). The actual harness experiment converts those candidates into pairwise duels in `src/harness_matsci/historical.py`; after conversion, PBO has `1,385` positive duel actions and `1,345` negative duel actions.
+| Task family | Purpose | Source | Records | Why auxiliary only |
+| --- | --- | --- | ---: | --- |
+| `preferential_bo` | Controlled A/B preference-optimization sanity check | González et al., Preferential Bayesian Optimization, ICML 2017, `https://proceedings.mlr.press/v70/gonzalez17a.html` | 2,730 converted duels | It has a clean latent objective but no material composition, structure, property table, or materials database distribution. |
+
+PBO can still test whether the harness handles noisy pairwise decisions, but it should not support the paper’s materials-discovery claim.
+
+## Local Raw Data Directory
+
+Current local data live at `/Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks`.
+
+- `matbench_pairwise_actions.jsonl`: 8,000 real-material A/B preference actions.
+- `unique_materials_actions.jsonl`: 10,987 DiSCoVeR-style screening actions.
+- `extreme_properties_actions.jsonl`: 2,000 RL-CC molecule actions.
+- `pairwise_optimization_actions.jsonl`: 2,730 auxiliary PBO candidate rows, converted to duels by the loader.
+- `summary.json`: local manifest. If all four files are counted, total records are `23,717`; main materials only are `20,987`.
 
 ## `ActionRecord` Contract
 
@@ -33,331 +43,220 @@ Every experiment consumes `ActionRecord` rows from `src/harness_matsci/schema.py
 
 | Field | Meaning | Visible at decision time? |
 | --- | --- | --- |
-| `record_id` | Stable action identifier | Yes |
-| `benchmark` | Task family, such as `discover_unique` | Yes |
-| `split` | Train / feedback / acceptance / test assignment | No for runtime policy; yes for evaluation bookkeeping |
-| `visible_context` | What the scientific agent or harness is allowed to read | Yes |
-| `candidate_action` | The proposed next step | Yes |
-| `action_type` | Action category, such as `choose_candidate` or `choose` | Yes |
-| `evidence` | Pre-execution evidence snippets, after leakage sanitization | Yes |
-| `features` | Numeric uncertainty / cost / source / stability signals | Yes |
-| `label` | `1` if action was worth executing, else `0` | Hidden oracle label |
+| `record_id` | Stable action id | Yes |
+| `benchmark` | Task family, e.g. `matbench_pairwise` | Yes |
+| `visible_context` | What the agent/harness can read | Yes |
+| `candidate_action` | Proposed next step | Yes |
+| `action_type` | Action category, e.g. `choose` or `choose_candidate` | Yes |
+| `evidence` | Pre-execution evidence after leakage sanitation | Yes |
+| `features` | Numeric uncertainty, source, cost, stability, and visible-candidate signals | Yes |
+| `label` | Whether the action was worth executing | Hidden oracle label |
 | `utility` | Normalized downstream scientific gain | Hidden oracle utility |
-| `metadata` | Source, group, raw IDs, and audit fields | Mixed; oracle subfields are not model inputs |
+| `metadata` | Source, group id, raw ids, and audit fields | Mixed; oracle fields are not model inputs |
 
-The harness is trained to estimate whether the **current action** is worth doing under the visible information, not to solve the whole scientific discovery task end-to-end.
+The harness learns whether the **current proposed action** is worth executing under visible information; it does not directly train a property predictor.
 
-## Task 1: Preferential BO Pairwise Optimization
+## Task 1: `matbench_pairwise`
+
+### Why This Replaces PBO as the Main Pairwise Task
+
+The previous PBO task had the right A/B preference form but was not materials-related. `matbench_pairwise` keeps the A/B action structure while grounding every comparison in real Materials Project / Matbench materials and a real hidden material property.
 
 ### Public Artifact
 
-- Paper: González et al., “Preferential Bayesian Optimization,” ICML 2017.
-- Paper URL: `https://proceedings.mlr.press/v70/gonzalez17a.html`.
-- Reproduced benchmark functions: Forrester, Six-Hump Camel, Goldstein-Price, and Levy.
-- Raw rows are generated from the published latent objective functions, not downloaded from a separate dataset.
+- Dataset: Matbench `log10(K_VRH)`.
+- URL: `https://raw.githubusercontent.com/materialsproject/matbench/main/scripts/artifacts/matbench_log_kvrh.json.bz2`.
+- Source domain: Materials Project elasticity data.
+- Scientific objective: prefer the material with higher hidden bulk-modulus target.
 
-### Raw Candidate Construction
+### Construction Pipeline
 
-- For each objective, a deterministic grid is evaluated.
-- `grid_size=30` gives 30 Forrester points and `30 × 30 = 900` points for each 2D objective.
-- Objective values are minimization objectives: lower objective value is scientifically better.
-- Raw normalized utility is `1 - normalize(objective_value)`, so larger utility is better.
-- Raw candidate success in the upstream summary is top-decile latent utility; this raw label is only a builder-stage diagnostic.
+1. Load all `10,987` Matbench rows with `composition`, `log10(K_VRH)`, `spg_num`, and `crys_sys`.
+2. Normalize true `log10(K_VRH)` to `[0,1]`; this normalized value is hidden.
+3. Sample 8,000 material pairs, mostly close-property pairs to make decisions nontrivial.
+4. Group pairs by unordered crystal-system pair, giving 28 regimes.
+5. Create a noisy surrogate score for each material from the hidden normalized property plus noise.
+6. The candidate action chooses the material with the higher noisy surrogate score.
+7. `label = 1` if the chosen material has hidden normalized `log10(K_VRH)` at least as high as the other material.
+8. `utility = abs(normalized_property_A - normalized_property_B)` if the choice is correct, else `0`.
+9. Pairs with true normalized gap below `0.003` are filtered so positive actions have nonzero utility.
 
-### Action Conversion Used by the Harness
+### Visible vs Hidden
 
-The loader converts raw candidates to pairwise actions:
+Visible fields include:
 
-1. Group raw candidates by objective, e.g. `gonzalez17a::forrester`.
-2. For each candidate, choose a deterministic partner using a stable hash of the record id.
-3. Build a visible noisy surrogate score for each arm:
-   `0.5 + 0.15 * tanh(smooth_prior) + 0.1 * (hash_prior - 0.5) + Gaussian(0, noise_scale)`.
-4. Set `noise_scale = 0.06 + 0.18 * average_domain_edge_score`.
-5. The candidate action is `Choose candidate A` or `Choose candidate B`, depending on the larger visible surrogate score.
-6. Hidden oracle label is `1` if the chosen arm has true normalized utility greater than or equal to the other arm, else `0`.
-7. Hidden oracle utility is the true utility margin if the choice is correct, else `0`.
+- Composition of material A and B.
+- Crystal system and space group.
+- Coarse surrogate bulk-modulus tier: `low`, `medium`, or `high`.
+- Surrogate margin and estimated noise.
 
-### Visible vs Hidden Fields
+Hidden fields include:
 
-- Visible context names the objective family and the two candidate coordinates.
-- Visible evidence contains only `surrogate_margin`, estimated noise, and domain-edge score.
-- Hidden fields include true objective values, true utilities, chosen true utility, and true margin.
-- The visible text explicitly says the latent objective is not observed.
+- Exact `log10(K_VRH)` for both materials.
+- Normalized `log10(K_VRH)` for both materials.
+- Which material is truly better.
+- True property gap and utility.
+
+Exact `log10(K_VRH)` is never placed in `visible_context` or `evidence`.
 
 ### Example Converted Record
 
 ```json
 {
-  "record_id": "pairwise-duel::forrester::00000",
-  "benchmark": "preferential_bo",
-  "visible_context": "Preferential optimization duel on forrester. Candidate A: x0=0; candidate B: x0=0.896552. The agent observes only a noisy surrogate ordering, not the latent objective.",
-  "candidate_action": "Choose candidate B for the next preferential comparison.",
-  "evidence": ["surrogate_margin=0.7296", "estimated_noise=0.2214", "domain_edge_score=0.8966"],
-  "label": 0,
-  "utility": 0.0
+  "benchmark": "matbench_pairwise",
+  "visible_context": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Sm1 Te1; crystal system: cubic; space group: 221; surrogate bulk-modulus tier: high. Candidate B: Composition: Na4 Mn4 F12; crystal system: orthorhombic; space group: 62; surrogate bulk-modulus tier: high. The true Materials Project elasticity target is withheld until evaluation.",
+  "candidate_action": "Choose candidate A for high-bulk-modulus materials follow-up.",
+  "evidence": ["A_surrogate_tier=high", "B_surrogate_tier=high", "surrogate_margin=0.0343", "estimated_noise=0.4468"],
+  "label": 1,
+  "utility": 0.003007
 }
 ```
 
-Interpretation: the visible surrogate preferred B, but hidden normalized utility shows A was better, so the action was not worth executing.
-
-## Task 2: DiSCoVeR-Style Unique Materials
+## Task 2: `discover_unique`
 
 ### Public Artifact
 
 - Paper: “DiSCoVeR: a materials discovery screening tool for high performance, unique chemical compositions.”
 - DOI: `10.1039/d1dd00028d`.
 - Paper code: `https://github.com/sparks-baird/mat_discover`.
-- Open reproduction dataset: Matbench `matbench_log_kvrh`, `https://raw.githubusercontent.com/materialsproject/matbench/main/scripts/artifacts/matbench_log_kvrh.json.bz2`.
-- Scientific alignment: high bulk modulus plus uniqueness / non-redundancy, matching the DiSCoVeR discovery-screening motivation.
+- Open reproduction dataset: Matbench `log10(K_VRH)`.
 
-### Raw Material Fields
-
-Each Matbench row contributes:
-
-- `mbid`: material id.
-- `composition`: formula string.
-- `log10(K_VRH)`: bulk-modulus target value.
-- `spg_num`: space group number.
-- `crys_sys`: crystal system.
-
-### Label and Utility Construction
-
-The current benchmark uses a lightweight uniqueness proxy instead of fully reproducing DiSCoVeR’s DensMAP density pipeline:
+### Label and Utility
 
 1. `performance_score = normalize(log10(K_VRH))`.
-2. Element rarity is computed from inverse square-root element frequency: `mean(1 / sqrt(count(element)))`, then normalized.
-3. Space-group rarity is `1 / sqrt(count(space_group))`, then normalized.
-4. Crystal-system rarity is `1 / sqrt(count(crystal_system))`, then normalized.
+2. Element rarity uses inverse square-root element frequency.
+3. Space-group rarity uses inverse square-root space-group frequency.
+4. Crystal-system rarity uses inverse square-root crystal-system frequency.
 5. `uniqueness_score = 0.6 * element_rarity + 0.3 * space_group_rarity + 0.1 * crystal_system_rarity`.
 6. `discovery_score = 0.5 * performance_score + 0.5 * uniqueness_score`.
-7. `label = 1` if the material is in the top decile of `discovery_score`, else `0`.
+7. `label = 1` if the material is in the top decile of `discovery_score`.
 8. `utility = discovery_score`.
 
-### Visible vs Hidden Fields
+Visible fields contain composition, crystal system, and space group. Exact property values are replaced by `property estimate` before training/evaluation.
 
-- Visible context contains composition, crystal system, and space group.
-- Exact `log10(K_VRH)` is removed from visible context/evidence during conversion.
-- Evidence text replaces exact property values with `property estimate`.
-- Hidden oracle features include `performance_score`, `uniqueness_score`, and `discovery_score`.
-
-### Example Converted Record
-
-```json
-{
-  "record_id": "unique-material::mb-log-kvrh-00001",
-  "benchmark": "discover_unique",
-  "visible_context": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ca1 Ag2 Ge2; crystal system: tetragonal; space group: 139.",
-  "candidate_action": "Screen Ca1 Ag2 Ge2 as a high-performance, chemically unique material candidate.",
-  "evidence": ["Ca1 Ag2 Ge2", "property estimate", "space_group=139", "crystal_system=tetragonal"],
-  "label": 0,
-  "utility": 0.355283
-}
-```
-
-Interpretation: the material has a nonzero discovery utility, but it is not in the top decile of the current performance-plus-uniqueness proxy.
-
-## Task 3: RL-CC Extreme Properties
+## Task 3: `extreme_properties`
 
 ### Public Artifact
 
 - Paper: “Materials discovery with extreme properties via reinforcement learning-guided combinatorial chemistry.”
 - DOI: `10.1039/d3sc05281h`.
-- Paper code: `https://github.com/Haeyeon-Choi/RL-CC`.
+- Code: `https://github.com/Haeyeon-Choi/RL-CC`.
 - Targets: `https://raw.githubusercontent.com/Haeyeon-Choi/RL-CC/main/Target_C1_to_C10.csv`.
-- Generated result files: `https://raw.githubusercontent.com/Haeyeon-Choi/RL-CC/main/result/extrapolation/evaluate_Point{point}.csv`.
+- Results: `https://raw.githubusercontent.com/Haeyeon-Choi/RL-CC/main/result/extrapolation/evaluate_Point{point}.csv`.
 
-### Raw Molecule Fields
+### Label and Utility
 
-Each generated row contributes:
+The target-hit bounds are the paper’s Table 1 average RMSE values: `logP=0.373`, `TPSA=5.292`, `QED=0.078`, `HBA=1.068`, `HBD=0.235`, `MW=7.113`, and `DRD2=0.105`.
 
-- `SMILES`: generated molecule.
-- Target and generated values for `MW`, `logP`, `TPSA`, `QED`, `HBA`, `HBD`, and `DRD2`.
-- `reward`: score from the paper’s generated result file.
-
-### Target-Hit Bounds
-
-The current label uses the paper’s Table 1 average RMSE bounds:
-
-| Property | Bound |
-| --- | ---: |
-| `logP` | 0.373 |
-| `TPSA` | 5.292 |
-| `QED` | 0.078 |
-| `HBA` | 1.068 |
-| `HBD` | 0.235 |
-| `MW` | 7.113 |
-| `DRD2` | 0.105 |
-
-### Label and Utility Construction
-
-1. For each property, compute `error = abs(generated_value - target_value)`.
+1. Compute absolute error for each generated property against the target.
 2. A property is a hit if `error <= bound`.
 3. `hit_fraction = number_of_hit_properties / 7`.
-4. `all_hit = true` only if all seven properties hit.
+4. `label = 1` only if all seven properties hit.
 5. `reward_score = normalize(reward)` within the target file.
-6. `target_hit_score = 0.75 * hit_fraction + 0.25 * reward_score`.
-7. `label = 1` if `all_hit`, else `0`.
-8. `utility = target_hit_score`.
+6. `utility = target_hit_score = 0.75 * hit_fraction + 0.25 * reward_score`.
 
-The stored 2,000-record benchmark uses `200` selected generated molecules per target. For each target, positives and negatives are both represented: positives receive up to one third of the per-target budget when available, and selection mixes high-scoring rows with seeded random rows.
+Visible evidence values such as `hit_fraction`, `reward`, and `all_hit` are replaced by `outcome withheld` before training/evaluation.
 
-### Visible vs Hidden Fields
+## Auxiliary: `preferential_bo`
 
-- Visible context names the target and lists the seven properties to hit.
-- Candidate action contains the generated molecule SMILES.
-- During harness conversion, evidence values such as `hit_fraction`, `reward`, and `all_hit` are replaced with `outcome withheld`.
-- Hidden oracle fields include property errors, hit booleans, reward, hit fraction, and target-hit score.
+PBO is still useful for a clean controlled check, but it is not a materials benchmark.
 
-### Example Converted Record
+- It uses Forrester, Six-Hump Camel, Goldstein-Price, and Levy latent objectives.
+- The loader turns raw objective candidates into noisy pairwise duels.
+- `label = 1` if the surrogate-chosen arm has higher hidden normalized utility.
+- `utility = true_margin` if correct, else `0`.
+- It should be reported as appendix / sanity check only.
 
-```json
-{
-  "record_id": "extreme-rlcc::C1::b450726656c6",
-  "benchmark": "extreme_properties",
-  "visible_context": "RL-CC extrapolation target C1 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds.",
-  "candidate_action": "Advance generated molecule for target C1: CC#CCc1cc2c(...)",
-  "evidence": ["target=C1", "outcome withheld", "outcome withheld", "outcome withheld"],
-  "label": 1,
-  "utility": 1.0
-}
-```
+## Leakage Controls
 
-Interpretation: the hidden generated-property row hits all seven target bounds, but that success signal is not visible to the local harness.
+The conversion code is in `src/harness_matsci/historical.py`.
 
-## Feature Construction After Loading
+- `log10(K_VRH)` and `log10_k_vrh` patterns are removed from visible text/evidence for Matbench-derived tasks.
+- RL-CC outcome fields such as `hit_fraction`, `reward`, and `all_hit` are replaced by `outcome withheld`.
+- Raw oracle signals such as `latent_utility`, `performance_score`, `uniqueness_score`, `discovery_score`, `target_hit_score`, `reward`, and `mean_clipped_error` are excluded from `features`.
+- Converted records store `metadata.excluded_oracle_features`, `metadata.raw_uncertainty_keys`, and `metadata.raw_context_keys` for audit.
 
-The raw JSONL rows contain many useful fields, but the harness loader intentionally removes oracle-like signals before training. The conversion code is in `src/harness_matsci/historical.py`.
+## Evaluation Protocol
 
-### Oracle Features Excluded
-
-The loader excludes raw uncertainty keys that directly encode outcomes, including:
-
-- `preference_strength`, `latent_utility`, `metric_value`.
-- `performance_score`, `uniqueness_score`, `discovery_score`.
-- `target_hit_score`, `hit_fraction`, `reward`, `reward_score`, `mean_clipped_error`, `five_hit`.
-- Raw `evidence_support`, `evidence_conflict`, `verbal_confidence`, `tool_agreement`, `consensus_spread`, and `ood_score` when those were computed from oracle outcomes upstream.
-
-The loader also excludes oracle context fields such as `performance_score`, `uniqueness_score`, `hit_fraction`, `reward`, `reward_score`, `mean_clipped_error`, and `five_hit`.
-
-### Features Recomputed From Visible Information
-
-After filtering, the loader adds or recomputes visible features:
-
-- Text-derived `verbal_confidence`, `evidence_support`, and `evidence_conflict` from `visible_context + candidate_action`.
-- `cost` from `cost_level` and `reversibility` from `reversibility`.
-- `action_complexity` from action length and `evidence_count` from number of evidence snippets.
-- `source_reliability = 1 - source_risk` when `source_risk` is visible and non-oracle.
-- Non-oracle context features, normalized by simple domain rules, such as `space_group / 230`.
-- Candidate-derived structure/composition features, such as formula length, number of unique elements, crystal-system one-hot features, SMILES atom count, ring density, and branch density.
-
-For auditability, each converted record stores `metadata.excluded_oracle_features`, `metadata.raw_uncertainty_keys`, and `metadata.raw_context_keys`.
-
-## Splits and Evaluation Protocol
-
-- The scientific regime boundary is `metadata.group_id`.
-- Current full-benchmark experiments evaluate 21 regimes: 4 PBO objectives, 7 crystal systems, and 10 RL-CC targets.
-- For each seed, a complete `group_id` is held out as the final test regime when possible.
-- Remaining records are split into train, feedback, and acceptance partitions.
-- RHI-style harness mutation uses feedback trajectories, then accepts or rejects candidate harnesses on the held-out acceptance set.
-- Final metrics are computed only on the untouched test partition.
-- Main full-benchmark protocol uses five seeds: `1,7,13,21,42`.
-- The fixed discovery budget is top `10%` of actions by policy score.
-- The target selective-risk threshold is `alpha=0.10`.
-
-## Main Method Inputs and Outputs
-
-### Local Sci-VoI-RHI
-
-- Input: one action record’s visible context, candidate action, visible evidence, and visible numeric features.
-- Trained outputs: reliability, expected utility, epistemic uncertainty, verification value, and action-cost-adjusted VoI score.
-- Runtime output: route the action to `proceed`, `retrieve_more`, `simulate`, `ask_expert`, `experiment`, or `abstain`.
-- Optimization objective: maximize oracle-normalized net scientific utility under a fixed top-10% action budget while keeping selective risk low.
-
-### Direct LLM Judge Baseline
-
-- Input: the same visible context, candidate action, and evidence; no hidden label or utility.
-- Output: one scalar `p_success` from an LLM judge.
-- Calibration: validation/feedback scores choose thresholds; test scores are final held-out evaluation.
-- Current completed direct judge subset uses `gpt-5.5` on 500 balanced records.
-
-### Hybrid LLM + VoI Judge
-
-- Input: local Sci-VoI score plus cached direct LLM judge score for the same action.
-- Output: blended or routed action-worthiness score.
-- Selection: blend weights and LLM-call budgets are chosen on local calibration records only.
-- Current result is a 500-record subset experiment, not the full held-out-regime benchmark.
+- Main material regimes: 28 Matbench crystal-system pairs, 7 DiSCoVeR crystal systems, and 10 RL-CC targets.
+- Main material total: 45 held-out regimes.
+- Splits are action-level train / feedback / acceptance plus complete-regime held-out test where the suite supports it.
+- Fixed action budget: top 10% actions by policy score.
+- Target selective risk: `alpha=0.10`.
+- Main objective: maximize oracle-normalized net scientific utility under the action budget while keeping selective risk low.
 
 ## Reproduction Commands
 
-Run the leakage and label audit:
+Generate the Matbench pairwise data from the local Matbench cache:
+
+```bash
+PYTHONPATH=src python3 -m harness_matsci.matbench_pairwise \
+  --source-path /Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks/cache/matbench_log_kvrh.json.bz2 \
+  --out /Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks/matbench_pairwise_actions.jsonl \
+  --n-pairs 8000 \
+  --seed 1729 \
+  --min-true-gap 0.003 \
+  --update-summary
+```
+
+Audit the new pairwise task:
 
 ```bash
 PYTHONPATH=src python3 -m harness_matsci label-audit \
   --data-dir /Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks \
-  --out runs/label_audit_v1/summary.json \
-  --markdown-out runs/label_audit_v1/README.md
+  --tasks matbench_pairwise \
+  --out runs/label_audit_matbench_pairwise_v1/summary.json \
+  --markdown-out runs/label_audit_matbench_pairwise_v1/README.md
 ```
 
-Run the full non-LLM Sci-VoI-RHI suite:
+Audit the three main material tasks:
+
+```bash
+PYTHONPATH=src python3 -m harness_matsci label-audit \
+  --data-dir /Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks \
+  --tasks matbench_pairwise,discover_unique,extreme_properties \
+  --out runs/label_audit_main_materials_v1/summary.json \
+  --markdown-out runs/label_audit_main_materials_v1/README.md
+```
+
+Run a Matbench pairwise VoI smoke check:
 
 ```bash
 PYTHONPATH=src python3 -m harness_matsci voi-experiment-suite \
   --data-dir /Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks \
-  --seeds 1,7,13,21,42 \
-  --epochs 60 \
-  --iterations 3 \
-  --out runs/scivoi_rhi_v1/summary.json \
-  --markdown-out runs/scivoi_rhi_v1/README.md
+  --tasks matbench_pairwise \
+  --methods verbal_confidence,evidence_heuristic,h0_reliability,static_voi,scivoi_rhi \
+  --components '' \
+  --acceptance-policies '' \
+  --seeds 1 \
+  --epochs 10 \
+  --iterations 1 \
+  --out runs/matbench_pairwise_smoke_v1/summary.json \
+  --markdown-out runs/matbench_pairwise_smoke_v1/README.md
 ```
 
-Run the mechanism ablation:
-
-```bash
-PYTHONPATH=src python3 -m harness_matsci mechanism-ablation \
-  --data-dir /Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks \
-  --seeds 1,7,13,21,42 \
-  --epochs 60 \
-  --out runs/mechanism_ablation_v2/summary.json \
-  --markdown-out runs/mechanism_ablation_v2/README.md
-```
-
-Run the cached hybrid LLM + VoI subset experiment:
-
-```bash
-PYTHONPATH=src python3 -m harness_matsci.hybrid_judge \
-  --records runs/direct_judge_subset500_v1/records.jsonl \
-  --judge-cache runs/direct_judge_cache/subset500_gpt55_scores.json \
-  --local-train-fraction 0.5 \
-  --out-dir runs/hybrid_llm_judge_subset_v1
-```
-
-## Existing Validation Artifacts
+## Current Validation Artifacts
 
 | Artifact | What it verifies |
 | --- | --- |
-| `runs/label_audit_v1/README.md` | Labels and utilities are internally consistent with the proxy definitions; visible text is checked for leakage patterns. |
-| `runs/scivoi_rhi_v1/README.md` | Full held-out-regime Sci-VoI-RHI result over 15,717 converted actions. |
-| `runs/mechanism_ablation_v2/summary.json` | Utility head, uncertainty, routing, cost, and recursive acceptance ablations. |
-| `runs/related_work_baselines_v1/README.md` | Non-LLM related-work baseline sweep. |
-| `runs/direct_judge_subset500_v1/README.md` | Real `gpt-5.5` one-shot direct judge result on a balanced 500-record subset. |
-| `runs/hybrid_llm_judge_subset_v1/README.md` | Cached `gpt-5.5` plus local VoI hybrid subset result. |
+| `runs/label_audit_matbench_pairwise_v1/README.md` | New Matbench pairwise labels/utilities are exactly recomputable from hidden property values; visible text has no property leakage. |
+| `runs/label_audit_main_materials_v1/README.md` | The three main material tasks have consistent labels/utilities and no visible leakage. |
+| `runs/matbench_pairwise_smoke_v1/README.md` | One-seed smoke check that the VoI suite runs on the new real-material pairwise task. |
+| `runs/scivoi_rhi_v1/README.md` | Preserved legacy full run over the earlier 15,717-record setting that included PBO. |
 
 ## 500 Electrolyte-Paper Pilot
 
-The 500-row pilot lives at `/Users/huan/matsci_uncertainty/data/raw/nature_electrolyte/training_actions_500.jsonl` and is used by `src/harness_matsci/paper_bootstrap.py`.
+The pilot file is `/Users/huan/matsci_uncertainty/data/raw/nature_electrolyte/training_actions_500.jsonl` and is consumed by `src/harness_matsci/paper_bootstrap.py`.
 
 - Domain: battery electrolyte papers.
-- Record type: paper segment converted into an action such as `retrieve_more`, `recommend_experiment`, `execute_tool`, or `commit_decision`.
-- Label: weak `outcome_success` assigned by the paper-data builder according to whether the route is appropriate for the extracted evidence state.
-- Utility: raw `metric_value`, converted directly to `ActionRecord.utility`.
+- Record type: paper segment converted into actions such as `retrieve_more`, `recommend_experiment`, `execute_tool`, or `commit_decision`.
 - Purpose: pilot evidence that historical papers can bootstrap action-level gate training.
-- Limitation: this pilot is smaller, noisier, and less benchmark-grounded than the three main public artifact families.
+- Limitation: smaller and noisier than the main public material-artifact tasks.
 
-## Limitations to State in Papers
+## Current Limitations
 
-- These are offline proxy action labels, not expert annotations of live MatBot decisions.
-- `discover_unique` uses a transparent rarity proxy instead of a full DensMAP reproduction of DiSCoVeR.
-- `preferential_bo` is an optimization benchmark and not itself a materials database.
-- `extreme_properties` depends on published RL-CC generated result files and property-hit tolerances.
-- The local gate has limited materials semantic grounding unless paired with stronger tools, retrieval, or an LLM judge.
-- The next required validation is online MatBot trajectory logging with expert or downstream experiment labels.
+- The main data are still offline action reconstructions, not live MatBot trajectories.
+- `matbench_pairwise` is real materials data, but candidate actions are generated from a noisy surrogate rather than emitted by MatBot.
+- `discover_unique` uses a transparent rarity proxy instead of a full DensMAP reproduction.
+- `extreme_properties` is molecular / chemical discovery, not inorganic crystal screening.
+- Full paper results should be rerun on `matbench_pairwise,discover_unique,extreme_properties`; preserved full results currently correspond to the earlier PBO-including setup.

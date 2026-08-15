@@ -8,10 +8,11 @@
 
 - 做了一个面向 MatSci Agent 的 action-level uncertainty / value-of-information harness。
 - 把三类科学发现问题整理成可以量化验证的 action-worthiness benchmark：
-  - pairwise preferential optimization：判断候选 A 是否优于候选 B；
+  - Matbench material pairwise preference：用真实 Materials Project / Matbench `log10(K_VRH)` 属性表判断候选 A 是否优于候选 B；
   - unique-material discovery：判断候选材料是否值得筛选、是否有独特科学价值；
   - extreme-property discovery：判断候选分子/材料是否值得推进到极端性质目标。
-- 构造了 15,717 条历史 proxy action records，覆盖 21 个 scientific regimes，并用 105 个 held-out-regime folds 做评估。
+- 新增了 8,000 条真实材料 A/B pairwise action records；当前主材料数据共 20,987 条，覆盖 45 个 scientific regimes，并通过 label/utility/leakage audit。
+- 保留了旧版 15,717 条、105 folds 的 Sci-VoI-RHI 完整结果作为 legacy 对照；下一步需要在新的 20,987 条主材料数据上完整 rerun。
 - 实现了类似 RHI 的 recursive harness improvement，但优化目标从“通用偏好/输出质量”改成“科学行动是否值得做”。
 - 补了真实 direct LLM-as-judge baseline：`gpt-5.5` 在 500 条 balanced subset 上完成评分。
 
@@ -97,7 +98,7 @@ H_i harness
 
 - `gpt-5.5` direct judge 是很强的 one-shot baseline，明显强于简单 heuristic。
 - 在这个小的 direct-judge subset 上，`gpt-5.5` 当前比我们的 quick same-subset RHI check 更会做 top-k ranking。
-- 但我们的主结果不是和 GPT-5.5 小子集硬比，而是在完整 15,717 条、105 folds 的 held-out-regime protocol 上证明 action-value harness 优于原始 RHI 和 static reliability。
+- 但 direct judge 只是 500 条 subset；旧完整结果是在 15,717 条 legacy 数据上完成，新主材料数据已经补齐到 20,987 条，完整 rerun 还需要继续跑。
 - `gpt-5.6-luna` 已尝试 100 条 subset，但 provider 返回 HTTP 429，所以目前不能算有效结果。
 
 ## 当前可以怎么讲贡献

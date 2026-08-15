@@ -32,6 +32,7 @@ from .training import (
 
 TASKS = ("preferential_bo", "discover_unique", "extreme_properties")
 TASK_LABELS = {
+    "matbench_pairwise": "Matbench material pairwise preference",
     "preferential_bo": "Pairwise optimization",
     "discover_unique": "Unique-material discovery",
     "extreme_properties": "Extreme-property discovery",
@@ -372,6 +373,8 @@ def _experimental_design() -> dict[str, dict[str, str]]:
 def _build_task_cache(config: ExperimentSuiteConfig) -> dict[str, dict[int, dict[str, list[ActionRecord]]]]:
     cache: dict[str, dict[int, dict[str, list[ActionRecord]]]] = {}
     for task in config.tasks:
+        if not config.data_dir and task == "matbench_pairwise":
+            raise ValueError("matbench_pairwise requires --data-dir because it is built from real Matbench rows")
         cache[task] = {}
         for seed in config.seeds:
             records = (

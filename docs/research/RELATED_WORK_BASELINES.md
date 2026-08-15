@@ -15,12 +15,14 @@
 | Direct LLM-as-judge | Whether a frontier LLM can directly score action worthiness. | Protocol implemented in `runs/direct_judge_baseline_v1/README.md`; needs API/model run. |
 | Agentic LLM judge / debate / reflection | Whether multi-call LLM judging beats an executable harness. | Not yet run; requires API calls and a fixed token budget. |
 
-## Newly Added Non-LLM Experiments
+## Preserved Non-LLM Experiments
 
-The new sweep in `runs/related_work_baselines_v1/` adds all non-LLM baseline
-families above under the same `15,717`-record, `21`-regime, five-seed held-out
-protocol. It intentionally does not rerun recursive Sci-VoI mutations; the
-preserved Sci-VoI result remains in `runs/scivoi_rhi_v1/`.
+The sweep in `runs/related_work_baselines_v1/` adds all non-LLM baseline
+families above under the earlier `15,717`-record, `21`-regime, five-seed
+held-out protocol that still included PBO. It intentionally does not rerun
+recursive Sci-VoI mutations; the preserved Sci-VoI result remains in
+`runs/scivoi_rhi_v1/`. After adding real-material `matbench_pairwise`, these
+baselines should be rerun on the updated `20,987`-record main materials setup.
 
 Key combined comparison: `scivoi_policy_always_accept` reaches risk-adjusted
 utility `0.6043` with risk `0.1600`. The strongest raw-utility judge-style
@@ -46,8 +48,9 @@ See `runs/related_work_baselines_v1/SCIVOI_COMPARISON.md` for the merged table.
 
 ## Claim Boundary
 
-The current non-LLM baseline sweep strengthens the offline method claim, not the
-online MatBot claim. The paper should state that Sci-VoI-RHI improves
-risk-adjusted scientific action selection on historical/proxy materials
-benchmarks. It should not claim demonstrated improvement in real laboratory or
-DFT trajectories until online records or expert labels are added.
+The preserved non-LLM baseline sweep strengthens the offline method claim on the
+earlier setup, not the online MatBot claim. The updated data layer now provides a
+stronger materials-grounded pairwise task from Matbench, but final paper claims
+need the full baseline rerun on `matbench_pairwise,discover_unique,extreme_properties`.
+The paper should not claim demonstrated improvement in real laboratory or DFT
+trajectories until online records or expert labels are added.

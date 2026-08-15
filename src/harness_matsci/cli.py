@@ -7,6 +7,7 @@ from typing import Any
 from .benchmarks import BENCHMARK_BUILDERS, make_records
 from .campaign import CampaignConfig, save_campaign_report
 from .experiments import ExperimentSuiteConfig, save_experiment_suite
+from .historical import MAIN_MATERIAL_TASKS
 from .audit_experiments import LabelAuditConfig, run_label_utility_audit, save_label_utility_audit
 from .io import read_json, read_jsonl, write_json, write_jsonl
 from .mechanism_ablation import MechanismAblationConfig, run_mechanism_ablation, save_mechanism_ablation
@@ -142,7 +143,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     voi_parser = subparsers.add_parser("voi-experiment-suite", help="Run Sci-VoI-RHI held-out-regime experiments")
     voi_parser.add_argument("--data-dir", required=True, help="Directory containing historical task JSONL files")
-    voi_parser.add_argument("--tasks", default="preferential_bo,discover_unique,extreme_properties")
+    voi_parser.add_argument("--tasks", default=",".join(MAIN_MATERIAL_TASKS))
     voi_parser.add_argument("--methods", default=",".join(DEFAULT_METHODS))
     voi_parser.add_argument("--components", default="utility,uncertainty,routing,features")
     voi_parser.add_argument("--acceptance-policies", default="mean_guarded,always_accept")
@@ -159,7 +160,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     audit_parser = subparsers.add_parser("label-audit", help="Audit historical proxy labels and utilities")
     audit_parser.add_argument("--data-dir", required=True, help="Directory containing historical task JSONL files")
-    audit_parser.add_argument("--tasks", default="preferential_bo,discover_unique,extreme_properties")
+    audit_parser.add_argument("--tasks", default=",".join(MAIN_MATERIAL_TASKS))
     audit_parser.add_argument("--sample-per-task", type=int, default=12)
     audit_parser.add_argument("--seed", type=int, default=1729)
     audit_parser.add_argument("--out", required=True)
@@ -168,7 +169,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     mechanism_parser = subparsers.add_parser("mechanism-ablation", help="Run Sci-VoI mechanism ablations without an LLM judge")
     mechanism_parser.add_argument("--data-dir", required=True, help="Directory containing historical task JSONL files")
-    mechanism_parser.add_argument("--tasks", default="preferential_bo,discover_unique,extreme_properties")
+    mechanism_parser.add_argument("--tasks", default=",".join(MAIN_MATERIAL_TASKS))
     mechanism_parser.add_argument("--seeds", default="1,7,13,21,42")
     mechanism_parser.add_argument("--iterations", type=int, default=3)
     mechanism_parser.add_argument("--budget-fraction", type=float, default=0.1)

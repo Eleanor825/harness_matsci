@@ -1,0 +1,423 @@
+{
+  "aggregate": {
+    "all_label_consistency_passed": true,
+    "all_raw_oracle_keys_recorded_as_excluded": true,
+    "all_utility_consistency_passed": true,
+    "all_visible_leakage_free": true,
+    "total_action_records": 8000,
+    "total_raw_records": 8000
+  },
+  "config": {
+    "data_dir": "/Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks",
+    "sample_per_task": 12,
+    "seed": 1729,
+    "tasks": [
+      "matbench_pairwise"
+    ],
+    "tolerance": 1e-08
+  },
+  "limitations": [
+    "This audit proves internal proxy-label consistency and leakage sanitation; it is not a human expert annotation study.",
+    "Preferential BO labels are simulated noisy duels derived from published latent objectives, not real online BO trajectories.",
+    "Matbench pairwise labels compare hidden real materials-property values, but the action proposals are offline reconstructions rather than live MatBot choices.",
+    "Unique-material and extreme-property labels inherit the validity of the historical benchmark builders and should still be spot-checked by domain experts before a final paper claim."
+  ],
+  "sample_manifest": [
+    {
+      "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.2072"
+      ],
+      "group_id": "matbench_pairwise::same::trigonal_vs_trigonal",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::14523464c75f",
+      "task": "matbench_pairwise",
+      "utility": 0.013865617984964218,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Pb1 Au1 O2; crystal system: trigonal; space group: 166; surrogate bulk-modulus tier: high. Candidate B: Composition: Ba3 Zn3 O6; crystal system: trigonal; space group: 152; \u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=medium",
+        "surrogate_margin=0.6182"
+      ],
+      "group_id": "matbench_pairwise::same::trigonal_vs_trigonal",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::960b56a9d595",
+      "task": "matbench_pairwise",
+      "utility": 0.010857547026010661,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Zn1 Re2 O8; crystal system: trigonal; space group: 147; surrogate bulk-modulus tier: high. Candidate B: Composition: Sc2 Cl2; crystal system: trigonal; space group: 166; sur\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=medium",
+        "B_surrogate_tier=low",
+        "surrogate_margin=0.3944"
+      ],
+      "group_id": "matbench_pairwise::same::cubic_vs_cubic",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::4c7bcfeef824",
+      "task": "matbench_pairwise",
+      "utility": 0.19509264944112414,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Hf1 N1; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: medium. Candidate B: Composition: Cu1 S1; crystal system: cubic; space group: 216; surrogate bu\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=low",
+        "surrogate_margin=0.7162"
+      ],
+      "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::33895fa0e4ba",
+      "task": "matbench_pairwise",
+      "utility": 0.0038152659278256618,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Dy1 B2; crystal system: hexagonal; space group: 191; surrogate bulk-modulus tier: high. Candidate B: Composition: Tb1 B2; crystal system: hexagonal; space group: 191; surrog\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=medium",
+        "B_surrogate_tier=medium",
+        "surrogate_margin=0.1257"
+      ],
+      "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::e639e77f0c96",
+      "task": "matbench_pairwise",
+      "utility": 0.18947162293614417,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: In4 Se4; crystal system: hexagonal; space group: 194; surrogate bulk-modulus tier: medium. Candidate B: Composition: Rb4; crystal system: hexagonal; space group: 194; surrog\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.0231"
+      ],
+      "group_id": "matbench_pairwise::cross::hexagonal_vs_monoclinic",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::89d83867158c",
+      "task": "matbench_pairwise",
+      "utility": 0.31097704013480393,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Li4 Zr2 O6; crystal system: monoclinic; space group: 15; surrogate bulk-modulus tier: high. Candidate B: Composition: Li3; crystal system: hexagonal; space group: 191; surro\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=medium",
+        "B_surrogate_tier=medium",
+        "surrogate_margin=0.1742"
+      ],
+      "group_id": "matbench_pairwise::same::tetragonal_vs_tetragonal",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::12ea6e0c588a",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Ba4 S6; crystal system: tetragonal; space group: 109; surrogate bulk-modulus tier: medium. Candidate B: Composition: Ag1 I1; crystal system: tetragonal; space group: 119; su\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=medium",
+        "surrogate_margin=0.4337"
+      ],
+      "group_id": "matbench_pairwise::same::cubic_vs_cubic",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::eaf6c84640a3",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Cd1 F2; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: high. Candidate B: Composition: Tm1 Pa1 Tc2; crystal system: cubic; space group: 225; surrogate\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.0845"
+      ],
+      "group_id": "matbench_pairwise::cross::cubic_vs_monoclinic",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::618ab362be93",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: K1 Na2 Bi1; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: high. Candidate B: Composition: B48 O6; crystal system: monoclinic; space group: 12; surrog\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=low",
+        "surrogate_margin=0.7502"
+      ],
+      "group_id": "matbench_pairwise::same::tetragonal_vs_tetragonal",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::e81caa746bad",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Be2 Si2 N4; crystal system: tetragonal; space group: 122; surrogate bulk-modulus tier: high. Candidate B: Composition: Si2 B4 Mo10; crystal system: tetragonal; space group: \u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=low",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.9384"
+      ],
+      "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::6ab6bcbf0028",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Eu2 Cl6; crystal system: hexagonal; space group: 176; surrogate bulk-modulus tier: low. Candidate B: Composition: Li5 Mg1; crystal system: hexagonal; space group: 189; surro\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.0778"
+      ],
+      "group_id": "matbench_pairwise::cross::hexagonal_vs_orthorhombic",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::5ad245da7cc6",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Ga2 As2; crystal system: hexagonal; space group: 186; surrogate bulk-modulus tier: high. Candidate B: Composition: Sc4 Si4 Pt4; crystal system: orthorhombic; space group: 62\u2026"
+    }
+  ],
+  "schema": "label-utility-audit-v1",
+  "tasks": {
+    "matbench_pairwise": {
+      "consistency": {
+        "label_failures_preview": [],
+        "label_mismatch_count": 0,
+        "negative_records_with_positive_utility": 0,
+        "pairwise_tie_count": 0,
+        "positive_records_with_zero_utility": 0,
+        "utility_failures_preview": [],
+        "utility_mismatch_count": 0
+      },
+      "converted_records": 8000,
+      "groups": 28,
+      "label_sources": [
+        "matbench_log_kvrh_pairwise_property_comparison"
+      ],
+      "leakage": {
+        "missing_excluded_oracle_key_count": 0,
+        "missing_excluded_oracle_key_preview": [],
+        "raw_oracle_key_count": 0,
+        "visible_text_forbidden_count": 0,
+        "visible_text_forbidden_preview": []
+      },
+      "positive_rate": 0.553375,
+      "raw_records": 8000,
+      "sample_records": [
+        {
+          "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.2072"
+          ],
+          "group_id": "matbench_pairwise::same::trigonal_vs_trigonal",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::14523464c75f",
+          "task": "matbench_pairwise",
+          "utility": 0.013865617984964218,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Pb1 Au1 O2; crystal system: trigonal; space group: 166; surrogate bulk-modulus tier: high. Candidate B: Composition: Ba3 Zn3 O6; crystal system: trigonal; space group: 152; \u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=medium",
+            "surrogate_margin=0.6182"
+          ],
+          "group_id": "matbench_pairwise::same::trigonal_vs_trigonal",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::960b56a9d595",
+          "task": "matbench_pairwise",
+          "utility": 0.010857547026010661,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Zn1 Re2 O8; crystal system: trigonal; space group: 147; surrogate bulk-modulus tier: high. Candidate B: Composition: Sc2 Cl2; crystal system: trigonal; space group: 166; sur\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=medium",
+            "B_surrogate_tier=low",
+            "surrogate_margin=0.3944"
+          ],
+          "group_id": "matbench_pairwise::same::cubic_vs_cubic",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::4c7bcfeef824",
+          "task": "matbench_pairwise",
+          "utility": 0.19509264944112414,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Hf1 N1; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: medium. Candidate B: Composition: Cu1 S1; crystal system: cubic; space group: 216; surrogate bu\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=low",
+            "surrogate_margin=0.7162"
+          ],
+          "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::33895fa0e4ba",
+          "task": "matbench_pairwise",
+          "utility": 0.0038152659278256618,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Dy1 B2; crystal system: hexagonal; space group: 191; surrogate bulk-modulus tier: high. Candidate B: Composition: Tb1 B2; crystal system: hexagonal; space group: 191; surrog\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=medium",
+            "B_surrogate_tier=medium",
+            "surrogate_margin=0.1257"
+          ],
+          "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::e639e77f0c96",
+          "task": "matbench_pairwise",
+          "utility": 0.18947162293614417,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: In4 Se4; crystal system: hexagonal; space group: 194; surrogate bulk-modulus tier: medium. Candidate B: Composition: Rb4; crystal system: hexagonal; space group: 194; surrog\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.0231"
+          ],
+          "group_id": "matbench_pairwise::cross::hexagonal_vs_monoclinic",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::89d83867158c",
+          "task": "matbench_pairwise",
+          "utility": 0.31097704013480393,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Li4 Zr2 O6; crystal system: monoclinic; space group: 15; surrogate bulk-modulus tier: high. Candidate B: Composition: Li3; crystal system: hexagonal; space group: 191; surro\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=medium",
+            "B_surrogate_tier=medium",
+            "surrogate_margin=0.1742"
+          ],
+          "group_id": "matbench_pairwise::same::tetragonal_vs_tetragonal",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::12ea6e0c588a",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Ba4 S6; crystal system: tetragonal; space group: 109; surrogate bulk-modulus tier: medium. Candidate B: Composition: Ag1 I1; crystal system: tetragonal; space group: 119; su\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=medium",
+            "surrogate_margin=0.4337"
+          ],
+          "group_id": "matbench_pairwise::same::cubic_vs_cubic",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::eaf6c84640a3",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Cd1 F2; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: high. Candidate B: Composition: Tm1 Pa1 Tc2; crystal system: cubic; space group: 225; surrogate\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.0845"
+          ],
+          "group_id": "matbench_pairwise::cross::cubic_vs_monoclinic",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::618ab362be93",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: K1 Na2 Bi1; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: high. Candidate B: Composition: B48 O6; crystal system: monoclinic; space group: 12; surrog\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=low",
+            "surrogate_margin=0.7502"
+          ],
+          "group_id": "matbench_pairwise::same::tetragonal_vs_tetragonal",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::e81caa746bad",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Be2 Si2 N4; crystal system: tetragonal; space group: 122; surrogate bulk-modulus tier: high. Candidate B: Composition: Si2 B4 Mo10; crystal system: tetragonal; space group: \u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=low",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.9384"
+          ],
+          "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::6ab6bcbf0028",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Eu2 Cl6; crystal system: hexagonal; space group: 176; surrogate bulk-modulus tier: low. Candidate B: Composition: Li5 Mg1; crystal system: hexagonal; space group: 189; surro\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.0778"
+          ],
+          "group_id": "matbench_pairwise::cross::hexagonal_vs_orthorhombic",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::5ad245da7cc6",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Ga2 As2; crystal system: hexagonal; space group: 186; surrogate bulk-modulus tier: high. Candidate B: Composition: Sc4 Si4 Pt4; crystal system: orthorhombic; space group: 62\u2026"
+        }
+      ],
+      "utility_distribution": {
+        "max": 0.8127927616389782,
+        "mean": 0.04426718068846711,
+        "min": 0.0,
+        "std": 0.09393006296885317
+      }
+    }
+  }
+}

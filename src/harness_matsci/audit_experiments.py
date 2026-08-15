@@ -16,6 +16,8 @@ from .schema import ActionRecord
 FORBIDDEN_VISIBLE_PATTERNS = (
     "hidden objective value is",
     "log10(k_vrh)=",
+    "log10_k_vrh=",
+    "true log10",
     "hit_fraction=",
     "target_hit_score",
     "reward=",
@@ -30,7 +32,7 @@ PAIRWISE_LABEL_SOURCE = "simulated_noisy_preferential_duel_from_published_object
 @dataclass(frozen=True)
 class LabelAuditConfig:
     data_dir: str
-    tasks: tuple[str, ...] = tuple(HISTORICAL_TASK_FILES)
+    tasks: tuple[str, ...] = ("preferential_bo", "discover_unique", "extreme_properties")
     sample_per_task: int = 12
     seed: int = 1729
     tolerance: float = 1e-8
@@ -63,6 +65,7 @@ def run_label_utility_audit(config: LabelAuditConfig) -> dict[str, Any]:
         "limitations": [
             "This audit proves internal proxy-label consistency and leakage sanitation; it is not a human expert annotation study.",
             "Preferential BO labels are simulated noisy duels derived from published latent objectives, not real online BO trajectories.",
+            "Matbench pairwise labels compare hidden real materials-property values, but the action proposals are offline reconstructions rather than live MatBot choices.",
             "Unique-material and extreme-property labels inherit the validity of the historical benchmark builders and should still be spot-checked by domain experts before a final paper claim.",
         ],
     }
@@ -113,7 +116,7 @@ def render_label_utility_audit_markdown(report: dict[str, Any]) -> str:
         "## What This Establishes",
         "",
         "- `label` is reproducible from stored benchmark outcome metadata for all converted action records.",
-        "- `utility` is reproducible from raw benchmark utility fields for non-pairwise tasks and from true pairwise margins for preferential duels.",
+        "- `utility` is reproducible from raw benchmark utility fields for non-pairwise tasks and from hidden true margins for pairwise tasks such as Matbench A/B preference and auxiliary PBO duels.",
         "- Hidden outcome strings such as exact objective values, `log10(K_VRH)`, `hit_fraction`, `reward`, and `all_hit` are absent from visible context/evidence after conversion.",
         "- Raw oracle-valued uncertainty fields are recorded in `excluded_oracle_features` so reviewers can audit what was withheld.",
         "",
@@ -176,7 +179,7 @@ def _audit_task(task: str, raw_payloads: list[dict[str, Any]], records: list[Act
             "utility_mismatch_count": len(utility_failures),
             "label_failures_preview": label_failures[:20],
             "utility_failures_preview": utility_failures[:20],
-            "pairwise_tie_count": tie_count if task == "preferential_bo" else 0,
+            "pairwise_tie_count": tie_count if task in {"preferential_bo", "matbench_pairwise"} else 0,
             "negative_records_with_positive_utility": negative_positive_utility,
             "positive_records_with_zero_utility": positive_zero_utility,
         },
@@ -207,6 +210,26 @@ def _expected_label_and_utility(
             expected_label = int(chosen_true >= other_true)
             true_margin = max(0.0, min(1.0, abs(left - right)))
             expected_utility = true_margin if expected_label else 0.0
+            return expected_label, expected_utility, math.isclose(left, right, abs_tol=1e-12)
+        except Exception:
+            return None, None, False
+
+    if task == "matbench_pairwise":
+        raw_id = str(record.metadata.get("raw_record_id", record.record_id))
+        raw = raw_by_id.get(raw_id)
+        expected_label = int(bool(record.metadata.get("outcome_success"))) if "outcome_success" in record.metadata else None
+        if raw is None:
+            return expected_label, None, False
+        tool_outputs = raw.get("tool_outputs", {})
+        try:
+            left = float(tool_outputs["candidate_a"]["normalized_k_vrh"])
+            right = float(tool_outputs["candidate_b"]["normalized_k_vrh"])
+            chosen = str(tool_outputs["chosen"])
+            chosen_true = left if chosen == "A" else right
+            other_true = right if chosen == "A" else left
+            expected_label = int(chosen_true >= other_true)
+            true_gap = max(0.0, min(1.0, abs(left - right)))
+            expected_utility = true_gap if expected_label else 0.0
             return expected_label, expected_utility, math.isclose(left, right, abs_tol=1e-12)
         except Exception:
             return None, None, False

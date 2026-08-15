@@ -8,16 +8,41 @@ Full data provenance and action-construction details are in `docs/research/DATA_
 
 | Item | Value |
 | --- | ---: |
-| Total historical proxy records | 15,717 |
+| Main materials proxy records | 20,987 |
+| `matbench_pairwise` records | 8,000 |
 | `discover_unique` records | 10,987 |
 | `extreme_properties` records | 2,000 |
-| `preferential_bo` records | 2,730 |
-| Scientific regimes / outer folds | 21 regimes × 5 seeds = 105 folds |
+| Main materials regimes | 45 |
+| Auxiliary `preferential_bo` sanity-check records | 2,730 |
+| All local records including auxiliary PBO | 23,717 |
 | Fixed discovery budget | top 10% actions |
 | RHI iterations | 3 |
 | Target risk alpha | 0.10 |
 
-## Main Full-Benchmark Results
+## Updated Materials Data Audits
+
+These checks were run after replacing synthetic PBO with real-material `matbench_pairwise` as the main pairwise task.
+
+| Audit | Records | Groups | Positive rate | Utility mean | Label ok | Utility ok | Visible leaks |
+| --- | ---: | ---: | ---: | ---: | --- | --- | ---: |
+| `matbench_pairwise` | 8,000 | 28 | 0.5534 | 0.0443 | true | true | 0 |
+| main materials: `matbench_pairwise,discover_unique,extreme_properties` | 20,987 | 45 | 0.2782 | 0.2917 | true | true | 0 |
+
+## Matbench Pairwise Smoke Result
+
+This is a one-seed smoke check on the new real-material A/B preference task, not the final paper-scale rerun.
+
+| Method | Net utility ↑ | Risk-adjusted ↑ | Risk ↓ | Hit rate ↑ | Folds |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `scivoi_rhi` | 0.8048 ± 0.2225 | 0.7699 | 0.1397 | 0.7811 | 28 |
+| `static_voi` | 0.7951 ± 0.2269 | 0.7619 | 0.1330 | 0.7772 | 28 |
+| `h0_reliability` | 0.7648 ± 0.2632 | 0.7364 | 0.1136 | 0.7543 | 28 |
+| `evidence_heuristic` | 0.4051 ± 0.2463 | 0.3786 | 0.1058 | 0.6883 | 28 |
+| `verbal_confidence` | 0.1176 ± 0.2678 | 0.0139 | 0.4146 | 0.5986 | 28 |
+
+## Legacy Full-Benchmark Results
+
+The following full-benchmark result is preserved for comparison. It used the earlier 15,717-record setup with PBO + DiSCoVeR + RL-CC over 21 regimes × 5 seeds = 105 folds. It should not be described as the final main-materials result after the Matbench pairwise replacement.
 
 Primary metric is oracle-normalized net scientific utility at a fixed 10% action budget; higher is better. Risk is selective risk among executed actions; lower is better.
 
@@ -59,7 +84,7 @@ Primary metric is oracle-normalized net scientific utility at a fixed 10% action
 
 ## Direct LLM Judge Subset Results
 
-Score is the direct-judge diagnostic score combining AURC, calibration, log loss, and fixed-budget discovery efficiency; lower is better. This is a 500-record subset, not the full 15,717-record held-out-regime protocol.
+Score is the direct-judge diagnostic score combining AURC, calibration, log loss, and fixed-budget discovery efficiency; lower is better. This is a 500-record subset, not the full main-materials held-out-regime protocol.
 
 | Method | Model/proxy | Score ↓ | Selective risk ↓ | Coverage ↑ | Risk@10% ↓ | Hit rate ↑ | Utility efficiency ↑ | ECE ↓ | Brier ↓ |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -103,7 +128,8 @@ Same 100-record cached `gpt-5.5` control:
 
 ## Interpretation Boundary
 
-- The full-benchmark claim is positive for Sci-VoI-RHI against reliability-only RHI and static reliability baselines.
-- The current real direct-judge subset shows `gpt-5.5` is a strong one-shot judge and currently beats our quick same-subset RHI check on top-k ranking; our stronger claim remains the full held-out-regime Sci-VoI protocol plus better calibration/risk-control behavior.
+- The preserved full-benchmark claim is positive for Sci-VoI-RHI against reliability-only RHI and static reliability baselines, but it used the earlier PBO-including setup.
+- The updated main materials data now replace PBO with `matbench_pairwise`; the full 20,987-record paper-scale rerun is still pending.
+- The current real direct-judge subset shows `gpt-5.5` is a strong one-shot judge and currently beats our quick same-subset RHI check on top-k ranking.
 - The current hybrid subset result supports a narrower claim: LLM grounding plus local calibration improves action-worthiness diagnostics and calibration, but not top-k discovery yet.
 - `gpt-5.6-luna` is not counted as an experiment result because the provider currently returns HTTP 429.

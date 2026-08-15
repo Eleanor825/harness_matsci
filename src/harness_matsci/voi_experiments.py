@@ -11,14 +11,14 @@ from typing import Any, Callable
 
 from .calibration import threshold_for_selective_risk
 from .features import feature_names_from_records
-from .historical import HISTORICAL_TASK_FILES, load_historical_task_records
+from .historical import MAIN_MATERIAL_TASKS, load_historical_task_records
 from .metrics import binary_metrics, discovery_gain, fixed_coverage_metrics, scientific_discovery_metrics
 from .rhi import train_rhi_from_splits
 from .training import evaluate_gate, train_gate_with_features, verbal_confidence_scores, evidence_heuristic_scores
 from .voi import VOI_FEATURES, VOI_SEED_HARNESS, evaluate_voi, fit_voi_model, train_voi_rhi
 
 
-TASKS = tuple(HISTORICAL_TASK_FILES)
+TASKS = MAIN_MATERIAL_TASKS
 PRIMARY_COST_WEIGHT = 0.15
 DEFAULT_METHODS = (
     "random_policy",

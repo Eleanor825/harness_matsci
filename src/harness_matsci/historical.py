@@ -14,10 +14,13 @@ from .features import clamp, text_confidence
 from .schema import ActionRecord
 
 HISTORICAL_TASK_FILES = {
+    "matbench_pairwise": "matbench_pairwise_actions.jsonl",
     "preferential_bo": "pairwise_optimization_actions.jsonl",
     "discover_unique": "unique_materials_actions.jsonl",
     "extreme_properties": "extreme_properties_actions.jsonl",
 }
+
+MAIN_MATERIAL_TASKS = ("matbench_pairwise", "discover_unique", "extreme_properties")
 
 ORACLE_SIGNAL_KEYS = frozenset(
     {
@@ -461,16 +464,21 @@ def _number(value: Any) -> bool:
 
 def _sanitize_visible_context(task: str, context: str) -> str:
     """Remove benchmark outcomes that were serialized into historical context."""
-    if task == "discover_unique":
+    if task in {"discover_unique", "matbench_pairwise"}:
         context = re.sub(r"\s*log10\(K_VRH\)\s*=\s*[-+]?\d+(?:\.\d+)?", "", context)
+        context = re.sub(r"\s*log10_k_vrh\s*=\s*[-+]?\d+(?:\.\d+)?", "", context, flags=re.IGNORECASE)
     return re.sub(r"\s+", " ", context).strip()
 
 
 def _sanitize_evidence(task: str, evidence: Any) -> list[str]:
     cleaned = [str(item) for item in evidence]
-    if task == "discover_unique":
+    if task in {"discover_unique", "matbench_pairwise"}:
         cleaned = [
             re.sub(r"log10\(K_VRH\)\s*=\s*[-+]?\d+(?:\.\d+)?", "property estimate", item)
+            for item in cleaned
+        ]
+        cleaned = [
+            re.sub(r"log10_k_vrh\s*=\s*[-+]?\d+(?:\.\d+)?", "property estimate", item, flags=re.IGNORECASE)
             for item in cleaned
         ]
     if task == "extreme_properties":
@@ -506,6 +514,26 @@ def _visible_candidate_features(
     candidate_action: str,
     raw_context: dict[str, Any],
 ) -> dict[str, float]:
+    if task == "matbench_pairwise":
+        formulas = re.findall(r"Composition:\s*([^;]+)", visible_context)
+        chosen_match = re.search(r"candidate\s+([AB])", candidate_action, flags=re.IGNORECASE)
+        chosen_index = 0 if not chosen_match or chosen_match.group(1).upper() == "A" else 1
+        chosen_formula = formulas[chosen_index] if len(formulas) > chosen_index else candidate_action
+        elements = re.findall(r"[A-Z][a-z]?", chosen_formula)
+        space_groups = [float(value) for value in re.findall(r"space group:\s*(\d+)", visible_context, flags=re.IGNORECASE)]
+        chosen_space_group = space_groups[chosen_index] if len(space_groups) > chosen_index else 0.0
+        same_system = float(raw_context.get("same_crystal_system", 0.0))
+        surrogate_margin = float(raw_context.get("surrogate_margin", 0.0))
+        uncertainty = float(raw_context.get("surrogate_uncertainty", 0.5))
+        return {
+            "candidate_structure_complexity": clamp(len(chosen_formula) / 40.0),
+            "candidate_composition_diversity": clamp(len(set(elements)) / 6.0),
+            "candidate_domain_position": clamp(chosen_space_group / 230.0),
+            "pair_same_crystal_system": clamp(same_system),
+            "pair_surrogate_margin": clamp(surrogate_margin),
+            "pair_surrogate_uncertainty": clamp(uncertainty),
+            "ood_score": clamp(0.2 + 0.25 * (1.0 - same_system) + 0.5 * uncertainty),
+        }
     if task == "preferential_bo":
         coordinates = [float(value) for value in re.findall(r"x\d+=(-?\d+(?:\.\d+)?)", candidate_action)]
         dimension = float(raw_context.get("dimension", len(coordinates) or 1.0))

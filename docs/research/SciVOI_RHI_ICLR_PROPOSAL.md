@@ -63,16 +63,18 @@ thresholding, acceptance, or stopping.
 
 ## Experimental Design
 
-The non-LLM benchmark uses three published materials-discovery task families:
+The updated non-LLM benchmark uses three materials / chemical discovery task families:
 
-1. preferential optimization from pairwise “A better than B” decisions;
-2. DiSCoVeR-style unique-material screening;
-3. extreme-property molecular discovery.
+1. real-material Matbench `log10(K_VRH)` pairwise A/B preference decisions;
+2. DiSCoVeR-style unique-material screening from Matbench / Materials Project elasticity data;
+3. RL-CC extreme-property molecular discovery.
 
-The formal split is leave-one-scientific-regime-out: 21 complete regimes are
-held out one at a time, repeated over five seeds. Source records are split into
-train, feedback, and acceptance partitions. Direct LLM-as-judge is excluded by
-design for this experiment package.
+The updated main-materials data contain 20,987 action records across 45 regimes.
+PBO is retained only as an auxiliary controlled optimization sanity check, not a
+main materials benchmark. The formal split is leave-one-scientific-regime-out:
+complete regimes are held out one at a time, repeated over seeds. Source records
+are split into train, feedback, and acceptance partitions. Direct LLM-as-judge is
+excluded by design for this experiment package.
 
 Primary metric is oracle-normalized continuous net scientific utility at a fixed
 10% action budget. Guardrails are selective risk, hit rate, outcome-conditioned
@@ -98,9 +100,10 @@ multi-call agentic judge baselines are protocol-ready but require API calls.
 
 ## Current Results
 
-The full non-LLM suite in `runs/scivoi_rhi_v1/README.md` evaluates 15,717
-records, 21 leave-one-regime-out folds, and five seeds. The direct RHI-style
-Sci-VoI variant (`scivoi_policy_always_accept`) obtains:
+The preserved full non-LLM suite in `runs/scivoi_rhi_v1/README.md` evaluates the
+earlier 15,717-record PBO-including setup with 21 leave-one-regime-out folds and
+five seeds. The direct RHI-style Sci-VoI variant (`scivoi_policy_always_accept`)
+obtains:
 
 - net utility `0.6443 ± 0.2052`;
 - risk-adjusted utility `0.6043`;
@@ -114,6 +117,9 @@ Compared with strong static utility/VoI heads, direct Sci-VoI-RHI is roughly
 tied on continuous utility but much safer: static VoI risk is `0.3845`, while
 direct Sci-VoI-RHI risk is `0.1600`. Verbal confidence has high raw utility but
 unacceptable risk (`0.7889`), so it is not a safe scientific action policy.
+
+The updated Matbench-pairwise main-materials setup has passed construction and
+audit, but the full paper-scale Sci-VoI / baseline rerun is still pending.
 
 The non-LLM related-work sweep in
 `runs/related_work_baselines_v1/SCIVOI_COMPARISON.md` strengthens this pattern.

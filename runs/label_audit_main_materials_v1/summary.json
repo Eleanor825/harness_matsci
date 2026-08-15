@@ -1,0 +1,1211 @@
+{
+  "aggregate": {
+    "all_label_consistency_passed": true,
+    "all_raw_oracle_keys_recorded_as_excluded": true,
+    "all_utility_consistency_passed": true,
+    "all_visible_leakage_free": true,
+    "total_action_records": 20987,
+    "total_raw_records": 20987
+  },
+  "config": {
+    "data_dir": "/Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks",
+    "sample_per_task": 12,
+    "seed": 1729,
+    "tasks": [
+      "matbench_pairwise",
+      "discover_unique",
+      "extreme_properties"
+    ],
+    "tolerance": 1e-08
+  },
+  "limitations": [
+    "This audit proves internal proxy-label consistency and leakage sanitation; it is not a human expert annotation study.",
+    "Preferential BO labels are simulated noisy duels derived from published latent objectives, not real online BO trajectories.",
+    "Matbench pairwise labels compare hidden real materials-property values, but the action proposals are offline reconstructions rather than live MatBot choices.",
+    "Unique-material and extreme-property labels inherit the validity of the historical benchmark builders and should still be spot-checked by domain experts before a final paper claim."
+  ],
+  "sample_manifest": [
+    {
+      "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.2072"
+      ],
+      "group_id": "matbench_pairwise::same::trigonal_vs_trigonal",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::14523464c75f",
+      "task": "matbench_pairwise",
+      "utility": 0.013865617984964218,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Pb1 Au1 O2; crystal system: trigonal; space group: 166; surrogate bulk-modulus tier: high. Candidate B: Composition: Ba3 Zn3 O6; crystal system: trigonal; space group: 152; \u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=medium",
+        "surrogate_margin=0.6182"
+      ],
+      "group_id": "matbench_pairwise::same::trigonal_vs_trigonal",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::960b56a9d595",
+      "task": "matbench_pairwise",
+      "utility": 0.010857547026010661,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Zn1 Re2 O8; crystal system: trigonal; space group: 147; surrogate bulk-modulus tier: high. Candidate B: Composition: Sc2 Cl2; crystal system: trigonal; space group: 166; sur\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=medium",
+        "B_surrogate_tier=low",
+        "surrogate_margin=0.3944"
+      ],
+      "group_id": "matbench_pairwise::same::cubic_vs_cubic",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::4c7bcfeef824",
+      "task": "matbench_pairwise",
+      "utility": 0.19509264944112414,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Hf1 N1; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: medium. Candidate B: Composition: Cu1 S1; crystal system: cubic; space group: 216; surrogate bu\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=low",
+        "surrogate_margin=0.7162"
+      ],
+      "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::33895fa0e4ba",
+      "task": "matbench_pairwise",
+      "utility": 0.0038152659278256618,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Dy1 B2; crystal system: hexagonal; space group: 191; surrogate bulk-modulus tier: high. Candidate B: Composition: Tb1 B2; crystal system: hexagonal; space group: 191; surrog\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=medium",
+        "B_surrogate_tier=medium",
+        "surrogate_margin=0.1257"
+      ],
+      "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::e639e77f0c96",
+      "task": "matbench_pairwise",
+      "utility": 0.18947162293614417,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: In4 Se4; crystal system: hexagonal; space group: 194; surrogate bulk-modulus tier: medium. Candidate B: Composition: Rb4; crystal system: hexagonal; space group: 194; surrog\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.0231"
+      ],
+      "group_id": "matbench_pairwise::cross::hexagonal_vs_monoclinic",
+      "label": 1,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::89d83867158c",
+      "task": "matbench_pairwise",
+      "utility": 0.31097704013480393,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Li4 Zr2 O6; crystal system: monoclinic; space group: 15; surrogate bulk-modulus tier: high. Candidate B: Composition: Li3; crystal system: hexagonal; space group: 191; surro\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=medium",
+        "B_surrogate_tier=medium",
+        "surrogate_margin=0.1742"
+      ],
+      "group_id": "matbench_pairwise::same::tetragonal_vs_tetragonal",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::12ea6e0c588a",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Ba4 S6; crystal system: tetragonal; space group: 109; surrogate bulk-modulus tier: medium. Candidate B: Composition: Ag1 I1; crystal system: tetragonal; space group: 119; su\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=medium",
+        "surrogate_margin=0.4337"
+      ],
+      "group_id": "matbench_pairwise::same::cubic_vs_cubic",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::eaf6c84640a3",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Cd1 F2; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: high. Candidate B: Composition: Tm1 Pa1 Tc2; crystal system: cubic; space group: 225; surrogate\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.0845"
+      ],
+      "group_id": "matbench_pairwise::cross::cubic_vs_monoclinic",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::618ab362be93",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: K1 Na2 Bi1; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: high. Candidate B: Composition: B48 O6; crystal system: monoclinic; space group: 12; surrog\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=low",
+        "surrogate_margin=0.7502"
+      ],
+      "group_id": "matbench_pairwise::same::tetragonal_vs_tetragonal",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::e81caa746bad",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Be2 Si2 N4; crystal system: tetragonal; space group: 122; surrogate bulk-modulus tier: high. Candidate B: Composition: Si2 B4 Mo10; crystal system: tetragonal; space group: \u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=low",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.9384"
+      ],
+      "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::6ab6bcbf0028",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Eu2 Cl6; crystal system: hexagonal; space group: 176; surrogate bulk-modulus tier: low. Candidate B: Composition: Li5 Mg1; crystal system: hexagonal; space group: 189; surro\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+      "evidence_excerpt": [
+        "A_surrogate_tier=high",
+        "B_surrogate_tier=high",
+        "surrogate_margin=0.0778"
+      ],
+      "group_id": "matbench_pairwise::cross::hexagonal_vs_orthorhombic",
+      "label": 0,
+      "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+      "record_id": "matbench-pairwise::5ad245da7cc6",
+      "task": "matbench_pairwise",
+      "utility": 0.0,
+      "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Ga2 As2; crystal system: hexagonal; space group: 186; surrogate bulk-modulus tier: high. Candidate B: Composition: Sc4 Si4 Pt4; crystal system: orthorhombic; space group: 62\u2026"
+    },
+    {
+      "candidate_action_excerpt": "Screen Be1 Al1 Ir2 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Be1 Al1 Ir2",
+        "property estimate",
+        "space_group=225"
+      ],
+      "group_id": "discover::matbench_log_kvrh::cubic",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-00992",
+      "task": "discover_unique",
+      "utility": 0.486619,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Be1 Al1 Ir2; crystal system: cubic; space group: 225."
+    },
+    {
+      "candidate_action_excerpt": "Screen Np1 Rh3 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Np1 Rh3",
+        "property estimate",
+        "space_group=221"
+      ],
+      "group_id": "discover::matbench_log_kvrh::cubic",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-00678",
+      "task": "discover_unique",
+      "utility": 0.593249,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Np1 Rh3; crystal system: cubic; space group: 221."
+    },
+    {
+      "candidate_action_excerpt": "Screen Tb2 B4 C4 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Tb2 B4 C4",
+        "property estimate",
+        "space_group=127"
+      ],
+      "group_id": "discover::matbench_log_kvrh::tetragonal",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-04102",
+      "task": "discover_unique",
+      "utility": 0.490855,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Tb2 B4 C4; crystal system: tetragonal; space group: 127."
+    },
+    {
+      "candidate_action_excerpt": "Screen Ta4 Fe8 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Ta4 Fe8",
+        "property estimate",
+        "space_group=194"
+      ],
+      "group_id": "discover::matbench_log_kvrh::hexagonal",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-05343",
+      "task": "discover_unique",
+      "utility": 0.487476,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ta4 Fe8; crystal system: hexagonal; space group: 194."
+    },
+    {
+      "candidate_action_excerpt": "Screen Ta2 Pt4 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Ta2 Pt4",
+        "property estimate",
+        "space_group=63"
+      ],
+      "group_id": "discover::matbench_log_kvrh::orthorhombic",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-04911",
+      "task": "discover_unique",
+      "utility": 0.497166,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ta2 Pt4; crystal system: orthorhombic; space group: 63."
+    },
+    {
+      "candidate_action_excerpt": "Screen Mo2 Ir6 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Mo2 Ir6",
+        "property estimate",
+        "space_group=194"
+      ],
+      "group_id": "discover::matbench_log_kvrh::hexagonal",
+      "label": 1,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-04358",
+      "task": "discover_unique",
+      "utility": 0.541344,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Mo2 Ir6; crystal system: hexagonal; space group: 194."
+    },
+    {
+      "candidate_action_excerpt": "Screen Ti2 Tc1 Ni1 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Ti2 Tc1 Ni1",
+        "property estimate",
+        "space_group=225"
+      ],
+      "group_id": "discover::matbench_log_kvrh::cubic",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-05890",
+      "task": "discover_unique",
+      "utility": 0.46235,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti2 Tc1 Ni1; crystal system: cubic; space group: 225."
+    },
+    {
+      "candidate_action_excerpt": "Screen Si2 Ru1 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Si2 Ru1",
+        "property estimate",
+        "space_group=123"
+      ],
+      "group_id": "discover::matbench_log_kvrh::tetragonal",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-10833",
+      "task": "discover_unique",
+      "utility": 0.450448,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Si2 Ru1; crystal system: tetragonal; space group: 123."
+    },
+    {
+      "candidate_action_excerpt": "Screen Yb2 Au6 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Yb2 Au6",
+        "property estimate",
+        "space_group=59"
+      ],
+      "group_id": "discover::matbench_log_kvrh::orthorhombic",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-02398",
+      "task": "discover_unique",
+      "utility": 0.428881,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Yb2 Au6; crystal system: orthorhombic; space group: 59."
+    },
+    {
+      "candidate_action_excerpt": "Screen Ti2 Ni2 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Ti2 Ni2",
+        "property estimate",
+        "space_group=51"
+      ],
+      "group_id": "discover::matbench_log_kvrh::orthorhombic",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-08665",
+      "task": "discover_unique",
+      "utility": 0.426447,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti2 Ni2; crystal system: orthorhombic; space group: 51."
+    },
+    {
+      "candidate_action_excerpt": "Screen Th1 Sn1 Pt1 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Th1 Sn1 Pt1",
+        "property estimate",
+        "space_group=216"
+      ],
+      "group_id": "discover::matbench_log_kvrh::cubic",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-02806",
+      "task": "discover_unique",
+      "utility": 0.435426,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Th1 Sn1 Pt1; crystal system: cubic; space group: 216."
+    },
+    {
+      "candidate_action_excerpt": "Screen Ti1 Zn1 Au2 as a high-performance, chemically unique material candidate.",
+      "evidence_excerpt": [
+        "Ti1 Zn1 Au2",
+        "property estimate",
+        "space_group=225"
+      ],
+      "group_id": "discover::matbench_log_kvrh::cubic",
+      "label": 0,
+      "label_source": "top_decile_discover_unique_score_proxy",
+      "record_id": "unique-material::mb-log-kvrh-06087",
+      "task": "discover_unique",
+      "utility": 0.423833,
+      "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti1 Zn1 Au2; crystal system: cubic; space group: 225."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C3: CN(C)C1C(O)C(O)C(O)CN1C1OC(c2nnc(-c3ccc4[nH]nc(C5OC(C6CNC6)C(O)C(O)C5N)c4c3)n2NC(=O)C2OC(N3CC(O)C(O)C(O)C3C(=O)[O-])C(O)C(O)C2O)C(O)C(O)C1O",
+      "evidence_excerpt": [
+        "target=C3",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C3",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C3::80cdd970dc65",
+      "task": "extreme_properties",
+      "utility": 0.944917,
+      "visible_context_excerpt": "RL-CC extrapolation target C3 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C3: CN(C)CC#CCN1CC(c2nnc(C(=O)Nn3c(C4OCC(O)C(O)C4O)nnc3C3OC(C(O)O)C(O)C(O)C3O)n2NC(=O)C2OCC(O)C(O)C2O)(C2OC(NC(N)=S)C(O)C(O)C2O)C1",
+      "evidence_excerpt": [
+        "target=C3",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C3",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C3::43023d91fd0d",
+      "task": "extreme_properties",
+      "utility": 0.951155,
+      "visible_context_excerpt": "RL-CC extrapolation target C3 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2NC(c3cc[nH]c(=N)n3)CCN(C3OC(C4C(c5c(-n6cnc7c(=N)[nH]cnc76)sc(N)c5-c5n[nH]c(=NC(=O)N6CC6)s5)OC(c5c(-c6n[nH]c(=NC(=O)N7CCNC(=O)C7)s6)sc(N)c5C5CNC5)C4O)C(O)C3N3CC(C4CNC(=O)C",
+      "evidence_excerpt": [
+        "target=C6",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C6",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C6::4a42870a01cb",
+      "task": "extreme_properties",
+      "utility": 0.864521,
+      "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(-c2c(C3NC(c4cc(O)c(C5OC(c6n[nH]c(=NC(=O)N7CCNC(=O)C7)s6)C(F)C5O)c(-n5cnc6c(=N)[nH]cnc65)c4)CCN(C(=O)CCC(=O)N4CCC(c5n[nH]c(=NC(=O)N6CCNC(=O)C6)s5)NC(C5CNC5)C4=O)C3=O)sc(N)c2",
+      "evidence_excerpt": [
+        "target=C6",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C6",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C6::0516fb7f9648",
+      "task": "extreme_properties",
+      "utility": 0.92968,
+      "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C1: CC#CCc1ccnc2cc(-c3ccc4c(c3)OCO4)c(-c3cnc(-c4nc5cnc(-c6ccc(C(C)(C)CO)c(C)c6)nc5n(-c5cc6c(=O)[nH]ccc6[nH]5)c4=O)nc3-c3cc(-c4nc(-c5cc6ccccc6cc5O)n5cc[nH]c(=N)c45)cnc3-c3cc4ccccc4cc3O)",
+      "evidence_excerpt": [
+        "target=C1",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C1",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C1::e32e4d4a9dd5",
+      "task": "extreme_properties",
+      "utility": 0.98646,
+      "visible_context_excerpt": "RL-CC extrapolation target C1 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2OC(CS)C(O)C2c2ccnc3[nH]c(C4OC(n5cnc6c(=N)[nH]cnc65)C(C5OC(c6n[nH]c(=NC(=O)N7CC7)s6)C(O)C5c5nc(C6CC(O)C(c7n[nH]c(=NC(=O)N8CCNC(=O)C8)s7)O6)[nH]c5-c5n[nH]c(=NC(=O)N6CCNC(=O",
+      "evidence_excerpt": [
+        "target=C6",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C6",
+      "label": 1,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C6::7524ebb7d790",
+      "task": "extreme_properties",
+      "utility": 0.952374,
+      "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2C(O)C(c3c(-c4n[nH]c(=NC(=O)N5CC5)s4)nc(-c4n[nH]c(=NC(=O)N5CCCC5C(=O)N=CCN5CC5)s4)[nH]c3=O)OC2C2C(C3OC(c4sc(N)c(CS)c4-n4c(=O)[nH]c5ccccc54)C(O)C3F)C(c3ccc4o[nH]c(=N)c4c3)O",
+      "evidence_excerpt": [
+        "target=C6",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C6",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C6::d8c7121ceafc",
+      "task": "extreme_properties",
+      "utility": 0.30368,
+      "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C8: Cc1ccc2[nH]c(=O)c(-c3nccc(-c4ccc5c(c4)c4ccccc4n5-c4cnc5[nH]c(=N)[nH]c(=N)c5n4)c3N3CCc4c(sc(-c5ccc6c(cc5=O)C(NC(=O)CN5C(=O)COc7ccc(S(=O)(=O)NC(=S)NNC(=O)c8nc(=N)[nH][nH]8)cc75)CCc5c",
+      "evidence_excerpt": [
+        "target=C8",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C8",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C8::2291586da3b7",
+      "task": "extreme_properties",
+      "utility": 0.22332,
+      "visible_context_excerpt": "RL-CC extrapolation target C8 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C10: C=CC1CC1C1C(c2cc(C=Cc3cccnc3)cc(-n3c(-c4ccc(C)cn4)nc4c3c(=O)n(C3(C)CC(C5C(N6CC(O)C(O)CNC6=O)CC(C)(c6cc(=NCO)[nH][nH]6)C(=O)N5C(=O)CCC(F)(F)F)C(n5c(O)c6c(c5O)C5C=CC6C5)N(C5NC(=O)C(C",
+      "evidence_excerpt": [
+        "target=C10",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C10",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C10::a9a378ca469c",
+      "task": "extreme_properties",
+      "utility": 0.464061,
+      "visible_context_excerpt": "RL-CC extrapolation target C10 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C5: CCCCC(=O)N1C(=O)N(C(=O)C(Cc2ccc(N=c3nc4c(ccn4-c4c(C5NC(=O)N(c6cc(=NC=O)n(-c7cc(=NC(O)n8ccc(=NCO)[nH]8)[nH][nH]7)[nH]6)C(c6ccc7ncnn7c6)C(O)C5O)ccc(C=Cc5ccncc5)c4NC4=NC(=O)C(=Cc5ccnc",
+      "evidence_excerpt": [
+        "target=C5",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C5",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C5::0e122f145379",
+      "task": "extreme_properties",
+      "utility": 0.678385,
+      "visible_context_excerpt": "RL-CC extrapolation target C5 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C4: CCC(C(=O)NC(=N)N)C1OC(C(CC(=O)N2CCNC(=O)C2)c2oc3cc(C(CC(=O)NC(=N)N)c4c[nH]c(=N)[nH]c4=N)c(CCCCO)cc3c2N2C(=O)NC(C(CC(=O)NC)N3C(=O)NC(c4c(C5OC(C(=O)C(N)=O)C(O)C(O)C5O)csc4C4SCC5NC(=O",
+      "evidence_excerpt": [
+        "target=C4",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C4",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C4::faae1a3684b6",
+      "task": "extreme_properties",
+      "utility": 0.430814,
+      "visible_context_excerpt": "RL-CC extrapolation target C4 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    },
+    {
+      "candidate_action_excerpt": "Advance generated molecule for target C10: CCCCCCCC(=O)N1C(=O)C(C)(C2C(O)C(O)C(N3CC(O)C(O)C(CC(F)F)NC3=O)N(C3C(O)C(O)C(c4cc(=NCO)[nH]n4-c4cc(=NC=O)[nH][nH]4)NC(=O)N3CC)C(=O)N2C(=O)CCCCCCC)CC(N2C(=O)C(C)(N3C(=O)NC(n4ccc(=NCO",
+      "evidence_excerpt": [
+        "target=C10",
+        "outcome withheld",
+        "outcome withheld"
+      ],
+      "group_id": "rlcc_extreme::C10",
+      "label": 0,
+      "label_source": "rlcc_table1_target_hit_bounds",
+      "record_id": "extreme-rlcc::C10::57c921a4bd51",
+      "task": "extreme_properties",
+      "utility": 0.356782,
+      "visible_context_excerpt": "RL-CC extrapolation target C10 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+    }
+  ],
+  "schema": "label-utility-audit-v1",
+  "tasks": {
+    "discover_unique": {
+      "consistency": {
+        "label_failures_preview": [],
+        "label_mismatch_count": 0,
+        "negative_records_with_positive_utility": 9888,
+        "pairwise_tie_count": 0,
+        "positive_records_with_zero_utility": 0,
+        "utility_failures_preview": [],
+        "utility_mismatch_count": 0
+      },
+      "converted_records": 10987,
+      "groups": 7,
+      "label_sources": [
+        "top_decile_discover_unique_score_proxy"
+      ],
+      "leakage": {
+        "missing_excluded_oracle_key_count": 0,
+        "missing_excluded_oracle_key_preview": [],
+        "raw_oracle_key_count": 109870,
+        "visible_text_forbidden_count": 0,
+        "visible_text_forbidden_preview": []
+      },
+      "positive_rate": 0.10002730499681442,
+      "raw_records": 10987,
+      "sample_records": [
+        {
+          "candidate_action_excerpt": "Screen Be1 Al1 Ir2 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Be1 Al1 Ir2",
+            "property estimate",
+            "space_group=225"
+          ],
+          "group_id": "discover::matbench_log_kvrh::cubic",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-00992",
+          "task": "discover_unique",
+          "utility": 0.486619,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Be1 Al1 Ir2; crystal system: cubic; space group: 225."
+        },
+        {
+          "candidate_action_excerpt": "Screen Np1 Rh3 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Np1 Rh3",
+            "property estimate",
+            "space_group=221"
+          ],
+          "group_id": "discover::matbench_log_kvrh::cubic",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-00678",
+          "task": "discover_unique",
+          "utility": 0.593249,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Np1 Rh3; crystal system: cubic; space group: 221."
+        },
+        {
+          "candidate_action_excerpt": "Screen Tb2 B4 C4 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Tb2 B4 C4",
+            "property estimate",
+            "space_group=127"
+          ],
+          "group_id": "discover::matbench_log_kvrh::tetragonal",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-04102",
+          "task": "discover_unique",
+          "utility": 0.490855,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Tb2 B4 C4; crystal system: tetragonal; space group: 127."
+        },
+        {
+          "candidate_action_excerpt": "Screen Ta4 Fe8 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Ta4 Fe8",
+            "property estimate",
+            "space_group=194"
+          ],
+          "group_id": "discover::matbench_log_kvrh::hexagonal",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-05343",
+          "task": "discover_unique",
+          "utility": 0.487476,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ta4 Fe8; crystal system: hexagonal; space group: 194."
+        },
+        {
+          "candidate_action_excerpt": "Screen Ta2 Pt4 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Ta2 Pt4",
+            "property estimate",
+            "space_group=63"
+          ],
+          "group_id": "discover::matbench_log_kvrh::orthorhombic",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-04911",
+          "task": "discover_unique",
+          "utility": 0.497166,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ta2 Pt4; crystal system: orthorhombic; space group: 63."
+        },
+        {
+          "candidate_action_excerpt": "Screen Mo2 Ir6 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Mo2 Ir6",
+            "property estimate",
+            "space_group=194"
+          ],
+          "group_id": "discover::matbench_log_kvrh::hexagonal",
+          "label": 1,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-04358",
+          "task": "discover_unique",
+          "utility": 0.541344,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Mo2 Ir6; crystal system: hexagonal; space group: 194."
+        },
+        {
+          "candidate_action_excerpt": "Screen Ti2 Tc1 Ni1 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Ti2 Tc1 Ni1",
+            "property estimate",
+            "space_group=225"
+          ],
+          "group_id": "discover::matbench_log_kvrh::cubic",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-05890",
+          "task": "discover_unique",
+          "utility": 0.46235,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti2 Tc1 Ni1; crystal system: cubic; space group: 225."
+        },
+        {
+          "candidate_action_excerpt": "Screen Si2 Ru1 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Si2 Ru1",
+            "property estimate",
+            "space_group=123"
+          ],
+          "group_id": "discover::matbench_log_kvrh::tetragonal",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-10833",
+          "task": "discover_unique",
+          "utility": 0.450448,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Si2 Ru1; crystal system: tetragonal; space group: 123."
+        },
+        {
+          "candidate_action_excerpt": "Screen Yb2 Au6 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Yb2 Au6",
+            "property estimate",
+            "space_group=59"
+          ],
+          "group_id": "discover::matbench_log_kvrh::orthorhombic",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-02398",
+          "task": "discover_unique",
+          "utility": 0.428881,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Yb2 Au6; crystal system: orthorhombic; space group: 59."
+        },
+        {
+          "candidate_action_excerpt": "Screen Ti2 Ni2 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Ti2 Ni2",
+            "property estimate",
+            "space_group=51"
+          ],
+          "group_id": "discover::matbench_log_kvrh::orthorhombic",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-08665",
+          "task": "discover_unique",
+          "utility": 0.426447,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti2 Ni2; crystal system: orthorhombic; space group: 51."
+        },
+        {
+          "candidate_action_excerpt": "Screen Th1 Sn1 Pt1 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Th1 Sn1 Pt1",
+            "property estimate",
+            "space_group=216"
+          ],
+          "group_id": "discover::matbench_log_kvrh::cubic",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-02806",
+          "task": "discover_unique",
+          "utility": 0.435426,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Th1 Sn1 Pt1; crystal system: cubic; space group: 216."
+        },
+        {
+          "candidate_action_excerpt": "Screen Ti1 Zn1 Au2 as a high-performance, chemically unique material candidate.",
+          "evidence_excerpt": [
+            "Ti1 Zn1 Au2",
+            "property estimate",
+            "space_group=225"
+          ],
+          "group_id": "discover::matbench_log_kvrh::cubic",
+          "label": 0,
+          "label_source": "top_decile_discover_unique_score_proxy",
+          "record_id": "unique-material::mb-log-kvrh-06087",
+          "task": "discover_unique",
+          "utility": 0.423833,
+          "visible_context_excerpt": "DiSCoVeR-style task: screen a Materials Project elasticity candidate for high bulk modulus and chemical uniqueness. Composition: Ti1 Zn1 Au2; crystal system: cubic; space group: 225."
+        }
+      ],
+      "utility_distribution": {
+        "max": 0.738414,
+        "mean": 0.3998419365613907,
+        "min": 0.046231,
+        "std": 0.06701701543007077
+      }
+    },
+    "extreme_properties": {
+      "consistency": {
+        "label_failures_preview": [],
+        "label_mismatch_count": 0,
+        "negative_records_with_positive_utility": 1682,
+        "pairwise_tie_count": 0,
+        "positive_records_with_zero_utility": 0,
+        "utility_failures_preview": [],
+        "utility_mismatch_count": 0
+      },
+      "converted_records": 2000,
+      "groups": 10,
+      "label_sources": [
+        "rlcc_table1_target_hit_bounds"
+      ],
+      "leakage": {
+        "missing_excluded_oracle_key_count": 0,
+        "missing_excluded_oracle_key_preview": [],
+        "raw_oracle_key_count": 18000,
+        "visible_text_forbidden_count": 0,
+        "visible_text_forbidden_preview": []
+      },
+      "positive_rate": 0.1565,
+      "raw_records": 2000,
+      "sample_records": [
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C3: CN(C)C1C(O)C(O)C(O)CN1C1OC(c2nnc(-c3ccc4[nH]nc(C5OC(C6CNC6)C(O)C(O)C5N)c4c3)n2NC(=O)C2OC(N3CC(O)C(O)C(O)C3C(=O)[O-])C(O)C(O)C2O)C(O)C(O)C1O",
+          "evidence_excerpt": [
+            "target=C3",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C3",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C3::80cdd970dc65",
+          "task": "extreme_properties",
+          "utility": 0.944917,
+          "visible_context_excerpt": "RL-CC extrapolation target C3 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C3: CN(C)CC#CCN1CC(c2nnc(C(=O)Nn3c(C4OCC(O)C(O)C4O)nnc3C3OC(C(O)O)C(O)C(O)C3O)n2NC(=O)C2OCC(O)C(O)C2O)(C2OC(NC(N)=S)C(O)C(O)C2O)C1",
+          "evidence_excerpt": [
+            "target=C3",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C3",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C3::43023d91fd0d",
+          "task": "extreme_properties",
+          "utility": 0.951155,
+          "visible_context_excerpt": "RL-CC extrapolation target C3 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2NC(c3cc[nH]c(=N)n3)CCN(C3OC(C4C(c5c(-n6cnc7c(=N)[nH]cnc76)sc(N)c5-c5n[nH]c(=NC(=O)N6CC6)s5)OC(c5c(-c6n[nH]c(=NC(=O)N7CCNC(=O)C7)s6)sc(N)c5C5CNC5)C4O)C(O)C3N3CC(C4CNC(=O)C",
+          "evidence_excerpt": [
+            "target=C6",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C6",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C6::4a42870a01cb",
+          "task": "extreme_properties",
+          "utility": 0.864521,
+          "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(-c2c(C3NC(c4cc(O)c(C5OC(c6n[nH]c(=NC(=O)N7CCNC(=O)C7)s6)C(F)C5O)c(-n5cnc6c(=N)[nH]cnc65)c4)CCN(C(=O)CCC(=O)N4CCC(c5n[nH]c(=NC(=O)N6CCNC(=O)C6)s5)NC(C5CNC5)C4=O)C3=O)sc(N)c2",
+          "evidence_excerpt": [
+            "target=C6",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C6",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C6::0516fb7f9648",
+          "task": "extreme_properties",
+          "utility": 0.92968,
+          "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C1: CC#CCc1ccnc2cc(-c3ccc4c(c3)OCO4)c(-c3cnc(-c4nc5cnc(-c6ccc(C(C)(C)CO)c(C)c6)nc5n(-c5cc6c(=O)[nH]ccc6[nH]5)c4=O)nc3-c3cc(-c4nc(-c5cc6ccccc6cc5O)n5cc[nH]c(=N)c45)cnc3-c3cc4ccccc4cc3O)",
+          "evidence_excerpt": [
+            "target=C1",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C1",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C1::e32e4d4a9dd5",
+          "task": "extreme_properties",
+          "utility": 0.98646,
+          "visible_context_excerpt": "RL-CC extrapolation target C1 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2OC(CS)C(O)C2c2ccnc3[nH]c(C4OC(n5cnc6c(=N)[nH]cnc65)C(C5OC(c6n[nH]c(=NC(=O)N7CC7)s6)C(O)C5c5nc(C6CC(O)C(c7n[nH]c(=NC(=O)N8CCNC(=O)C8)s7)O6)[nH]c5-c5n[nH]c(=NC(=O)N6CCNC(=O",
+          "evidence_excerpt": [
+            "target=C6",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C6",
+          "label": 1,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C6::7524ebb7d790",
+          "task": "extreme_properties",
+          "utility": 0.952374,
+          "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C6: N=c1ccc(C2C(O)C(c3c(-c4n[nH]c(=NC(=O)N5CC5)s4)nc(-c4n[nH]c(=NC(=O)N5CCCC5C(=O)N=CCN5CC5)s4)[nH]c3=O)OC2C2C(C3OC(c4sc(N)c(CS)c4-n4c(=O)[nH]c5ccccc54)C(O)C3F)C(c3ccc4o[nH]c(=N)c4c3)O",
+          "evidence_excerpt": [
+            "target=C6",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C6",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C6::d8c7121ceafc",
+          "task": "extreme_properties",
+          "utility": 0.30368,
+          "visible_context_excerpt": "RL-CC extrapolation target C6 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C8: Cc1ccc2[nH]c(=O)c(-c3nccc(-c4ccc5c(c4)c4ccccc4n5-c4cnc5[nH]c(=N)[nH]c(=N)c5n4)c3N3CCc4c(sc(-c5ccc6c(cc5=O)C(NC(=O)CN5C(=O)COc7ccc(S(=O)(=O)NC(=S)NNC(=O)c8nc(=N)[nH][nH]8)cc75)CCc5c",
+          "evidence_excerpt": [
+            "target=C8",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C8",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C8::2291586da3b7",
+          "task": "extreme_properties",
+          "utility": 0.22332,
+          "visible_context_excerpt": "RL-CC extrapolation target C8 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C10: C=CC1CC1C1C(c2cc(C=Cc3cccnc3)cc(-n3c(-c4ccc(C)cn4)nc4c3c(=O)n(C3(C)CC(C5C(N6CC(O)C(O)CNC6=O)CC(C)(c6cc(=NCO)[nH][nH]6)C(=O)N5C(=O)CCC(F)(F)F)C(n5c(O)c6c(c5O)C5C=CC6C5)N(C5NC(=O)C(C",
+          "evidence_excerpt": [
+            "target=C10",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C10",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C10::a9a378ca469c",
+          "task": "extreme_properties",
+          "utility": 0.464061,
+          "visible_context_excerpt": "RL-CC extrapolation target C10 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C5: CCCCC(=O)N1C(=O)N(C(=O)C(Cc2ccc(N=c3nc4c(ccn4-c4c(C5NC(=O)N(c6cc(=NC=O)n(-c7cc(=NC(O)n8ccc(=NCO)[nH]8)[nH][nH]7)[nH]6)C(c6ccc7ncnn7c6)C(O)C5O)ccc(C=Cc5ccncc5)c4NC4=NC(=O)C(=Cc5ccnc",
+          "evidence_excerpt": [
+            "target=C5",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C5",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C5::0e122f145379",
+          "task": "extreme_properties",
+          "utility": 0.678385,
+          "visible_context_excerpt": "RL-CC extrapolation target C5 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C4: CCC(C(=O)NC(=N)N)C1OC(C(CC(=O)N2CCNC(=O)C2)c2oc3cc(C(CC(=O)NC(=N)N)c4c[nH]c(=N)[nH]c4=N)c(CCCCO)cc3c2N2C(=O)NC(C(CC(=O)NC)N3C(=O)NC(c4c(C5OC(C(=O)C(N)=O)C(O)C(O)C5O)csc4C4SCC5NC(=O",
+          "evidence_excerpt": [
+            "target=C4",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C4",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C4::faae1a3684b6",
+          "task": "extreme_properties",
+          "utility": 0.430814,
+          "visible_context_excerpt": "RL-CC extrapolation target C4 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        },
+        {
+          "candidate_action_excerpt": "Advance generated molecule for target C10: CCCCCCCC(=O)N1C(=O)C(C)(C2C(O)C(O)C(N3CC(O)C(O)C(CC(F)F)NC3=O)N(C3C(O)C(O)C(c4cc(=NCO)[nH]n4-c4cc(=NC=O)[nH][nH]4)NC(=O)N3CC)C(=O)N2C(=O)CCCCCCC)CC(N2C(=O)C(C)(N3C(=O)NC(n4ccc(=NCO",
+          "evidence_excerpt": [
+            "target=C10",
+            "outcome withheld",
+            "outcome withheld"
+          ],
+          "group_id": "rlcc_extreme::C10",
+          "label": 0,
+          "label_source": "rlcc_table1_target_hit_bounds",
+          "record_id": "extreme-rlcc::C10::57c921a4bd51",
+          "task": "extreme_properties",
+          "utility": 0.356782,
+          "visible_context_excerpt": "RL-CC extrapolation target C10 from PubChem SARS-CoV-2 clinical-trial molecules. The candidate should hit MW, logP, TPSA, QED, HBA, HBD, and DRD2 within the paper's Table 1 RMSE bounds."
+        }
+      ],
+      "utility_distribution": {
+        "max": 1.0,
+        "mean": 0.687824305,
+        "min": 0.0,
+        "std": 0.21172371622638067
+      }
+    },
+    "matbench_pairwise": {
+      "consistency": {
+        "label_failures_preview": [],
+        "label_mismatch_count": 0,
+        "negative_records_with_positive_utility": 0,
+        "pairwise_tie_count": 0,
+        "positive_records_with_zero_utility": 0,
+        "utility_failures_preview": [],
+        "utility_mismatch_count": 0
+      },
+      "converted_records": 8000,
+      "groups": 28,
+      "label_sources": [
+        "matbench_log_kvrh_pairwise_property_comparison"
+      ],
+      "leakage": {
+        "missing_excluded_oracle_key_count": 0,
+        "missing_excluded_oracle_key_preview": [],
+        "raw_oracle_key_count": 0,
+        "visible_text_forbidden_count": 0,
+        "visible_text_forbidden_preview": []
+      },
+      "positive_rate": 0.553375,
+      "raw_records": 8000,
+      "sample_records": [
+        {
+          "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.2072"
+          ],
+          "group_id": "matbench_pairwise::same::trigonal_vs_trigonal",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::14523464c75f",
+          "task": "matbench_pairwise",
+          "utility": 0.013865617984964218,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Pb1 Au1 O2; crystal system: trigonal; space group: 166; surrogate bulk-modulus tier: high. Candidate B: Composition: Ba3 Zn3 O6; crystal system: trigonal; space group: 152; \u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=medium",
+            "surrogate_margin=0.6182"
+          ],
+          "group_id": "matbench_pairwise::same::trigonal_vs_trigonal",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::960b56a9d595",
+          "task": "matbench_pairwise",
+          "utility": 0.010857547026010661,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Zn1 Re2 O8; crystal system: trigonal; space group: 147; surrogate bulk-modulus tier: high. Candidate B: Composition: Sc2 Cl2; crystal system: trigonal; space group: 166; sur\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=medium",
+            "B_surrogate_tier=low",
+            "surrogate_margin=0.3944"
+          ],
+          "group_id": "matbench_pairwise::same::cubic_vs_cubic",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::4c7bcfeef824",
+          "task": "matbench_pairwise",
+          "utility": 0.19509264944112414,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Hf1 N1; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: medium. Candidate B: Composition: Cu1 S1; crystal system: cubic; space group: 216; surrogate bu\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=low",
+            "surrogate_margin=0.7162"
+          ],
+          "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::33895fa0e4ba",
+          "task": "matbench_pairwise",
+          "utility": 0.0038152659278256618,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Dy1 B2; crystal system: hexagonal; space group: 191; surrogate bulk-modulus tier: high. Candidate B: Composition: Tb1 B2; crystal system: hexagonal; space group: 191; surrog\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=medium",
+            "B_surrogate_tier=medium",
+            "surrogate_margin=0.1257"
+          ],
+          "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::e639e77f0c96",
+          "task": "matbench_pairwise",
+          "utility": 0.18947162293614417,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: In4 Se4; crystal system: hexagonal; space group: 194; surrogate bulk-modulus tier: medium. Candidate B: Composition: Rb4; crystal system: hexagonal; space group: 194; surrog\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.0231"
+          ],
+          "group_id": "matbench_pairwise::cross::hexagonal_vs_monoclinic",
+          "label": 1,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::89d83867158c",
+          "task": "matbench_pairwise",
+          "utility": 0.31097704013480393,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Li4 Zr2 O6; crystal system: monoclinic; space group: 15; surrogate bulk-modulus tier: high. Candidate B: Composition: Li3; crystal system: hexagonal; space group: 191; surro\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=medium",
+            "B_surrogate_tier=medium",
+            "surrogate_margin=0.1742"
+          ],
+          "group_id": "matbench_pairwise::same::tetragonal_vs_tetragonal",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::12ea6e0c588a",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Ba4 S6; crystal system: tetragonal; space group: 109; surrogate bulk-modulus tier: medium. Candidate B: Composition: Ag1 I1; crystal system: tetragonal; space group: 119; su\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=medium",
+            "surrogate_margin=0.4337"
+          ],
+          "group_id": "matbench_pairwise::same::cubic_vs_cubic",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::eaf6c84640a3",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Cd1 F2; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: high. Candidate B: Composition: Tm1 Pa1 Tc2; crystal system: cubic; space group: 225; surrogate\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.0845"
+          ],
+          "group_id": "matbench_pairwise::cross::cubic_vs_monoclinic",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::618ab362be93",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: K1 Na2 Bi1; crystal system: cubic; space group: 225; surrogate bulk-modulus tier: high. Candidate B: Composition: B48 O6; crystal system: monoclinic; space group: 12; surrog\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=low",
+            "surrogate_margin=0.7502"
+          ],
+          "group_id": "matbench_pairwise::same::tetragonal_vs_tetragonal",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::e81caa746bad",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Be2 Si2 N4; crystal system: tetragonal; space group: 122; surrogate bulk-modulus tier: high. Candidate B: Composition: Si2 B4 Mo10; crystal system: tetragonal; space group: \u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate B for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=low",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.9384"
+          ],
+          "group_id": "matbench_pairwise::same::hexagonal_vs_hexagonal",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::6ab6bcbf0028",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Eu2 Cl6; crystal system: hexagonal; space group: 176; surrogate bulk-modulus tier: low. Candidate B: Composition: Li5 Mg1; crystal system: hexagonal; space group: 189; surro\u2026"
+        },
+        {
+          "candidate_action_excerpt": "Choose candidate A for high-bulk-modulus materials follow-up.",
+          "evidence_excerpt": [
+            "A_surrogate_tier=high",
+            "B_surrogate_tier=high",
+            "surrogate_margin=0.0778"
+          ],
+          "group_id": "matbench_pairwise::cross::hexagonal_vs_orthorhombic",
+          "label": 0,
+          "label_source": "matbench_log_kvrh_pairwise_property_comparison",
+          "record_id": "matbench-pairwise::5ad245da7cc6",
+          "task": "matbench_pairwise",
+          "utility": 0.0,
+          "visible_context_excerpt": "Matbench elasticity pairwise follow-up. Candidate A: Composition: Ga2 As2; crystal system: hexagonal; space group: 186; surrogate bulk-modulus tier: high. Candidate B: Composition: Sc4 Si4 Pt4; crystal system: orthorhombic; space group: 62\u2026"
+        }
+      ],
+      "utility_distribution": {
+        "max": 0.8127927616389782,
+        "mean": 0.04426718068846711,
+        "min": 0.0,
+        "std": 0.09393006296885317
+      }
+    }
+  }
+}

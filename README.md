@@ -7,7 +7,7 @@ Runtime uncertainty harness for scientific agents in materials discovery.
 - Turns each scientific action into an `ActionRecord` with visible context, evidence, feature signals, and a binary label for whether the action was worth executing.
 - Trains a transparent `LogisticGate` to estimate `P(action worth doing)`.
 - Routes low-confidence actions to `retrieve_more`, `simulate`, `ask_expert`, or `abstain` instead of forcing a bad proceed.
-- Ships three offline benchmarks aligned with our paper targets: pairwise optimization, unique-material discovery, and extreme-property discovery.
+- Ships three main offline materials benchmarks aligned with our paper targets: Matbench material pairwise preference, DiSCoVeR-style unique-material discovery, and RL-CC extreme-property discovery.
 - Provides an RHI-MatSci loop that evolves the scientific agent's prompt-level contracts and orchestrator hops from trajectory feedback, then accepts or rejects each revision on held-out actions.
 - Adds Sci-VoI-RHI, an executable value-of-information harness that estimates reliability, scientific utility, epistemic uncertainty, verification value, and action cost before routing the next step.
 
@@ -23,11 +23,13 @@ Use JSONL with one `ActionRecord` per line. Key fields:
 
 ## Data provenance
 
-The main offline benchmark contains 15,717 paper-artifact / benchmark-derived
-action proxies from three public task families: González et al. preferential BO,
-DiSCoVeR-style unique-material screening with Matbench `log10(K_VRH)`, and
-RL-CC extreme-property molecule generation. It is not live MatBot trajectory
-logging and not manual extraction of 15,717 PDF actions.
+The main offline materials benchmark contains 20,987 paper-artifact /
+benchmark-derived action proxies from three public materials / chemical task
+families: Matbench material pairwise preference, DiSCoVeR-style unique-material
+screening with Matbench `log10(K_VRH)`, and RL-CC extreme-property molecule
+generation. It is not live MatBot trajectory logging and not manual extraction
+of PDF actions. The older González et al. PBO data is retained only as an
+auxiliary controlled optimization sanity check, not as a materials benchmark.
 
 Full data lineage, public URLs, label equations, leakage controls, examples,
 and reproduction commands are documented in
@@ -39,6 +41,18 @@ Generate a benchmark dataset:
 
 ```bash
 python -m harness_matsci make-benchmark --benchmark preferential_bo --out data/preferential_bo.jsonl
+```
+
+Generate the real-material Matbench pairwise preference data:
+
+```bash
+PYTHONPATH=src python3 -m harness_matsci.matbench_pairwise \
+  --source-path /Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks/cache/matbench_log_kvrh.json.bz2 \
+  --out /Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks/matbench_pairwise_actions.jsonl \
+  --n-pairs 8000 \
+  --seed 1729 \
+  --min-true-gap 0.003 \
+  --update-summary
 ```
 
 Train a gate:
@@ -176,7 +190,7 @@ PYTHONPATH=src python3 -m harness_matsci.hybrid_judge \
 This hybrid experiment uses cached `gpt-5.5` one-shot judge scores as a
 semantic sensor and evaluates whether local VoI calibration/blending improves
 the action-worthiness score. It is a 500-record subset result, not the full
-15,717-record held-out-regime protocol.
+main-materials held-out-regime protocol.
 
 Run the first historical-paper bootstrap experiment:
 
@@ -218,13 +232,14 @@ and `runs/rhi_experiments_v5_evolution/RESULTS.md` remain important diagnostic
 references. They show that the original reliability-only RHI mutation is active
 but does not produce a positive H0-to-H3 improvement.
 
-The current positive method result is Sci-VoI-RHI in
-`runs/scivoi_rhi_v1/README.md`. The direct RHI-style executable VoI variant
-(`scivoi_policy_always_accept`) achieves net utility `0.6443 ± 0.2052` and
-selective risk `0.1600` over 105 paired held-out-regime folds. It improves over
-original RHI by `+0.0808` utility and over static full reliability by `+0.0809`.
-It is utility-comparable to static utility/VoI heads while being substantially
-safer.
+The preserved positive method result is Sci-VoI-RHI in
+`runs/scivoi_rhi_v1/README.md`. That run used the earlier 15,717-record setup
+that included auxiliary PBO. The direct RHI-style executable VoI variant
+(`scivoi_policy_always_accept`) achieved net utility `0.6443 ± 0.2052` and
+selective risk `0.1600` over 105 paired held-out-regime folds. The main
+materials benchmark has since been updated to replace PBO with
+`matbench_pairwise`; full paper-scale Sci-VoI results on the new 20,987-record
+main materials setup still need to be rerun.
 
 The related-work baseline sweep in
 `runs/related_work_baselines_v1/SCIVOI_COMPARISON.md` adds random/cost sanity
@@ -244,9 +259,9 @@ must be run with an explicitly configured API model.
 The current real direct-judge result is a 500-record `gpt-5.5` subset in
 `runs/direct_judge_subset500_v1/README.md`: score `0.3602`, Risk@10% `0.3462`,
 hit rate `0.6800`, and ECE `0.1548`. This strong one-shot judge beats the
-current quick same-subset Sci-VoI score on top-k ranking, while Sci-VoI remains
-better supported on the full 15,717-record held-out-regime protocol and shows
-lower calibration error in the same-subset check. A 100-record
+current quick same-subset Sci-VoI score on top-k ranking. This result should be
+reported separately from both the preserved legacy full run and the updated
+20,987-record main materials setup. A 100-record
 `gpt-5.6-luna` attempt is documented in
 `runs/direct_judge_subset100_gpt56luna_v1/README.md`; the provider currently
 returns HTTP `429`, so it is not counted as a completed model result. Gateway

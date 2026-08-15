@@ -8,7 +8,7 @@ from pathlib import Path
 from statistics import mean, pstdev
 from typing import Any
 
-from .historical import HISTORICAL_TASK_FILES
+from .historical import MAIN_MATERIAL_TASKS
 from .voi_experiments import VoIExperimentConfig, run_voi_experiment_suite
 
 
@@ -41,7 +41,7 @@ MECHANISM_COMPARISONS = (
 @dataclass(frozen=True)
 class MechanismAblationConfig:
     data_dir: str
-    tasks: tuple[str, ...] = tuple(HISTORICAL_TASK_FILES)
+    tasks: tuple[str, ...] = MAIN_MATERIAL_TASKS
     seeds: tuple[int, ...] = (1, 7, 13, 21, 42)
     iterations: int = 3
     budget_fraction: float = 0.1
