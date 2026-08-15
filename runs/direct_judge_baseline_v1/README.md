@@ -2,9 +2,25 @@
 
 ## Status
 
-Protocol and implementation are ready. A formal score table is intentionally
-not included until an OpenAI-compatible model and API key are explicitly
-configured. No mock scores are reported as scientific results.
+Protocol and implementation are ready. The client now uses the current
+`gpt-5.5` / `https://www.hi-code.cc` Responses configuration and sends
+OpenAI/browser-compatible request headers so the gateway does not reject Python
+`urllib` traffic as a bot request. A small end-to-end smoke run is stored in
+`runs/direct_judge_smoke_v1/`; it is not a formal paper result. A real
+500-record `gpt-5.5` subset result is stored in
+`runs/direct_judge_subset500_v1/`. No mock scores are reported as scientific
+results.
+
+## Current Real Runs
+
+| Run | Model | Status | Key result |
+| --- | --- | --- | --- |
+| `runs/direct_judge_subset500_v1/` | `gpt-5.5` | complete | score `0.3602`, Risk@10% `0.3462`, hit rate `0.6800`, ECE `0.1548` on 500 records. |
+| `runs/direct_judge_subset100_gpt56luna_v1/` | `gpt-5.6-luna` | blocked | provider returns HTTP `429`; same-100 cached `gpt-5.5` control gives score `0.3484`, Risk@10% `0.2000`, hit rate `0.8000`. |
+
+Single-record gateway smoke checks currently pass for `gpt-5.5`, `gpt-5.4`,
+and `gpt-5.4-mini`. `gpt-5.3-codex` and `gpt-5.2` return provider `503`, and
+`gpt-5.6-luna` returns provider `429`.
 
 ## Definition
 
@@ -23,8 +39,8 @@ used to calibrate the direct judge.
 
 ```bash
 export OPENAI_API_KEY=...
-export OPENAI_MODEL=gpt-5.6-luna
-export OPENAI_BASE_URL=https://coding.beehears.com
+export OPENAI_MODEL=gpt-5.5
+export OPENAI_BASE_URL=https://www.hi-code.cc
 export OPENAI_REASONING_EFFORT=xhigh
 PYTHONPATH=src python3 -m harness_matsci experiment-suite \
   --data-dir /path/to/material_discovery_tasks \

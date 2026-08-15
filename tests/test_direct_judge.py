@@ -53,7 +53,7 @@ class DirectJudgeTests(unittest.TestCase):
             self.assertEqual(len(calls), 1)
             self.assertEqual(json.loads(cache.read_text())["scores"]["r1"], 0.73)
 
-    def test_uses_responses_wire_and_gpt54_defaults(self) -> None:
+    def test_uses_responses_wire_and_provider_defaults(self) -> None:
         requests: list[Request] = []
 
         def request(request: Request, timeout: float) -> bytes:
@@ -68,15 +68,18 @@ class DirectJudgeTests(unittest.TestCase):
             environ={"OPENAI_API_KEY": "test-key"},
             request_fn=request,
         )
-        self.assertEqual(judge.model, "gpt-5.6-luna")
-        self.assertEqual(judge.base_url, "https://coding.beehears.com")
+        self.assertEqual(judge.model, "gpt-5.5")
+        self.assertEqual(judge.base_url, "https://www.hi-code.cc")
         self.assertEqual(judge.reasoning_effort, "xhigh")
         self.assertEqual(judge.score_records([self._record()]), {"r1": 0.61})
         self.assertTrue(requests[0].full_url.endswith("/responses"))
         body = json.loads(requests[0].data)
-        self.assertEqual(body["model"], "gpt-5.6-luna")
+        self.assertEqual(body["model"], "gpt-5.5")
         self.assertEqual(body["reasoning"], {"effort": "xhigh"})
         self.assertFalse(body["store"])
+        self.assertIn("application/json", requests[0].headers["Accept"])
+        self.assertNotIn("Python-urllib", requests[0].headers["User-agent"])
+        self.assertEqual(requests[0].headers["Openai-beta"], "responses=v1")
 
     def test_fake_direct_judge_is_reported_in_suite(self) -> None:
         def fake_judge(records: list[ActionRecord]) -> dict[str, float]:

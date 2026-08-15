@@ -22,6 +22,9 @@ MatBot trajectory outcomes.
 | `paper_bootstrap_v1_multiseed/` | First paper-derived weak-label bootstrap on 500 electrolyte action records across five seeds. | Demonstrates feasibility of historical-paper action labels and records domain/group-shift limitations. |
 | `label_audit_v1/` | Full historical label/utility consistency and leakage audit. | Confirms the proxy labels and utilities are internally reproducible and that oracle fields are withheld from visible text. |
 | `direct_judge_baseline_v1/` | One-shot direct LLM-as-judge baseline protocol. | Preserves the baseline definition without publishing mock scores; generated score caches are intentionally not committed. |
+| `direct_judge_smoke_v1/` | End-to-end smoke run for the configured `gpt-5.5` judge client. | Confirms the real provider path works after adding gateway-safe request headers; not treated as a formal benchmark result. |
+| `direct_judge_subset500_v1/` | Balanced 500-record historical subset scored by `gpt-5.5` direct judge. | Provides a real LLM-as-judge subset comparison against verbal-confidence and evidence-heuristic baselines; not a replacement for the full 15,717-record run. |
+| `direct_judge_subset100_gpt56luna_v1/` | Balanced 100-record subset prepared for `gpt-5.6-luna` direct judge. | Documents that `gpt-5.6-luna` is currently blocked by provider `429`; includes a same-100 cached `gpt-5.5` control with score `0.3484` and Risk@10% `0.2000`. |
 
 ## Reading Order
 
@@ -33,6 +36,8 @@ For paper writing or result comparison, read:
 4. `rhi_experiments_v4/RESULTS.md` for the broader reliability-only diagnostic suite.
 5. `paper_bootstrap_v1_multiseed/README.md` for historical-paper weak-label evidence.
 6. `direct_judge_baseline_v1/README.md` for the direct LLM judge baseline protocol.
+7. `direct_judge_subset500_v1/README.md` for the current real `gpt-5.5` subset result.
+8. `direct_judge_subset100_gpt56luna_v1/README.md` for the attempted `gpt-5.6-luna` run and model-availability notes.
 
 ## Claim Boundaries
 

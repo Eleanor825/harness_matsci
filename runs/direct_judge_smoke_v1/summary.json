@@ -1,0 +1,3382 @@
+{
+  "baselines": {
+    "llm_direct_judge": {
+      "calibration": "validation/feedback split only",
+      "enabled": true,
+      "model": "gpt-5.5",
+      "test_access": "visible_context, candidate_action, and pre-execution evidence only"
+    }
+  },
+  "config": {
+    "acceptance_fraction": 0.1,
+    "alpha": 0.1,
+    "budget_fraction": 0.1,
+    "data_dir": null,
+    "direct_judge_base_url": "https://www.hi-code.cc",
+    "direct_judge_cache": "runs/direct_judge_cache/smoke_scores.json",
+    "direct_judge_model": "gpt-5.5",
+    "direct_judge_reasoning_effort": "xhigh",
+    "direct_judge_retries": 3,
+    "direct_judge_timeout": 90.0,
+    "epochs": 240,
+    "experiments": [
+      1
+    ],
+    "feedback_fraction": 0.15,
+    "l2": 0.001,
+    "learning_rate": 0.08,
+    "min_coverage": 0.1,
+    "n_per_task": 80,
+    "rhi_epsilon": 0.01,
+    "rhi_iterations": 3,
+    "seeds": [
+      1
+    ],
+    "tasks": [
+      "discover_unique"
+    ],
+    "train_fraction": 0.6,
+    "val_fraction": 0.2
+  },
+  "data_audit": {
+    "all_historical_source_test_groups_disjoint": true,
+    "all_record_partitions_disjoint": true,
+    "tasks": {
+      "discover_unique": {
+        "excluded_oracle_features": [],
+        "label_sources": [
+          "unknown"
+        ],
+        "model_feature_union": [
+          "audited_ld",
+          "cost",
+          "evidence_conflict",
+          "evidence_support",
+          "experimental_variance",
+          "lineage_impact",
+          "model_disagreement",
+          "ood_score",
+          "perturbation_stability",
+          "preference_margin",
+          "reversibility",
+          "source_reliability",
+          "tool_agreement",
+          "verbal_confidence"
+        ],
+        "n_groups": 1,
+        "n_positive": 24,
+        "n_records": 80,
+        "seeds": {
+          "1": {
+            "positive_rates": {
+              "acceptance": 0.5,
+              "feedback": 0.25,
+              "test": 0.08333333333333333,
+              "train": 0.3333333333333333
+            },
+            "record_partitions_disjoint": true,
+            "sizes": {
+              "acceptance": 8,
+              "feedback": 12,
+              "test": 12,
+              "train": 48
+            },
+            "source_groups": [
+              "discover_unique"
+            ],
+            "source_test_groups_disjoint": true,
+            "test_groups": [
+              "discover_unique"
+            ]
+          }
+        },
+        "visible_text_outcome_leakage_free": {
+          "n_offending_records": 0,
+          "offending_record_ids": [],
+          "passed": true
+        }
+      }
+    }
+  },
+  "data_regime": "synthetic_benchmark",
+  "experimental_design": {
+    "experiment_1": {
+      "claim": "recursive harness revisions improve ranking and fixed-budget scientific action selection within each task family",
+      "response": "use regime-held-out test groups, independent feedback and acceptance sets, strong non-RHI learned baselines, fixed-coverage risk, AURC, fixed-budget utility, and five paired seeds",
+      "reviewer_challenge": "a low selective risk may be produced by abstaining, a random split may leak regimes, or gains may come from a learned classifier rather than recursion",
+      "title": "Experiment 1 \u2014 task-specific validity"
+    },
+    "experiment_2": {
+      "claim": "an action-worthiness contract learned on two task families transfers zero-shot to a third",
+      "response": "exclude all target records from source training/calibration/acceptance, balance source tasks in loss and calibration, evaluate on held-out target regimes, and report a target-supervised upper bound",
+      "reviewer_challenge": "target calibration leakage or task-size imbalance can manufacture transfer, and failure may simply reflect an impossible target",
+      "title": "Experiment 2 \u2014 cross-task transfer"
+    },
+    "experiment_3": {
+      "claim": "one jointly trained harness remains stable across seeds and does not sacrifice a smaller task to optimize the largest dataset",
+      "response": "use inverse-frequency task weighting, macro acceptance, apply exactly the same selected joint gate to every task slice, and report per-task and macro-over-task results",
+      "reviewer_challenge": "pooled metrics are dominated by the 10,987-record unique-material task",
+      "title": "Experiment 3 \u2014 joint robustness"
+    },
+    "experiment_4": {
+      "claim": "recursive checkpoint selection, rather than a single learned gate, improves the scientific action-worthiness decision",
+      "response": "evaluate active H0, H1, H2, and H3 checkpoints on one untouched test split, compare guarded acceptance with always-accept mutation, and report paired change from H0 by task and policy",
+      "reviewer_challenge": "an accepted revision may be selected by acceptance noise, or a final score may hide regressions across intermediate harness versions",
+      "title": "Experiment 4 \u2014 self-evolution ablation"
+    }
+  },
+  "experiments": {
+    "experiment_1_single_task": {
+      "by_method": {
+        "evidence_heuristic": {
+          "aurc": {
+            "max": 0.915010221260221,
+            "mean": 0.915010221260221,
+            "min": 0.915010221260221,
+            "std": 0.0
+          },
+          "best_utility": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "brier": {
+            "max": 0.2435356302941769,
+            "mean": 0.2435356302941769,
+            "min": 0.2435356302941769,
+            "std": 0.0
+          },
+          "confidently_wrong_rate": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.05": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.10": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "crystal_regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "ece": {
+            "max": 0.40289809055874204,
+            "mean": 0.40289809055874204,
+            "min": 0.40289809055874204,
+            "std": 0.0
+          },
+          "hit_efficiency": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "hit_rate": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "hit_rate_lift": {
+            "max": -0.08333333333333333,
+            "mean": -0.08333333333333333,
+            "min": -0.08333333333333333,
+            "std": 0.0
+          },
+          "log_loss": {
+            "max": 0.6805894273595742,
+            "mean": 0.6805894273595742,
+            "min": 0.6805894273595742,
+            "std": 0.0
+          },
+          "mean_utility": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "mean_utility_lift": {
+            "max": -0.010845730952226788,
+            "mean": -0.010845730952226788,
+            "min": -0.010845730952226788,
+            "std": 0.0
+          },
+          "n": 1,
+          "normalized_hit_lift": {
+            "max": -0.09090909090909091,
+            "mean": -0.09090909090909091,
+            "min": -0.09090909090909091,
+            "std": 0.0
+          },
+          "normalized_utility_lift": {
+            "max": -0.09090909090909091,
+            "mean": -0.09090909090909091,
+            "min": -0.09090909090909091,
+            "std": 0.0
+          },
+          "positive_recall": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "random_hit_rate": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "random_mean_utility": {
+            "max": 0.010845730952226788,
+            "mean": 0.010845730952226788,
+            "min": 0.010845730952226788,
+            "std": 0.0
+          },
+          "regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "risk_at_0.10": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "risk_at_0.25": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "risk_at_0.50": {
+            "max": 0.8333333333333334,
+            "mean": 0.8333333333333334,
+            "min": 0.8333333333333334,
+            "std": 0.0
+          },
+          "score": {
+            "max": 0.6899828090616381,
+            "mean": 0.6899828090616381,
+            "min": 0.6899828090616381,
+            "std": 0.0
+          },
+          "seeds": [
+            1
+          ],
+          "selective_risk": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "simple_regret": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "unique_material_recall": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "utility_efficiency": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          }
+        },
+        "llm_direct_judge": {
+          "aurc": {
+            "max": 0.7413991101491102,
+            "mean": 0.7413991101491102,
+            "min": 0.7413991101491102,
+            "std": 0.0
+          },
+          "best_utility": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "brier": {
+            "max": 0.10319166666666667,
+            "mean": 0.10319166666666667,
+            "min": 0.10319166666666667,
+            "std": 0.0
+          },
+          "confidently_wrong_rate": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.05": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.10": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "crystal_regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "ece": {
+            "max": 0.21416666666666664,
+            "mean": 0.21416666666666664,
+            "min": 0.21416666666666664,
+            "std": 0.0
+          },
+          "hit_efficiency": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "hit_rate": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "hit_rate_lift": {
+            "max": 0.9166666666666666,
+            "mean": 0.9166666666666666,
+            "min": 0.9166666666666666,
+            "std": 0.0
+          },
+          "log_loss": {
+            "max": 0.37322760311558273,
+            "mean": 0.37322760311558273,
+            "min": 0.37322760311558273,
+            "std": 0.0
+          },
+          "mean_utility": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "mean_utility_lift": {
+            "max": 0.11930304047449466,
+            "mean": 0.11930304047449466,
+            "min": 0.11930304047449466,
+            "std": 0.0
+          },
+          "n": 1,
+          "normalized_hit_lift": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "normalized_utility_lift": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "positive_recall": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "random_hit_rate": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "random_mean_utility": {
+            "max": 0.010845730952226788,
+            "mean": 0.010845730952226788,
+            "min": 0.010845730952226788,
+            "std": 0.0
+          },
+          "regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "risk_at_0.10": {
+            "max": 0.5,
+            "mean": 0.5,
+            "min": 0.5,
+            "std": 0.0
+          },
+          "risk_at_0.25": {
+            "max": 0.6666666666666666,
+            "mean": 0.6666666666666666,
+            "min": 0.6666666666666666,
+            "std": 0.0
+          },
+          "risk_at_0.50": {
+            "max": 0.8333333333333334,
+            "mean": 0.8333333333333334,
+            "min": 0.8333333333333334,
+            "std": 0.0
+          },
+          "score": {
+            "max": 0.2940972513379483,
+            "mean": 0.2940972513379483,
+            "min": 0.2940972513379483,
+            "std": 0.0
+          },
+          "seeds": [
+            1
+          ],
+          "selective_risk": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "simple_regret": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "unique_material_recall": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "utility_efficiency": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          }
+        },
+        "non_rhi_seed": {
+          "aurc": {
+            "max": 0.7413991101491102,
+            "mean": 0.7413991101491102,
+            "min": 0.7413991101491102,
+            "std": 0.0
+          },
+          "best_utility": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "brier": {
+            "max": 0.06548015622669832,
+            "mean": 0.06548015622669832,
+            "min": 0.06548015622669832,
+            "std": 0.0
+          },
+          "confidently_wrong_rate": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.05": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.10": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "crystal_regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "ece": {
+            "max": 0.16669152906639684,
+            "mean": 0.16669152906639684,
+            "min": 0.16669152906639684,
+            "std": 0.0
+          },
+          "hit_efficiency": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "hit_rate": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "hit_rate_lift": {
+            "max": 0.9166666666666666,
+            "mean": 0.9166666666666666,
+            "min": 0.9166666666666666,
+            "std": 0.0
+          },
+          "log_loss": {
+            "max": 0.22026698554455915,
+            "mean": 0.22026698554455915,
+            "min": 0.22026698554455915,
+            "std": 0.0
+          },
+          "mean_utility": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "mean_utility_lift": {
+            "max": 0.11930304047449466,
+            "mean": 0.11930304047449466,
+            "min": 0.11930304047449466,
+            "std": 0.0
+          },
+          "n": 1,
+          "normalized_hit_lift": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "normalized_utility_lift": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "positive_recall": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "random_hit_rate": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "random_mean_utility": {
+            "max": 0.010845730952226788,
+            "mean": 0.010845730952226788,
+            "min": 0.010845730952226788,
+            "std": 0.0
+          },
+          "regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "risk_at_0.10": {
+            "max": 0.5,
+            "mean": 0.5,
+            "min": 0.5,
+            "std": 0.0
+          },
+          "risk_at_0.25": {
+            "max": 0.6666666666666666,
+            "mean": 0.6666666666666666,
+            "min": 0.6666666666666666,
+            "std": 0.0
+          },
+          "risk_at_0.50": {
+            "max": 0.8333333333333334,
+            "mean": 0.8333333333333334,
+            "min": 0.8333333333333334,
+            "std": 0.0
+          },
+          "score": {
+            "max": 0.25648958597426064,
+            "mean": 0.25648958597426064,
+            "min": 0.25648958597426064,
+            "std": 0.0
+          },
+          "seeds": [
+            1
+          ],
+          "selective_risk": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "simple_regret": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "unique_material_recall": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "utility_efficiency": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          }
+        },
+        "rhi": {
+          "aurc": {
+            "max": 0.7413991101491102,
+            "mean": 0.7413991101491102,
+            "min": 0.7413991101491102,
+            "std": 0.0
+          },
+          "best_utility": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "brier": {
+            "max": 0.07355051520371163,
+            "mean": 0.07355051520371163,
+            "min": 0.07355051520371163,
+            "std": 0.0
+          },
+          "confidently_wrong_rate": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.05": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.10": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "crystal_regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "ece": {
+            "max": 0.17457152476724203,
+            "mean": 0.17457152476724203,
+            "min": 0.17457152476724203,
+            "std": 0.0
+          },
+          "hit_efficiency": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "hit_rate": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "hit_rate_lift": {
+            "max": 0.9166666666666666,
+            "mean": 0.9166666666666666,
+            "min": 0.9166666666666666,
+            "std": 0.0
+          },
+          "initial_score": {
+            "max": 0.25648958597426064,
+            "mean": 0.25648958597426064,
+            "min": 0.25648958597426064,
+            "std": 0.0
+          },
+          "log_loss": {
+            "max": 0.2365030603583932,
+            "mean": 0.2365030603583932,
+            "min": 0.2365030603583932,
+            "std": 0.0
+          },
+          "mean_utility": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "mean_utility_lift": {
+            "max": 0.11930304047449466,
+            "mean": 0.11930304047449466,
+            "min": 0.11930304047449466,
+            "std": 0.0
+          },
+          "n": 1,
+          "n_accepted": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "normalized_hit_lift": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "normalized_utility_lift": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "positive_recall": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "random_hit_rate": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "random_mean_utility": {
+            "max": 0.010845730952226788,
+            "mean": 0.010845730952226788,
+            "min": 0.010845730952226788,
+            "std": 0.0
+          },
+          "regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "risk_at_0.10": {
+            "max": 0.5,
+            "mean": 0.5,
+            "min": 0.5,
+            "std": 0.0
+          },
+          "risk_at_0.25": {
+            "max": 0.6666666666666666,
+            "mean": 0.6666666666666666,
+            "min": 0.6666666666666666,
+            "std": 0.0
+          },
+          "risk_at_0.50": {
+            "max": 0.8333333333333334,
+            "mean": 0.8333333333333334,
+            "min": 0.8333333333333334,
+            "std": 0.0
+          },
+          "score": {
+            "max": 0.26172106834686515,
+            "mean": 0.26172106834686515,
+            "min": 0.26172106834686515,
+            "std": 0.0
+          },
+          "seeds": [
+            1
+          ],
+          "selective_risk": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "simple_regret": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "unique_material_recall": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "utility_efficiency": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          }
+        },
+        "static_full": {
+          "aurc": {
+            "max": 0.7413991101491102,
+            "mean": 0.7413991101491102,
+            "min": 0.7413991101491102,
+            "std": 0.0
+          },
+          "best_utility": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "brier": {
+            "max": 0.06592581471482788,
+            "mean": 0.06592581471482788,
+            "min": 0.06592581471482788,
+            "std": 0.0
+          },
+          "confidently_wrong_rate": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.05": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.10": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "crystal_regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "ece": {
+            "max": 0.14140929963759286,
+            "mean": 0.14140929963759286,
+            "min": 0.14140929963759286,
+            "std": 0.0
+          },
+          "hit_efficiency": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "hit_rate": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "hit_rate_lift": {
+            "max": 0.9166666666666666,
+            "mean": 0.9166666666666666,
+            "min": 0.9166666666666666,
+            "std": 0.0
+          },
+          "log_loss": {
+            "max": 0.20539887841138915,
+            "mean": 0.20539887841138915,
+            "min": 0.20539887841138915,
+            "std": 0.0
+          },
+          "mean_utility": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "mean_utility_lift": {
+            "max": 0.11930304047449466,
+            "mean": 0.11930304047449466,
+            "min": 0.11930304047449466,
+            "std": 0.0
+          },
+          "n": 1,
+          "normalized_hit_lift": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "normalized_utility_lift": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "positive_recall": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "random_hit_rate": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "random_mean_utility": {
+            "max": 0.010845730952226788,
+            "mean": 0.010845730952226788,
+            "min": 0.010845730952226788,
+            "std": 0.0
+          },
+          "regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "risk_at_0.10": {
+            "max": 0.5,
+            "mean": 0.5,
+            "min": 0.5,
+            "std": 0.0
+          },
+          "risk_at_0.25": {
+            "max": 0.6666666666666666,
+            "mean": 0.6666666666666666,
+            "min": 0.6666666666666666,
+            "std": 0.0
+          },
+          "risk_at_0.50": {
+            "max": 0.8333333333333334,
+            "mean": 0.8333333333333334,
+            "min": 0.8333333333333334,
+            "std": 0.0
+          },
+          "score": {
+            "max": 0.25055616718759044,
+            "mean": 0.25055616718759044,
+            "min": 0.25055616718759044,
+            "std": 0.0
+          },
+          "seeds": [
+            1
+          ],
+          "selective_risk": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "simple_regret": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "unique_material_recall": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "utility_efficiency": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          }
+        },
+        "verbal_confidence": {
+          "aurc": {
+            "max": 0.8247324434824433,
+            "mean": 0.8247324434824433,
+            "min": 0.8247324434824433,
+            "std": 0.0
+          },
+          "best_utility": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "brier": {
+            "max": 0.2855761269901202,
+            "mean": 0.2855761269901202,
+            "min": 0.2855761269901202,
+            "std": 0.0
+          },
+          "confidently_wrong_rate": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "coverage": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.05": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "coverage_at_risk_0.10": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "crystal_regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "ece": {
+            "max": 0.4716888491393594,
+            "mean": 0.4716888491393594,
+            "min": 0.4716888491393594,
+            "std": 0.0
+          },
+          "hit_efficiency": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "hit_rate": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "hit_rate_lift": {
+            "max": -0.08333333333333333,
+            "mean": -0.08333333333333333,
+            "min": -0.08333333333333333,
+            "std": 0.0
+          },
+          "log_loss": {
+            "max": 0.7662841201712364,
+            "mean": 0.7662841201712364,
+            "min": 0.7662841201712364,
+            "std": 0.0
+          },
+          "mean_utility": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "mean_utility_lift": {
+            "max": -0.010845730952226788,
+            "mean": -0.010845730952226788,
+            "min": -0.010845730952226788,
+            "std": 0.0
+          },
+          "n": 1,
+          "normalized_hit_lift": {
+            "max": -0.09090909090909091,
+            "mean": -0.09090909090909091,
+            "min": -0.09090909090909091,
+            "std": 0.0
+          },
+          "normalized_utility_lift": {
+            "max": -0.09090909090909091,
+            "mean": -0.09090909090909091,
+            "min": -0.09090909090909091,
+            "std": 0.0
+          },
+          "positive_recall": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "random_hit_rate": {
+            "max": 0.08333333333333333,
+            "mean": 0.08333333333333333,
+            "min": 0.08333333333333333,
+            "std": 0.0
+          },
+          "random_mean_utility": {
+            "max": 0.010845730952226788,
+            "mean": 0.010845730952226788,
+            "min": 0.010845730952226788,
+            "std": 0.0
+          },
+          "regime_coverage": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "risk_at_0.10": {
+            "max": 0.5,
+            "mean": 0.5,
+            "min": 0.5,
+            "std": 0.0
+          },
+          "risk_at_0.25": {
+            "max": 0.6666666666666666,
+            "mean": 0.6666666666666666,
+            "min": 0.6666666666666666,
+            "std": 0.0
+          },
+          "risk_at_0.50": {
+            "max": 0.8333333333333334,
+            "mean": 0.8333333333333334,
+            "min": 0.8333333333333334,
+            "std": 0.0
+          },
+          "score": {
+            "max": 0.6989942816652241,
+            "mean": 0.6989942816652241,
+            "min": 0.6989942816652241,
+            "std": 0.0
+          },
+          "seeds": [
+            1
+          ],
+          "selective_risk": {
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "std": 0.0
+          },
+          "simple_regret": {
+            "max": 0.13014877142672146,
+            "mean": 0.13014877142672146,
+            "min": 0.13014877142672146,
+            "std": 0.0
+          },
+          "unique_material_recall": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          },
+          "utility_efficiency": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "std": 0.0
+          }
+        }
+      },
+      "by_task": {
+        "discover_unique": {
+          "by_method": {
+            "evidence_heuristic": {
+              "aurc": {
+                "max": 0.915010221260221,
+                "mean": 0.915010221260221,
+                "min": 0.915010221260221,
+                "std": 0.0
+              },
+              "best_utility": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "brier": {
+                "max": 0.2435356302941769,
+                "mean": 0.2435356302941769,
+                "min": 0.2435356302941769,
+                "std": 0.0
+              },
+              "confidently_wrong_rate": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.05": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.10": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "crystal_regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "ece": {
+                "max": 0.40289809055874204,
+                "mean": 0.40289809055874204,
+                "min": 0.40289809055874204,
+                "std": 0.0
+              },
+              "hit_efficiency": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "hit_rate": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "hit_rate_lift": {
+                "max": -0.08333333333333333,
+                "mean": -0.08333333333333333,
+                "min": -0.08333333333333333,
+                "std": 0.0
+              },
+              "log_loss": {
+                "max": 0.6805894273595742,
+                "mean": 0.6805894273595742,
+                "min": 0.6805894273595742,
+                "std": 0.0
+              },
+              "mean_utility": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "mean_utility_lift": {
+                "max": -0.010845730952226788,
+                "mean": -0.010845730952226788,
+                "min": -0.010845730952226788,
+                "std": 0.0
+              },
+              "n": 1,
+              "normalized_hit_lift": {
+                "max": -0.09090909090909091,
+                "mean": -0.09090909090909091,
+                "min": -0.09090909090909091,
+                "std": 0.0
+              },
+              "normalized_utility_lift": {
+                "max": -0.09090909090909091,
+                "mean": -0.09090909090909091,
+                "min": -0.09090909090909091,
+                "std": 0.0
+              },
+              "positive_recall": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "random_hit_rate": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "random_mean_utility": {
+                "max": 0.010845730952226788,
+                "mean": 0.010845730952226788,
+                "min": 0.010845730952226788,
+                "std": 0.0
+              },
+              "regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "risk_at_0.10": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "risk_at_0.25": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "risk_at_0.50": {
+                "max": 0.8333333333333334,
+                "mean": 0.8333333333333334,
+                "min": 0.8333333333333334,
+                "std": 0.0
+              },
+              "score": {
+                "max": 0.6899828090616381,
+                "mean": 0.6899828090616381,
+                "min": 0.6899828090616381,
+                "std": 0.0
+              },
+              "seeds": [
+                1
+              ],
+              "selective_risk": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "simple_regret": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "unique_material_recall": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "utility_efficiency": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              }
+            },
+            "llm_direct_judge": {
+              "aurc": {
+                "max": 0.7413991101491102,
+                "mean": 0.7413991101491102,
+                "min": 0.7413991101491102,
+                "std": 0.0
+              },
+              "best_utility": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "brier": {
+                "max": 0.10319166666666667,
+                "mean": 0.10319166666666667,
+                "min": 0.10319166666666667,
+                "std": 0.0
+              },
+              "confidently_wrong_rate": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.05": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.10": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "crystal_regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "ece": {
+                "max": 0.21416666666666664,
+                "mean": 0.21416666666666664,
+                "min": 0.21416666666666664,
+                "std": 0.0
+              },
+              "hit_efficiency": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "hit_rate": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "hit_rate_lift": {
+                "max": 0.9166666666666666,
+                "mean": 0.9166666666666666,
+                "min": 0.9166666666666666,
+                "std": 0.0
+              },
+              "log_loss": {
+                "max": 0.37322760311558273,
+                "mean": 0.37322760311558273,
+                "min": 0.37322760311558273,
+                "std": 0.0
+              },
+              "mean_utility": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "mean_utility_lift": {
+                "max": 0.11930304047449466,
+                "mean": 0.11930304047449466,
+                "min": 0.11930304047449466,
+                "std": 0.0
+              },
+              "n": 1,
+              "normalized_hit_lift": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "normalized_utility_lift": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "positive_recall": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "random_hit_rate": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "random_mean_utility": {
+                "max": 0.010845730952226788,
+                "mean": 0.010845730952226788,
+                "min": 0.010845730952226788,
+                "std": 0.0
+              },
+              "regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "risk_at_0.10": {
+                "max": 0.5,
+                "mean": 0.5,
+                "min": 0.5,
+                "std": 0.0
+              },
+              "risk_at_0.25": {
+                "max": 0.6666666666666666,
+                "mean": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "std": 0.0
+              },
+              "risk_at_0.50": {
+                "max": 0.8333333333333334,
+                "mean": 0.8333333333333334,
+                "min": 0.8333333333333334,
+                "std": 0.0
+              },
+              "score": {
+                "max": 0.2940972513379483,
+                "mean": 0.2940972513379483,
+                "min": 0.2940972513379483,
+                "std": 0.0
+              },
+              "seeds": [
+                1
+              ],
+              "selective_risk": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "simple_regret": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "unique_material_recall": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "utility_efficiency": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              }
+            },
+            "non_rhi_seed": {
+              "aurc": {
+                "max": 0.7413991101491102,
+                "mean": 0.7413991101491102,
+                "min": 0.7413991101491102,
+                "std": 0.0
+              },
+              "best_utility": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "brier": {
+                "max": 0.06548015622669832,
+                "mean": 0.06548015622669832,
+                "min": 0.06548015622669832,
+                "std": 0.0
+              },
+              "confidently_wrong_rate": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.05": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.10": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "crystal_regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "ece": {
+                "max": 0.16669152906639684,
+                "mean": 0.16669152906639684,
+                "min": 0.16669152906639684,
+                "std": 0.0
+              },
+              "hit_efficiency": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "hit_rate": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "hit_rate_lift": {
+                "max": 0.9166666666666666,
+                "mean": 0.9166666666666666,
+                "min": 0.9166666666666666,
+                "std": 0.0
+              },
+              "log_loss": {
+                "max": 0.22026698554455915,
+                "mean": 0.22026698554455915,
+                "min": 0.22026698554455915,
+                "std": 0.0
+              },
+              "mean_utility": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "mean_utility_lift": {
+                "max": 0.11930304047449466,
+                "mean": 0.11930304047449466,
+                "min": 0.11930304047449466,
+                "std": 0.0
+              },
+              "n": 1,
+              "normalized_hit_lift": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "normalized_utility_lift": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "positive_recall": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "random_hit_rate": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "random_mean_utility": {
+                "max": 0.010845730952226788,
+                "mean": 0.010845730952226788,
+                "min": 0.010845730952226788,
+                "std": 0.0
+              },
+              "regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "risk_at_0.10": {
+                "max": 0.5,
+                "mean": 0.5,
+                "min": 0.5,
+                "std": 0.0
+              },
+              "risk_at_0.25": {
+                "max": 0.6666666666666666,
+                "mean": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "std": 0.0
+              },
+              "risk_at_0.50": {
+                "max": 0.8333333333333334,
+                "mean": 0.8333333333333334,
+                "min": 0.8333333333333334,
+                "std": 0.0
+              },
+              "score": {
+                "max": 0.25648958597426064,
+                "mean": 0.25648958597426064,
+                "min": 0.25648958597426064,
+                "std": 0.0
+              },
+              "seeds": [
+                1
+              ],
+              "selective_risk": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "simple_regret": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "unique_material_recall": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "utility_efficiency": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              }
+            },
+            "rhi": {
+              "aurc": {
+                "max": 0.7413991101491102,
+                "mean": 0.7413991101491102,
+                "min": 0.7413991101491102,
+                "std": 0.0
+              },
+              "best_utility": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "brier": {
+                "max": 0.07355051520371163,
+                "mean": 0.07355051520371163,
+                "min": 0.07355051520371163,
+                "std": 0.0
+              },
+              "confidently_wrong_rate": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.05": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.10": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "crystal_regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "ece": {
+                "max": 0.17457152476724203,
+                "mean": 0.17457152476724203,
+                "min": 0.17457152476724203,
+                "std": 0.0
+              },
+              "hit_efficiency": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "hit_rate": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "hit_rate_lift": {
+                "max": 0.9166666666666666,
+                "mean": 0.9166666666666666,
+                "min": 0.9166666666666666,
+                "std": 0.0
+              },
+              "initial_score": {
+                "max": 0.25648958597426064,
+                "mean": 0.25648958597426064,
+                "min": 0.25648958597426064,
+                "std": 0.0
+              },
+              "log_loss": {
+                "max": 0.2365030603583932,
+                "mean": 0.2365030603583932,
+                "min": 0.2365030603583932,
+                "std": 0.0
+              },
+              "mean_utility": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "mean_utility_lift": {
+                "max": 0.11930304047449466,
+                "mean": 0.11930304047449466,
+                "min": 0.11930304047449466,
+                "std": 0.0
+              },
+              "n": 1,
+              "n_accepted": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "normalized_hit_lift": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "normalized_utility_lift": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "positive_recall": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "random_hit_rate": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "random_mean_utility": {
+                "max": 0.010845730952226788,
+                "mean": 0.010845730952226788,
+                "min": 0.010845730952226788,
+                "std": 0.0
+              },
+              "regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "risk_at_0.10": {
+                "max": 0.5,
+                "mean": 0.5,
+                "min": 0.5,
+                "std": 0.0
+              },
+              "risk_at_0.25": {
+                "max": 0.6666666666666666,
+                "mean": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "std": 0.0
+              },
+              "risk_at_0.50": {
+                "max": 0.8333333333333334,
+                "mean": 0.8333333333333334,
+                "min": 0.8333333333333334,
+                "std": 0.0
+              },
+              "score": {
+                "max": 0.26172106834686515,
+                "mean": 0.26172106834686515,
+                "min": 0.26172106834686515,
+                "std": 0.0
+              },
+              "seeds": [
+                1
+              ],
+              "selective_risk": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "simple_regret": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "unique_material_recall": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "utility_efficiency": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              }
+            },
+            "static_full": {
+              "aurc": {
+                "max": 0.7413991101491102,
+                "mean": 0.7413991101491102,
+                "min": 0.7413991101491102,
+                "std": 0.0
+              },
+              "best_utility": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "brier": {
+                "max": 0.06592581471482788,
+                "mean": 0.06592581471482788,
+                "min": 0.06592581471482788,
+                "std": 0.0
+              },
+              "confidently_wrong_rate": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.05": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.10": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "crystal_regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "ece": {
+                "max": 0.14140929963759286,
+                "mean": 0.14140929963759286,
+                "min": 0.14140929963759286,
+                "std": 0.0
+              },
+              "hit_efficiency": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "hit_rate": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "hit_rate_lift": {
+                "max": 0.9166666666666666,
+                "mean": 0.9166666666666666,
+                "min": 0.9166666666666666,
+                "std": 0.0
+              },
+              "log_loss": {
+                "max": 0.20539887841138915,
+                "mean": 0.20539887841138915,
+                "min": 0.20539887841138915,
+                "std": 0.0
+              },
+              "mean_utility": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "mean_utility_lift": {
+                "max": 0.11930304047449466,
+                "mean": 0.11930304047449466,
+                "min": 0.11930304047449466,
+                "std": 0.0
+              },
+              "n": 1,
+              "normalized_hit_lift": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "normalized_utility_lift": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "positive_recall": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "random_hit_rate": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "random_mean_utility": {
+                "max": 0.010845730952226788,
+                "mean": 0.010845730952226788,
+                "min": 0.010845730952226788,
+                "std": 0.0
+              },
+              "regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "risk_at_0.10": {
+                "max": 0.5,
+                "mean": 0.5,
+                "min": 0.5,
+                "std": 0.0
+              },
+              "risk_at_0.25": {
+                "max": 0.6666666666666666,
+                "mean": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "std": 0.0
+              },
+              "risk_at_0.50": {
+                "max": 0.8333333333333334,
+                "mean": 0.8333333333333334,
+                "min": 0.8333333333333334,
+                "std": 0.0
+              },
+              "score": {
+                "max": 0.25055616718759044,
+                "mean": 0.25055616718759044,
+                "min": 0.25055616718759044,
+                "std": 0.0
+              },
+              "seeds": [
+                1
+              ],
+              "selective_risk": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "simple_regret": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "unique_material_recall": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "utility_efficiency": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              }
+            },
+            "verbal_confidence": {
+              "aurc": {
+                "max": 0.8247324434824433,
+                "mean": 0.8247324434824433,
+                "min": 0.8247324434824433,
+                "std": 0.0
+              },
+              "best_utility": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "brier": {
+                "max": 0.2855761269901202,
+                "mean": 0.2855761269901202,
+                "min": 0.2855761269901202,
+                "std": 0.0
+              },
+              "confidently_wrong_rate": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "coverage": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.05": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "coverage_at_risk_0.10": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "crystal_regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "ece": {
+                "max": 0.4716888491393594,
+                "mean": 0.4716888491393594,
+                "min": 0.4716888491393594,
+                "std": 0.0
+              },
+              "hit_efficiency": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "hit_rate": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "hit_rate_lift": {
+                "max": -0.08333333333333333,
+                "mean": -0.08333333333333333,
+                "min": -0.08333333333333333,
+                "std": 0.0
+              },
+              "log_loss": {
+                "max": 0.7662841201712364,
+                "mean": 0.7662841201712364,
+                "min": 0.7662841201712364,
+                "std": 0.0
+              },
+              "mean_utility": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "mean_utility_lift": {
+                "max": -0.010845730952226788,
+                "mean": -0.010845730952226788,
+                "min": -0.010845730952226788,
+                "std": 0.0
+              },
+              "n": 1,
+              "normalized_hit_lift": {
+                "max": -0.09090909090909091,
+                "mean": -0.09090909090909091,
+                "min": -0.09090909090909091,
+                "std": 0.0
+              },
+              "normalized_utility_lift": {
+                "max": -0.09090909090909091,
+                "mean": -0.09090909090909091,
+                "min": -0.09090909090909091,
+                "std": 0.0
+              },
+              "positive_recall": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "random_hit_rate": {
+                "max": 0.08333333333333333,
+                "mean": 0.08333333333333333,
+                "min": 0.08333333333333333,
+                "std": 0.0
+              },
+              "random_mean_utility": {
+                "max": 0.010845730952226788,
+                "mean": 0.010845730952226788,
+                "min": 0.010845730952226788,
+                "std": 0.0
+              },
+              "regime_coverage": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "risk_at_0.10": {
+                "max": 0.5,
+                "mean": 0.5,
+                "min": 0.5,
+                "std": 0.0
+              },
+              "risk_at_0.25": {
+                "max": 0.6666666666666666,
+                "mean": 0.6666666666666666,
+                "min": 0.6666666666666666,
+                "std": 0.0
+              },
+              "risk_at_0.50": {
+                "max": 0.8333333333333334,
+                "mean": 0.8333333333333334,
+                "min": 0.8333333333333334,
+                "std": 0.0
+              },
+              "score": {
+                "max": 0.6989942816652241,
+                "mean": 0.6989942816652241,
+                "min": 0.6989942816652241,
+                "std": 0.0
+              },
+              "seeds": [
+                1
+              ],
+              "selective_risk": {
+                "max": 1.0,
+                "mean": 1.0,
+                "min": 1.0,
+                "std": 0.0
+              },
+              "simple_regret": {
+                "max": 0.13014877142672146,
+                "mean": 0.13014877142672146,
+                "min": 0.13014877142672146,
+                "std": 0.0
+              },
+              "unique_material_recall": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "utility_efficiency": {
+                "max": 0.0,
+                "mean": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              }
+            }
+          },
+          "n_runs": 6
+        }
+      },
+      "n_runs": 6,
+      "paired_comparisons": {
+        "evidence_heuristic": {
+          "n": 1,
+          "score_difference_95ci": [
+            -0.42826174071477296,
+            -0.42826174071477296
+          ],
+          "score_difference_mean": -0.42826174071477296,
+          "sign_test_p": 1.0,
+          "utility_difference_mean": 0.13014877142672146,
+          "win_rate": 1.0
+        },
+        "llm_direct_judge": {
+          "n": 1,
+          "score_difference_95ci": [
+            -0.032376182991083136,
+            -0.032376182991083136
+          ],
+          "score_difference_mean": -0.032376182991083136,
+          "sign_test_p": 1.0,
+          "utility_difference_mean": 0.0,
+          "win_rate": 1.0
+        },
+        "non_rhi_seed": {
+          "n": 1,
+          "score_difference_95ci": [
+            0.005231482372604512,
+            0.005231482372604512
+          ],
+          "score_difference_mean": 0.005231482372604512,
+          "sign_test_p": 1.0,
+          "utility_difference_mean": 0.0,
+          "win_rate": 0.0
+        },
+        "static_full": {
+          "n": 1,
+          "score_difference_95ci": [
+            0.01116490115927471,
+            0.01116490115927471
+          ],
+          "score_difference_mean": 0.01116490115927471,
+          "sign_test_p": 1.0,
+          "utility_difference_mean": 0.0,
+          "win_rate": 0.0
+        },
+        "verbal_confidence": {
+          "n": 1,
+          "score_difference_95ci": [
+            -0.437273213318359,
+            -0.437273213318359
+          ],
+          "score_difference_mean": -0.437273213318359,
+          "sign_test_p": 1.0,
+          "utility_difference_mean": 0.13014877142672146,
+          "win_rate": 1.0
+        }
+      },
+      "primary_metric": "threshold-independent action-worthiness score (lower is better)",
+      "seed_count": 1,
+      "seed_protocol": [
+        1
+      ],
+      "task_count": 1
+    }
+  },
+  "limitations": [
+    "Historical outcomes are benchmark-derived offline action-worthiness proxies, not expert annotations or online MatBot trajectory outcomes.",
+    "The deterministic proposer is a reproducible trajectory-conditioned RHI implementation, not evidence that an LLM proposer improves the harness.",
+    "llm_direct_judge is an optional one-shot baseline: it sees only the visible action context and does not train, mutate a harness, or receive trajectory feedback.",
+    "Scientific utilities are reported per task and as macro summaries; pooled utility is not interpreted as a common physical unit.",
+    "Source train, feedback, and acceptance records are disjoint but can share source regimes; final test regimes remain group-disjoint."
+  ],
+  "runs": {
+    "joint": [],
+    "leave_one_out": [],
+    "single_task": [
+      {
+        "experiment": "experiment_1_single_task",
+        "holdout_task": "",
+        "method": "rhi",
+        "report": {
+          "accepted_versions": [
+            "H0_rhi_matsci",
+            "H1_trajectory_feedback"
+          ],
+          "calibration": {
+            "constraint_satisfied": 0.0,
+            "coverage": 0.16666666666666666,
+            "selected": 2.0,
+            "selective_risk": 1.0,
+            "threshold": 0.8683901709984083
+          },
+          "comparisons": [
+            {
+              "acceptance_policy": "guarded",
+              "acceptance_record_ids": [
+                "discover_unique-1-00079",
+                "discover_unique-1-00003",
+                "discover_unique-1-00051"
+              ],
+              "acceptance_records": 3,
+              "accepted_revision": true,
+              "aurc_gain": 0.3333333333333333,
+              "brier_gain": 0.012484308995108273,
+              "candidate": "H1_trajectory_feedback",
+              "candidate_score": 0.4257513761107441,
+              "coverage_gain": 0.0,
+              "hit_rate_gain": 1.0,
+              "iteration": 1,
+              "mean_utility_gain": 0.22597808502170036,
+              "previous": "H0_rhi_matsci",
+              "previous_score": 0.7516161557576554,
+              "rationale": "candidate accepted only if fixed-budget action-worthiness improves while risk, coverage, calibration, and utility guards hold",
+              "score_gain": 0.3258647796469113,
+              "selective_risk_gain": 0.0,
+              "winner": "candidate"
+            },
+            {
+              "acceptance_policy": "guarded",
+              "acceptance_record_ids": [
+                "discover_unique-1-00000",
+                "discover_unique-1-00049",
+                "discover_unique-1-00046"
+              ],
+              "acceptance_records": 3,
+              "accepted_revision": false,
+              "aurc_gain": 0.0,
+              "brier_gain": 0.0,
+              "candidate": "H2_trajectory_feedback",
+              "candidate_score": 0.11283056901893446,
+              "coverage_gain": 0.0,
+              "hit_rate_gain": 0.0,
+              "iteration": 2,
+              "mean_utility_gain": 0.0,
+              "previous": "H1_trajectory_feedback",
+              "previous_score": 0.11283056901893446,
+              "rationale": "candidate accepted only if fixed-budget action-worthiness improves while risk, coverage, calibration, and utility guards hold",
+              "score_gain": 0.0,
+              "selective_risk_gain": 0.0,
+              "winner": "previous"
+            },
+            {
+              "acceptance_policy": "guarded",
+              "acceptance_record_ids": [
+                "discover_unique-1-00073",
+                "discover_unique-1-00055"
+              ],
+              "acceptance_records": 2,
+              "accepted_revision": false,
+              "aurc_gain": 0.0,
+              "brier_gain": 0.0,
+              "candidate": "H3_trajectory_feedback",
+              "candidate_score": 0.9957241755852912,
+              "coverage_gain": 0.0,
+              "hit_rate_gain": 0.0,
+              "iteration": 3,
+              "mean_utility_gain": 0.0,
+              "previous": "H1_trajectory_feedback",
+              "previous_score": 0.9957241755852912,
+              "rationale": "candidate accepted only if fixed-budget action-worthiness improves while risk, coverage, calibration, and utility guards hold",
+              "score_gain": 0.0,
+              "selective_risk_gain": 0.0,
+              "winner": "previous"
+            }
+          ],
+          "feature_names": [
+            "verbal_confidence",
+            "evidence_support",
+            "evidence_conflict",
+            "ood_score",
+            "source_reliability",
+            "perturbation_stability",
+            "cost",
+            "reversibility",
+            "action_complexity",
+            "candidate_structure_complexity",
+            "candidate_composition_diversity",
+            "candidate_domain_position"
+          ],
+          "final_harness": "H1_trajectory_feedback",
+          "final_score": 0.26172106834686515,
+          "final_test": {
+            "discovery_gain": {
+              "best_utility": 0.13014877142672146,
+              "budget": 1.0,
+              "hit_efficiency": 1.0,
+              "hit_rate": 1.0,
+              "hit_rate_lift": 0.9166666666666666,
+              "mean_utility": 0.13014877142672146,
+              "mean_utility_lift": 0.11930304047449466,
+              "normalized_hit_lift": 1.0,
+              "normalized_utility_lift": 1.0,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.13014877142672146,
+              "random_hit_rate": 0.08333333333333333,
+              "random_mean_utility": 0.010845730952226788,
+              "utility_efficiency": 1.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.9166666666666666,
+              "aurc": 0.7413991101491102,
+              "brier": 0.07355051520371163,
+              "confidently_wrong_rate": 0.0,
+              "coverage": 0.0,
+              "coverage_at_risk_0.05": 0.08333333333333333,
+              "coverage_at_risk_0.10": 0.08333333333333333,
+              "ece": 0.17457152476724203,
+              "log_loss": 0.2365030603583932,
+              "n": 12.0,
+              "selective_accuracy": 0.0,
+              "selective_risk": 0.0
+            },
+            "n_records": 12,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.16666666666666666,
+                "selective_risk": 0.5
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 0.6666666666666666
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.8333333333333334
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 1.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.0,
+              "task": "discover_unique",
+              "unique_material_recall": 1.0
+            }
+          },
+          "initial_harness": "H0_rhi_matsci",
+          "initial_score": 0.25648958597426064,
+          "initial_test": {
+            "discovery_gain": {
+              "best_utility": 0.13014877142672146,
+              "budget": 1.0,
+              "hit_efficiency": 1.0,
+              "hit_rate": 1.0,
+              "hit_rate_lift": 0.9166666666666666,
+              "mean_utility": 0.13014877142672146,
+              "mean_utility_lift": 0.11930304047449466,
+              "normalized_hit_lift": 1.0,
+              "normalized_utility_lift": 1.0,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.13014877142672146,
+              "random_hit_rate": 0.08333333333333333,
+              "random_mean_utility": 0.010845730952226788,
+              "utility_efficiency": 1.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.9166666666666666,
+              "aurc": 0.7413991101491102,
+              "brier": 0.06548015622669832,
+              "confidently_wrong_rate": 0.0,
+              "coverage": 0.0,
+              "coverage_at_risk_0.05": 0.08333333333333333,
+              "coverage_at_risk_0.10": 0.08333333333333333,
+              "ece": 0.16669152906639684,
+              "log_loss": 0.22026698554455915,
+              "n": 12.0,
+              "selective_accuracy": 0.0,
+              "selective_risk": 0.0
+            },
+            "n_records": 12,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.16666666666666666,
+                "selective_risk": 0.5
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 0.6666666666666666
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.8333333333333334
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 1.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.0,
+              "task": "discover_unique",
+              "unique_material_recall": 1.0
+            }
+          },
+          "method": "RHI-MatSci",
+          "n_accepted": 1,
+          "n_comparisons": 3,
+          "proposer": "DeterministicTrajectoryProposer",
+          "validation": {
+            "discovery_gain": {
+              "best_utility": 0.422518030867198,
+              "budget": 1.0,
+              "hit_efficiency": 1.0,
+              "hit_rate": 1.0,
+              "hit_rate_lift": 0.5,
+              "mean_utility": 0.422518030867198,
+              "mean_utility_lift": 0.3137450094198755,
+              "normalized_hit_lift": 1.0,
+              "normalized_utility_lift": 1.0,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.422518030867198,
+              "random_hit_rate": 0.5,
+              "random_mean_utility": 0.10877302144732251,
+              "utility_efficiency": 1.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.625,
+              "aurc": 0.3952380952380952,
+              "brier": 0.3382355845969367,
+              "confidently_wrong_rate": 0.0,
+              "coverage": 0.125,
+              "coverage_at_risk_0.05": 0.125,
+              "coverage_at_risk_0.10": 0.125,
+              "ece": 0.42606716086072677,
+              "log_loss": 0.9516713949387994,
+              "n": 8.0,
+              "selective_accuracy": 1.0,
+              "selective_risk": 0.0
+            },
+            "n_records": 8,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.125,
+                "selective_risk": 0.0
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 0.5
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.5
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 0.25,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.0,
+              "task": "discover_unique",
+              "unique_material_recall": 0.25
+            }
+          }
+        },
+        "seed": 1,
+        "setting": "single_task",
+        "source_tasks": [],
+        "split": {
+          "acceptance": 8,
+          "feedback": 12,
+          "test": 12,
+          "train": 48
+        },
+        "task": "discover_unique"
+      },
+      {
+        "experiment": "experiment_1_single_task",
+        "holdout_task": "",
+        "method": "non_rhi_seed",
+        "report": {
+          "calibration": {
+            "constraint_satisfied": 0.0,
+            "coverage": 0.16666666666666666,
+            "selected": 2.0,
+            "selective_risk": 1.0,
+            "threshold": 0.8453190870988987
+          },
+          "feature_names": [
+            "verbal_confidence",
+            "evidence_support",
+            "evidence_conflict",
+            "ood_score"
+          ],
+          "test": {
+            "discovery_gain": {
+              "best_utility": 0.13014877142672146,
+              "budget": 1.0,
+              "hit_efficiency": 1.0,
+              "hit_rate": 1.0,
+              "hit_rate_lift": 0.9166666666666666,
+              "mean_utility": 0.13014877142672146,
+              "mean_utility_lift": 0.11930304047449466,
+              "normalized_hit_lift": 1.0,
+              "normalized_utility_lift": 1.0,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.13014877142672146,
+              "random_hit_rate": 0.08333333333333333,
+              "random_mean_utility": 0.010845730952226788,
+              "utility_efficiency": 1.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.9166666666666666,
+              "aurc": 0.7413991101491102,
+              "brier": 0.06548015622669832,
+              "confidently_wrong_rate": 0.0,
+              "coverage": 0.0,
+              "coverage_at_risk_0.05": 0.08333333333333333,
+              "coverage_at_risk_0.10": 0.08333333333333333,
+              "ece": 0.16669152906639684,
+              "log_loss": 0.22026698554455915,
+              "n": 12.0,
+              "selective_accuracy": 0.0,
+              "selective_risk": 0.0
+            },
+            "n_records": 12,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.16666666666666666,
+                "selective_risk": 0.5
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 0.6666666666666666
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.8333333333333334
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 1.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.0,
+              "task": "discover_unique",
+              "unique_material_recall": 1.0
+            }
+          },
+          "test_score": 0.25648958597426064,
+          "threshold": 0.8453190870988987,
+          "validation": {
+            "discovery_gain": {
+              "best_utility": 0.0,
+              "budget": 1.0,
+              "hit_efficiency": 0.0,
+              "hit_rate": 0.0,
+              "hit_rate_lift": -0.25,
+              "mean_utility": 0.0,
+              "mean_utility_lift": -0.04261965856699137,
+              "normalized_hit_lift": -0.3333333333333333,
+              "normalized_utility_lift": -0.19610591866962018,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.25994945083497867,
+              "random_hit_rate": 0.25,
+              "random_mean_utility": 0.04261965856699137,
+              "utility_efficiency": 0.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.5833333333333334,
+              "aurc": 0.7284632034632036,
+              "brier": 0.25524157585885604,
+              "confidently_wrong_rate": 0.16666666666666666,
+              "coverage": 0.16666666666666666,
+              "coverage_at_risk_0.05": 0.0,
+              "coverage_at_risk_0.10": 0.0,
+              "ece": 0.3036799196753551,
+              "log_loss": 0.785869753723848,
+              "n": 12.0,
+              "selective_accuracy": 0.0,
+              "selective_risk": 1.0
+            },
+            "n_records": 12,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.16666666666666666,
+                "selective_risk": 1.0
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 0.6666666666666666
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.6666666666666666
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 0.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.25994945083497867,
+              "task": "discover_unique",
+              "unique_material_recall": 0.0
+            }
+          }
+        },
+        "seed": 1,
+        "setting": "single_task",
+        "source_tasks": [],
+        "split": {
+          "acceptance": 8,
+          "feedback": 12,
+          "test": 12,
+          "train": 48
+        },
+        "task": "discover_unique"
+      },
+      {
+        "experiment": "experiment_1_single_task",
+        "holdout_task": "",
+        "method": "static_full",
+        "report": {
+          "calibration": {
+            "constraint_satisfied": 1.0,
+            "coverage": 0.16666666666666666,
+            "selected": 2.0,
+            "selective_risk": 0.0,
+            "threshold": 0.9561948580301928
+          },
+          "feature_names": [
+            "audited_ld",
+            "preference_margin",
+            "verbal_confidence",
+            "perturbation_stability",
+            "evidence_support",
+            "evidence_conflict",
+            "source_reliability",
+            "tool_agreement",
+            "model_disagreement",
+            "ood_score",
+            "experimental_variance",
+            "cost",
+            "reversibility",
+            "lineage_impact"
+          ],
+          "test": {
+            "discovery_gain": {
+              "best_utility": 0.13014877142672146,
+              "budget": 1.0,
+              "hit_efficiency": 1.0,
+              "hit_rate": 1.0,
+              "hit_rate_lift": 0.9166666666666666,
+              "mean_utility": 0.13014877142672146,
+              "mean_utility_lift": 0.11930304047449466,
+              "normalized_hit_lift": 1.0,
+              "normalized_utility_lift": 1.0,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.13014877142672146,
+              "random_hit_rate": 0.08333333333333333,
+              "random_mean_utility": 0.010845730952226788,
+              "utility_efficiency": 1.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.9166666666666666,
+              "aurc": 0.7413991101491102,
+              "brier": 0.06592581471482788,
+              "confidently_wrong_rate": 0.0,
+              "coverage": 0.0,
+              "coverage_at_risk_0.05": 0.08333333333333333,
+              "coverage_at_risk_0.10": 0.08333333333333333,
+              "ece": 0.14140929963759286,
+              "log_loss": 0.20539887841138915,
+              "n": 12.0,
+              "selective_accuracy": 0.0,
+              "selective_risk": 0.0
+            },
+            "n_records": 12,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.16666666666666666,
+                "selective_risk": 0.5
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 0.6666666666666666
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.8333333333333334
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 1.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.0,
+              "task": "discover_unique",
+              "unique_material_recall": 1.0
+            }
+          },
+          "test_score": 0.25055616718759044,
+          "threshold": 0.9561948580301928,
+          "validation": {
+            "discovery_gain": {
+              "best_utility": 0.23265838858744614,
+              "budget": 1.0,
+              "hit_efficiency": 1.0,
+              "hit_rate": 1.0,
+              "hit_rate_lift": 0.75,
+              "mean_utility": 0.23265838858744614,
+              "mean_utility_lift": 0.19003873002045477,
+              "normalized_hit_lift": 1.0,
+              "normalized_utility_lift": 0.8744255816805817,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.25994945083497867,
+              "random_hit_rate": 0.25,
+              "random_mean_utility": 0.04261965856699137,
+              "utility_efficiency": 0.8950139646001505
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.9166666666666666,
+              "aurc": 0.48114177489177484,
+              "brier": 0.1387950030246905,
+              "confidently_wrong_rate": 0.0,
+              "coverage": 0.16666666666666666,
+              "coverage_at_risk_0.05": 0.16666666666666666,
+              "coverage_at_risk_0.10": 0.16666666666666666,
+              "ece": 0.20978316313920226,
+              "log_loss": 0.3730184120524784,
+              "n": 12.0,
+              "selective_accuracy": 1.0,
+              "selective_risk": 0.0
+            },
+            "n_records": 12,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.16666666666666666,
+                "selective_risk": 0.0
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 0.3333333333333333
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.5
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 0.3333333333333333,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.027291062247532527,
+              "task": "discover_unique",
+              "unique_material_recall": 0.3333333333333333
+            }
+          }
+        },
+        "seed": 1,
+        "setting": "single_task",
+        "source_tasks": [],
+        "split": {
+          "acceptance": 8,
+          "feedback": 12,
+          "test": 12,
+          "train": 48
+        },
+        "task": "discover_unique"
+      },
+      {
+        "experiment": "experiment_1_single_task",
+        "holdout_task": "",
+        "method": "verbal_confidence",
+        "report": {
+          "calibration": {
+            "constraint_satisfied": 0.0,
+            "coverage": 0.16666666666666666,
+            "selected": 2.0,
+            "selective_risk": 0.5,
+            "threshold": 0.6752343401784126
+          },
+          "test": {
+            "discovery_gain": {
+              "best_utility": 0.0,
+              "budget": 1.0,
+              "hit_efficiency": 0.0,
+              "hit_rate": 0.0,
+              "hit_rate_lift": -0.08333333333333333,
+              "mean_utility": 0.0,
+              "mean_utility_lift": -0.010845730952226788,
+              "normalized_hit_lift": -0.09090909090909091,
+              "normalized_utility_lift": -0.09090909090909091,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.13014877142672146,
+              "random_hit_rate": 0.08333333333333333,
+              "random_mean_utility": 0.010845730952226788,
+              "utility_efficiency": 0.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.8333333333333334,
+              "aurc": 0.8247324434824433,
+              "brier": 0.2855761269901202,
+              "confidently_wrong_rate": 0.08333333333333333,
+              "coverage": 0.08333333333333333,
+              "coverage_at_risk_0.05": 0.0,
+              "coverage_at_risk_0.10": 0.0,
+              "ece": 0.4716888491393594,
+              "log_loss": 0.7662841201712364,
+              "n": 12.0,
+              "selective_accuracy": 0.0,
+              "selective_risk": 1.0
+            },
+            "n_records": 12,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.16666666666666666,
+                "selective_risk": 0.5
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 0.6666666666666666
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.8333333333333334
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 0.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.13014877142672146,
+              "task": "discover_unique",
+              "unique_material_recall": 0.0
+            }
+          },
+          "test_score": 0.6989942816652241,
+          "threshold": 0.6752343401784126,
+          "validation": {
+            "discovery_gain": {
+              "best_utility": 0.0,
+              "budget": 1.0,
+              "hit_efficiency": 0.0,
+              "hit_rate": 0.0,
+              "hit_rate_lift": -0.25,
+              "mean_utility": 0.0,
+              "mean_utility_lift": -0.04261965856699137,
+              "normalized_hit_lift": -0.3333333333333333,
+              "normalized_utility_lift": -0.19610591866962018,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.25994945083497867,
+              "random_hit_rate": 0.25,
+              "random_mean_utility": 0.04261965856699137,
+              "utility_efficiency": 0.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.75,
+              "aurc": 0.7277687590187591,
+              "brier": 0.26365828400980046,
+              "confidently_wrong_rate": 0.08333333333333333,
+              "coverage": 0.16666666666666666,
+              "coverage_at_risk_0.05": 0.0,
+              "coverage_at_risk_0.10": 0.0,
+              "ece": 0.2967809979324378,
+              "log_loss": 0.7208315784806741,
+              "n": 12.0,
+              "selective_accuracy": 0.5,
+              "selective_risk": 0.5
+            },
+            "n_records": 12,
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 0.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.25994945083497867,
+              "task": "discover_unique",
+              "unique_material_recall": 0.0
+            }
+          }
+        },
+        "seed": 1,
+        "setting": "single_task",
+        "source_tasks": [],
+        "split": {
+          "acceptance": 8,
+          "feedback": 12,
+          "test": 12,
+          "train": 48
+        },
+        "task": "discover_unique"
+      },
+      {
+        "experiment": "experiment_1_single_task",
+        "holdout_task": "",
+        "method": "evidence_heuristic",
+        "report": {
+          "calibration": {
+            "constraint_satisfied": 0.0,
+            "coverage": 0.16666666666666666,
+            "selected": 2.0,
+            "selective_risk": 1.0,
+            "threshold": 0.6428602260050168
+          },
+          "test": {
+            "discovery_gain": {
+              "best_utility": 0.0,
+              "budget": 1.0,
+              "hit_efficiency": 0.0,
+              "hit_rate": 0.0,
+              "hit_rate_lift": -0.08333333333333333,
+              "mean_utility": 0.0,
+              "mean_utility_lift": -0.010845730952226788,
+              "normalized_hit_lift": -0.09090909090909091,
+              "normalized_utility_lift": -0.09090909090909091,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.13014877142672146,
+              "random_hit_rate": 0.08333333333333333,
+              "random_mean_utility": 0.010845730952226788,
+              "utility_efficiency": 0.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.9166666666666666,
+              "aurc": 0.915010221260221,
+              "brier": 0.2435356302941769,
+              "confidently_wrong_rate": 0.0,
+              "coverage": 0.0,
+              "coverage_at_risk_0.05": 0.0,
+              "coverage_at_risk_0.10": 0.0,
+              "ece": 0.40289809055874204,
+              "log_loss": 0.6805894273595742,
+              "n": 12.0,
+              "selective_accuracy": 0.0,
+              "selective_risk": 0.0
+            },
+            "n_records": 12,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.16666666666666666,
+                "selective_risk": 1.0
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 1.0
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.8333333333333334
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 0.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.13014877142672146,
+              "task": "discover_unique",
+              "unique_material_recall": 0.0
+            }
+          },
+          "test_score": 0.6899828090616381,
+          "threshold": 0.6428602260050168,
+          "validation": {
+            "discovery_gain": {
+              "best_utility": 0.0,
+              "budget": 1.0,
+              "hit_efficiency": 0.0,
+              "hit_rate": 0.0,
+              "hit_rate_lift": -0.25,
+              "mean_utility": 0.0,
+              "mean_utility_lift": -0.04261965856699137,
+              "normalized_hit_lift": -0.3333333333333333,
+              "normalized_utility_lift": -0.19610591866962018,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.25994945083497867,
+              "random_hit_rate": 0.25,
+              "random_mean_utility": 0.04261965856699137,
+              "utility_efficiency": 0.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.5833333333333334,
+              "aurc": 0.8543891293891294,
+              "brier": 0.27449951697705105,
+              "confidently_wrong_rate": 0.16666666666666666,
+              "coverage": 0.16666666666666666,
+              "coverage_at_risk_0.05": 0.0,
+              "coverage_at_risk_0.10": 0.0,
+              "ece": 0.25872447273718807,
+              "log_loss": 0.7434727404331274,
+              "n": 12.0,
+              "selective_accuracy": 0.0,
+              "selective_risk": 1.0
+            },
+            "n_records": 12,
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 0.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.25994945083497867,
+              "task": "discover_unique",
+              "unique_material_recall": 0.0
+            }
+          }
+        },
+        "seed": 1,
+        "setting": "single_task",
+        "source_tasks": [],
+        "split": {
+          "acceptance": 8,
+          "feedback": 12,
+          "test": 12,
+          "train": 48
+        },
+        "task": "discover_unique"
+      },
+      {
+        "experiment": "experiment_1_single_task",
+        "holdout_task": "",
+        "method": "llm_direct_judge",
+        "report": {
+          "calibration": {
+            "constraint_satisfied": 1.0,
+            "coverage": 0.16666666666666666,
+            "selected": 2.0,
+            "selective_risk": 0.0,
+            "threshold": 0.48
+          },
+          "test": {
+            "discovery_gain": {
+              "best_utility": 0.13014877142672146,
+              "budget": 1.0,
+              "hit_efficiency": 1.0,
+              "hit_rate": 1.0,
+              "hit_rate_lift": 0.9166666666666666,
+              "mean_utility": 0.13014877142672146,
+              "mean_utility_lift": 0.11930304047449466,
+              "normalized_hit_lift": 1.0,
+              "normalized_utility_lift": 1.0,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.13014877142672146,
+              "random_hit_rate": 0.08333333333333333,
+              "random_mean_utility": 0.010845730952226788,
+              "utility_efficiency": 1.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.9166666666666666,
+              "aurc": 0.7413991101491102,
+              "brier": 0.10319166666666667,
+              "confidently_wrong_rate": 0.0,
+              "coverage": 0.0,
+              "coverage_at_risk_0.05": 0.08333333333333333,
+              "coverage_at_risk_0.10": 0.08333333333333333,
+              "ece": 0.21416666666666664,
+              "log_loss": 0.37322760311558273,
+              "n": 12.0,
+              "selective_accuracy": 0.0,
+              "selective_risk": 0.0
+            },
+            "n_records": 12,
+            "risk_coverage": {
+              "risk_at_0.10": {
+                "coverage": 0.16666666666666666,
+                "selective_risk": 0.5
+              },
+              "risk_at_0.25": {
+                "coverage": 0.25,
+                "selective_risk": 0.6666666666666666
+              },
+              "risk_at_0.50": {
+                "coverage": 0.5,
+                "selective_risk": 0.8333333333333334
+              }
+            },
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 1.0,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.0,
+              "task": "discover_unique",
+              "unique_material_recall": 1.0
+            }
+          },
+          "test_score": 0.2940972513379483,
+          "threshold": 0.48,
+          "validation": {
+            "discovery_gain": {
+              "best_utility": 0.25994945083497867,
+              "budget": 1.0,
+              "hit_efficiency": 1.0,
+              "hit_rate": 1.0,
+              "hit_rate_lift": 0.75,
+              "mean_utility": 0.25994945083497867,
+              "mean_utility_lift": 0.2173297922679873,
+              "normalized_hit_lift": 1.0,
+              "normalized_utility_lift": 1.0,
+              "oracle_hit_rate": 1.0,
+              "oracle_mean_utility": 0.25994945083497867,
+              "random_hit_rate": 0.25,
+              "random_mean_utility": 0.04261965856699137,
+              "utility_efficiency": 1.0
+            },
+            "metrics": {
+              "accuracy_at_threshold": 0.9166666666666666,
+              "aurc": 0.48114177489177484,
+              "brier": 0.13060000000000002,
+              "confidently_wrong_rate": 0.0,
+              "coverage": 0.16666666666666666,
+              "coverage_at_risk_0.05": 0.16666666666666666,
+              "coverage_at_risk_0.10": 0.16666666666666666,
+              "ece": 0.15999999999999998,
+              "log_loss": 0.4342653585235339,
+              "n": 12.0,
+              "selective_accuracy": 1.0,
+              "selective_risk": 0.0
+            },
+            "n_records": 12,
+            "scientific_discovery": {
+              "crystal_regime_coverage": 1.0,
+              "positive_recall": 0.3333333333333333,
+              "regime_coverage": 1.0,
+              "selected_regimes": 1.0,
+              "simple_regret": 0.0,
+              "task": "discover_unique",
+              "unique_material_recall": 0.3333333333333333
+            }
+          }
+        },
+        "seed": 1,
+        "setting": "single_task",
+        "source_tasks": [],
+        "split": {
+          "acceptance": 8,
+          "feedback": 12,
+          "test": 12,
+          "train": 48
+        },
+        "task": "discover_unique"
+      }
+    ]
+  },
+  "split_policy": {
+    "acceptance_role": "RHI candidate H_i versus H_(i+1) model selection only",
+    "feedback_role": "trajectory failure diagnosis and threshold calibration",
+    "historical": "complete scientific regimes are held out for test; remaining records are disjointly assigned to train, feedback, and acceptance",
+    "synthetic": "seeded record-level four-way split",
+    "test_role": "final reporting only; never used to propose or accept a harness",
+    "transfer_role": "held-out target task contributes no records to zero-shot training, feedback, calibration, or acceptance"
+  },
+  "summary": {
+    "n_evolution_runs": 0,
+    "n_joint_runs": 0,
+    "n_single_runs": 6,
+    "n_transfer_runs": 0
+  },
+  "task_labels": {
+    "discover_unique": "Unique-material discovery",
+    "extreme_properties": "Extreme-property discovery",
+    "preferential_bo": "Pairwise optimization"
+  }
+}

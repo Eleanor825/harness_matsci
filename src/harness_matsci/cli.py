@@ -126,7 +126,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     suite_parser.add_argument(
         "--direct-judge-base-url",
-        help="OpenAI-compatible Responses API base URL (default: OPENAI_BASE_URL or coding.beehears.com)",
+        help="OpenAI-compatible Responses API base URL (default: OPENAI_BASE_URL or hi-code.cc)",
     )
     suite_parser.add_argument(
         "--direct-judge-cache",

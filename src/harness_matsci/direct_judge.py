@@ -17,10 +17,11 @@ TASK_RUBRICS = {
     "discover_unique": "whether screening this candidate is likely to produce a scientifically useful and chemically or structurally unique material discovery",
     "extreme_properties": "whether advancing this candidate is likely to satisfy the stated extreme-property target rather than consume the discovery budget without useful evidence",
 }
-DEFAULT_MODEL = "gpt-5.6-luna"
-DEFAULT_BASE_URL = "https://coding.beehears.com"
+DEFAULT_MODEL = "gpt-5.5"
+DEFAULT_BASE_URL = "https://www.hi-code.cc"
 DEFAULT_REASONING_EFFORT = "xhigh"
 PROMPT_VERSION = "direct-judge-responses-v2"
+DEFAULT_USER_AGENT = "OpenAI/Python 1.0 harness-matsci-direct-judge"
 
 
 class DirectJudgeError(RuntimeError):
@@ -68,6 +69,7 @@ class LLMDirectJudge:
         *,
         model: str | None = None,
         base_url: str | None = None,
+        reasoning_effort: str | None = None,
         cache_path: str | Path | None = None,
         timeout: float = 90.0,
         max_retries: int = 3,
@@ -78,7 +80,7 @@ class LLMDirectJudge:
         resolved_model = model or values.get("OPENAI_MODEL", DEFAULT_MODEL)
         api_key = values.get("OPENAI_API_KEY", "")
         resolved_base_url = base_url or values.get("OPENAI_BASE_URL", DEFAULT_BASE_URL)
-        resolved_reasoning_effort = values.get("OPENAI_REASONING_EFFORT", DEFAULT_REASONING_EFFORT)
+        resolved_reasoning_effort = reasoning_effort or values.get("OPENAI_REASONING_EFFORT", DEFAULT_REASONING_EFFORT)
         if not resolved_model:
             raise ValueError("set --direct-judge-model or OPENAI_MODEL")
         if not api_key:
@@ -154,6 +156,9 @@ class LLMDirectJudge:
             headers={
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream",
+                "User-Agent": DEFAULT_USER_AGENT,
+                "OpenAI-Beta": "responses=v1",
             },
             method="POST",
         )

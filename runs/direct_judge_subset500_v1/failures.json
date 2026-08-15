@@ -1,0 +1,5 @@
+{
+  "note": "All 500 records have final scores in the cache; repeated 524 records are documented in summary.json fallback fields.",
+  "status": "resolved",
+  "transient_failure_events": 33
+}

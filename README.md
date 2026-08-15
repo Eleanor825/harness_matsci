@@ -131,8 +131,8 @@ Enable the optional one-shot LLM direct-as-judge baseline:
 
 ```bash
 export OPENAI_API_KEY=...
-export OPENAI_MODEL=gpt-5.6-luna
-export OPENAI_BASE_URL=https://coding.beehears.com
+export OPENAI_MODEL=gpt-5.5
+export OPENAI_BASE_URL=https://www.hi-code.cc
 export OPENAI_REASONING_EFFORT=xhigh
 python -m harness_matsci experiment-suite \
   --data-dir /path/to/material_discovery_tasks \
@@ -213,6 +213,17 @@ trajectory-conditioned acceptance. `static_full` is a single learned gate with
 the full available feature set. `verbal_confidence` is not an LLM judge; it is a
 text/feature heuristic. The direct LLM comparison is implemented separately and
 must be run with an explicitly configured API model.
+
+The current real direct-judge result is a 500-record `gpt-5.5` subset in
+`runs/direct_judge_subset500_v1/README.md`: score `0.3602`, Risk@10% `0.3462`,
+hit rate `0.6800`, and ECE `0.1548`. This strong one-shot judge beats the
+current quick same-subset Sci-VoI score on top-k ranking, while Sci-VoI remains
+better supported on the full 15,717-record held-out-regime protocol and shows
+lower calibration error in the same-subset check. A 100-record
+`gpt-5.6-luna` attempt is documented in
+`runs/direct_judge_subset100_gpt56luna_v1/README.md`; the provider currently
+returns HTTP `429`, so it is not counted as a completed model result. Gateway
+smoke checks currently pass for `gpt-5.5`, `gpt-5.4`, and `gpt-5.4-mini`.
 
 The current related-work baseline checklist is in
 `docs/research/RELATED_WORK_BASELINES.md`.

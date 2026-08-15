@@ -1,0 +1,238 @@
+{
+  "blocked_gpt56luna_attempt": {
+    "beehears_status": "Connection refused",
+    "hi_code_status": "HTTP 429 Too Many Requests",
+    "model": "gpt-5.6-luna",
+    "typo_model_gpt_5_6_lun_status": "HTTP 404 Not Found"
+  },
+  "config": {
+    "alpha": 0.1,
+    "budget_fraction": 0.1,
+    "min_coverage": 0.1,
+    "model": "gpt-5.5",
+    "source_cache": "runs/direct_judge_cache/subset500_gpt55_scores.json"
+  },
+  "data": {
+    "n_records": 100,
+    "n_test": 50,
+    "n_validation": 50,
+    "task_counts": {
+      "discover_unique": 34,
+      "extreme_properties": 33,
+      "preferential_bo": 33
+    },
+    "test_positive_rate": 0.32,
+    "validation_positive_rate": 0.34
+  },
+  "methods": {
+    "evidence_heuristic": {
+      "calibration": {
+        "constraint_satisfied": 0.0,
+        "coverage": 0.4338235294117647,
+        "minimum_group_coverage": 0.125,
+        "selected": 22.0,
+        "selective_risk": 0.42483660130718953,
+        "threshold": 0.8265333333333333
+      },
+      "discovery_gain": {
+        "best_utility": 0.441477,
+        "budget": 5.0,
+        "hit_efficiency": 0.0,
+        "hit_rate": 0.0,
+        "hit_rate_lift": -0.32,
+        "mean_utility": 0.3695746,
+        "mean_utility_lift": -0.04954455608487118,
+        "normalized_hit_lift": -0.6666666666666666,
+        "normalized_utility_lift": -0.09573471260712442,
+        "oracle_hit_rate": 0.8,
+        "oracle_mean_utility": 0.9366384,
+        "random_hit_rate": 0.32,
+        "random_mean_utility": 0.41911915608487116,
+        "utility_efficiency": 0.3945755373685298
+      },
+      "metrics": {
+        "accuracy_at_threshold": 0.38,
+        "aurc": 0.8683831357624411,
+        "brier": 0.5189618522596667,
+        "confidently_wrong_rate": 0.38,
+        "coverage": 0.46,
+        "coverage_at_risk_0.05": 0.0,
+        "coverage_at_risk_0.10": 0.0,
+        "ece": 0.537039902587841,
+        "log_loss": 1.4598346291948383,
+        "n": 50.0,
+        "selective_accuracy": 0.17391304347826086,
+        "selective_risk": 0.8260869565217391
+      },
+      "risk_coverage": {
+        "risk_at_0.10": {
+          "coverage": 0.1,
+          "selective_risk": 1.0
+        },
+        "risk_at_0.25": {
+          "coverage": 0.26,
+          "selective_risk": 1.0
+        },
+        "risk_at_0.50": {
+          "coverage": 0.5,
+          "selective_risk": 0.84
+        }
+      },
+      "scientific_discovery": {
+        "positive_recall": 0.0,
+        "regime_coverage": 0.25,
+        "selected_regimes": 4.0,
+        "simple_regret": 0.545659,
+        "task": "mixed"
+      },
+      "score": 0.8309617804230925,
+      "test_n": 50,
+      "threshold": 0.8265333333333333,
+      "validation_n": 50
+    },
+    "llm_direct_judge_gpt55_cached": {
+      "calibration": {
+        "constraint_satisfied": 0.0,
+        "coverage": 0.823529411764706,
+        "minimum_group_coverage": 0.47058823529411764,
+        "selected": 41.0,
+        "selective_risk": 0.5428921568627451,
+        "threshold": 0.02
+      },
+      "discovery_gain": {
+        "best_utility": 0.6928317309521326,
+        "budget": 5.0,
+        "hit_efficiency": 1.0,
+        "hit_rate": 0.8,
+        "hit_rate_lift": 0.48000000000000004,
+        "mean_utility": 0.21046478793490936,
+        "mean_utility_lift": -0.2086543681499618,
+        "normalized_hit_lift": 1.0,
+        "normalized_utility_lift": -0.403181853821421,
+        "oracle_hit_rate": 0.8,
+        "oracle_mean_utility": 0.9366384,
+        "random_hit_rate": 0.32,
+        "random_mean_utility": 0.41911915608487116,
+        "utility_efficiency": 0.22470228418449356
+      },
+      "metrics": {
+        "accuracy_at_threshold": 0.42,
+        "aurc": 0.4737254598836944,
+        "brier": 0.1771305,
+        "confidently_wrong_rate": 0.52,
+        "coverage": 0.78,
+        "coverage_at_risk_0.05": 0.08,
+        "coverage_at_risk_0.10": 0.08,
+        "ece": 0.1213,
+        "log_loss": 0.6588338157323906,
+        "n": 50.0,
+        "selective_accuracy": 0.3333333333333333,
+        "selective_risk": 0.6666666666666667
+      },
+      "risk_coverage": {
+        "risk_at_0.10": {
+          "coverage": 0.1,
+          "selective_risk": 0.2
+        },
+        "risk_at_0.25": {
+          "coverage": 0.26,
+          "selective_risk": 0.3076923076923077
+        },
+        "risk_at_0.50": {
+          "coverage": 0.5,
+          "selective_risk": 0.52
+        }
+      },
+      "scientific_discovery": {
+        "positive_recall": 0.25,
+        "regime_coverage": 0.125,
+        "selected_regimes": 2.0,
+        "simple_regret": 0.29430426904786744,
+        "task": "mixed"
+      },
+      "score": 0.34840730891233285,
+      "test_n": 50,
+      "threshold": 0.02,
+      "validation_n": 50
+    },
+    "verbal_confidence": {
+      "calibration": {
+        "constraint_satisfied": 0.0,
+        "coverage": 0.9166666666666666,
+        "minimum_group_coverage": 0.75,
+        "selected": 46.0,
+        "selective_risk": 0.6323529411764706,
+        "threshold": 0.48000000000000004
+      },
+      "discovery_gain": {
+        "best_utility": 0.6928317309521326,
+        "budget": 5.0,
+        "hit_efficiency": 0.5,
+        "hit_rate": 0.4,
+        "hit_rate_lift": 0.08000000000000002,
+        "mean_utility": 0.14222173969201096,
+        "mean_utility_lift": -0.2768974163928602,
+        "normalized_hit_lift": 0.16666666666666669,
+        "normalized_utility_lift": -0.5350475748458744,
+        "oracle_hit_rate": 0.8,
+        "oracle_mean_utility": 0.9366384,
+        "random_hit_rate": 0.32,
+        "random_mean_utility": 0.41911915608487116,
+        "utility_efficiency": 0.15184273855525351
+      },
+      "metrics": {
+        "accuracy_at_threshold": 0.26,
+        "aurc": 0.7262516039760043,
+        "brier": 0.27325445343282606,
+        "confidently_wrong_rate": 0.68,
+        "coverage": 0.94,
+        "coverage_at_risk_0.05": 0.0,
+        "coverage_at_risk_0.10": 0.0,
+        "ece": 0.23813631780156663,
+        "log_loss": 0.7426811038042619,
+        "n": 50.0,
+        "selective_accuracy": 0.2765957446808511,
+        "selective_risk": 0.7234042553191489
+      },
+      "risk_coverage": {
+        "risk_at_0.10": {
+          "coverage": 0.1,
+          "selective_risk": 0.6
+        },
+        "risk_at_0.25": {
+          "coverage": 0.26,
+          "selective_risk": 0.7692307692307693
+        },
+        "risk_at_0.50": {
+          "coverage": 0.5,
+          "selective_risk": 0.8
+        }
+      },
+      "scientific_discovery": {
+        "positive_recall": 0.125,
+        "regime_coverage": 0.1875,
+        "selected_regimes": 3.0,
+        "simple_regret": 0.29430426904786744,
+        "task": "mixed"
+      },
+      "score": 0.5431521310659153,
+      "test_n": 50,
+      "threshold": 0.48000000000000004,
+      "validation_n": 50
+    }
+  },
+  "model_availability_smoke": {
+    "base_url": "https://www.hi-code.cc",
+    "note": "Provider-availability smoke only; not a benchmark result.",
+    "record_count": 1,
+    "status": {
+      "gpt-5.2": "HTTP 503 Service Unavailable",
+      "gpt-5.3-codex": "HTTP 503 Service Unavailable",
+      "gpt-5.4": "ok",
+      "gpt-5.4-mini": "ok",
+      "gpt-5.5": "ok",
+      "gpt-5.6-luna": "HTTP 429 Too Many Requests"
+    }
+  },
+  "schema": "direct-judge-subset100-gpt55-cached-control-v1"
+}
