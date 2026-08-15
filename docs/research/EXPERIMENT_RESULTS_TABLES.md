@@ -4,6 +4,8 @@ This file is the compact, presentation-ready result table pack for the current r
 
 ## Data and Protocol
 
+Full data provenance and action-construction details are in `docs/research/DATA_PROVENANCE_AND_ACTION_CONSTRUCTION.md`.
+
 | Item | Value |
 | --- | ---: |
 | Total historical proxy records | 15,717 |
@@ -65,6 +67,21 @@ Score is the direct-judge diagnostic score combining AURC, calibration, log loss
 | `verbal_confidence` | heuristic | 0.4757 | 0.7654 | 0.9681 | 0.4231 | 0.6000 | 0.0696 | 0.3017 | 0.2669 |
 | `evidence_heuristic` | heuristic | 0.8131 | 0.8150 | 0.7968 | 0.8846 | 0.1200 | 0.4094 | 0.5879 | 0.5511 |
 
+## Hybrid LLM + VoI Subset Results
+
+This uses the same 500-record subset and cached `gpt-5.5` scores as the direct-judge table. The hybrid result tests whether the LLM judge can serve as a semantic sensor while the local harness calibrates and blends action value.
+
+| Method | Score ↓ | Risk@10% ↓ | Hit rate ↑ | Mean utility ↑ | Utility efficiency ↑ | ECE ↓ | LLM call rate ↓ |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `hybrid_static_blend` | 0.3315 | 0.3462 | 0.6800 | 0.0746 | 0.0809 | 0.0974 | 1.0000 |
+| `hybrid_adaptive_router` | 0.3315 | 0.3462 | 0.6800 | 0.0746 | 0.0809 | 0.0974 | 1.0000 |
+| `llm_direct_judge` | 0.3602 | 0.3462 | 0.6800 | 0.0746 | 0.0809 | 0.1548 | 1.0000 |
+| `hybrid_llm_guarded_blend` | 0.5000 | 0.3462 | 0.6800 | 0.0884 | 0.0958 | 0.1110 | 1.0000 |
+| `hybrid_adaptive_30pct_llm` | 0.5593 | 0.6154 | 0.4000 | 0.5125 | 0.5557 | 0.2803 | 0.3506 |
+| `local_voi_harness` | 0.6332 | 0.7308 | 0.2400 | 0.7910 | 0.8576 | 0.3769 | 0.0000 |
+
+Main takeaway: hybrid calibration improves diagnostic score and ECE versus direct `gpt-5.5`, but the current subset run does not improve Risk@10% or hit rate and does not yet reduce LLM calls for the best row.
+
 ## GPT-5.6-Luna Attempt and Model Availability
 
 | Model | Current status |
@@ -88,4 +105,5 @@ Same 100-record cached `gpt-5.5` control:
 
 - The full-benchmark claim is positive for Sci-VoI-RHI against reliability-only RHI and static reliability baselines.
 - The current real direct-judge subset shows `gpt-5.5` is a strong one-shot judge and currently beats our quick same-subset RHI check on top-k ranking; our stronger claim remains the full held-out-regime Sci-VoI protocol plus better calibration/risk-control behavior.
+- The current hybrid subset result supports a narrower claim: LLM grounding plus local calibration improves action-worthiness diagnostics and calibration, but not top-k discovery yet.
 - `gpt-5.6-luna` is not counted as an experiment result because the provider currently returns HTTP 429.

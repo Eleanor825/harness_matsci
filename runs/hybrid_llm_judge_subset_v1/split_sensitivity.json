@@ -1,0 +1,30 @@
+[
+  {
+    "hybrid_static_blend_score": 0.33146346126004167,
+    "llm_direct_judge_score": 0.3602423615437469,
+    "local_train_fraction": 0.5,
+    "local_voi_harness_score": 0.6331777779481707,
+    "static_blend_weight": 0.85
+  },
+  {
+    "hybrid_static_blend_score": 0.3557687106890298,
+    "llm_direct_judge_score": 0.3602423615437469,
+    "local_train_fraction": 0.68,
+    "local_voi_harness_score": 0.8701794035600771,
+    "static_blend_weight": 0.65
+  },
+  {
+    "hybrid_static_blend_score": 0.34115294422540837,
+    "llm_direct_judge_score": 0.3602423615437469,
+    "local_train_fraction": 0.8,
+    "local_voi_harness_score": 1.042186525375863,
+    "static_blend_weight": 0.7
+  },
+  {
+    "hybrid_static_blend_score": 0.3547885776809511,
+    "llm_direct_judge_score": 0.3602423615437469,
+    "local_train_fraction": 0.9,
+    "local_voi_harness_score": 1.1098038666313654,
+    "static_blend_weight": 0.65
+  }
+]

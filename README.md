@@ -21,6 +21,18 @@ Use JSONL with one `ActionRecord` per line. Key fields:
 - `label`: `1` if the step was worth doing, else `0`
 - `utility`: optional downstream gain for discovery metrics
 
+## Data provenance
+
+The main offline benchmark contains 15,717 paper-artifact / benchmark-derived
+action proxies from three public task families: González et al. preferential BO,
+DiSCoVeR-style unique-material screening with Matbench `log10(K_VRH)`, and
+RL-CC extreme-property molecule generation. It is not live MatBot trajectory
+logging and not manual extraction of 15,717 PDF actions.
+
+Full data lineage, public URLs, label equations, leakage controls, examples,
+and reproduction commands are documented in
+`docs/research/DATA_PROVENANCE_AND_ACTION_CONSTRUCTION.md`.
+
 ## Commands
 
 Generate a benchmark dataset:
@@ -95,7 +107,7 @@ Run the non-LLM Sci-VoI-RHI held-out-regime suite:
 
 ```bash
 python -m harness_matsci voi-experiment-suite \
-  --data-dir /path/to/material_discovery_tasks \
+  --data-dir /Users/huan/matsci_uncertainty/data/raw/material_discovery_tasks \
   --seeds 1,7,13,21,42 \
   --epochs 60 \
   --iterations 3 \
@@ -150,6 +162,21 @@ does not train, receive trajectory feedback, or mutate a harness. Its threshold
 is calibrated on the validation/feedback partition, while the test partition is
 used only for final evaluation. Calls are cached by model and prompt version;
 the repository does not include API keys or generated score caches.
+
+Run the cached hybrid LLM + VoI subset experiment:
+
+```bash
+PYTHONPATH=src python3 -m harness_matsci.hybrid_judge \
+  --records runs/direct_judge_subset500_v1/records.jsonl \
+  --judge-cache runs/direct_judge_cache/subset500_gpt55_scores.json \
+  --local-train-fraction 0.5 \
+  --out-dir runs/hybrid_llm_judge_subset_v1
+```
+
+This hybrid experiment uses cached `gpt-5.5` one-shot judge scores as a
+semantic sensor and evaluates whether local VoI calibration/blending improves
+the action-worthiness score. It is a 500-record subset result, not the full
+15,717-record held-out-regime protocol.
 
 Run the first historical-paper bootstrap experiment:
 
@@ -224,6 +251,12 @@ lower calibration error in the same-subset check. A 100-record
 `runs/direct_judge_subset100_gpt56luna_v1/README.md`; the provider currently
 returns HTTP `429`, so it is not counted as a completed model result. Gateway
 smoke checks currently pass for `gpt-5.5`, `gpt-5.4`, and `gpt-5.4-mini`.
+
+The cached hybrid LLM + VoI subset result is in
+`runs/hybrid_llm_judge_subset_v1/README.md`. On the same 500-record subset,
+`hybrid_static_blend` improves the diagnostic score from `0.3602` to `0.3315`
+and ECE from `0.1548` to `0.0974` versus direct `gpt-5.5`, but it does not yet
+improve Risk@10% or hit rate and still calls the LLM for every action.
 
 The current related-work baseline checklist is in
 `docs/research/RELATED_WORK_BASELINES.md`.
