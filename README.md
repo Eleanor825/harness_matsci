@@ -228,6 +228,10 @@ smoke checks currently pass for `gpt-5.5`, `gpt-5.4`, and `gpt-5.4-mini`.
 The current related-work baseline checklist is in
 `docs/research/RELATED_WORK_BASELINES.md`.
 
+For presentation-ready summaries, use
+`docs/research/EXPERIMENT_RESULTS_TABLES.md` for compact result tables and
+`docs/research/LEADERSHIP_BRIEF.md` for the current leadership update.
+
 ## Design note
 
 This repository reuses the harness idea from recursive self-improvement systems,
