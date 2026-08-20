@@ -449,12 +449,14 @@ def train_voi_rhi(
     epsilon: float = 0.005,
     component: str = "full",
     acceptance_policy: str = "robust_guarded",
+    initial_harness: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if acceptance_policy not in {"robust_guarded", "mean_guarded", "always_accept", "never_accept"}:
         raise ValueError("unknown acceptance policy")
     if not train_records or not feedback_records or not acceptance_records or not test_records:
         raise ValueError("all VoI-RHI partitions must be non-empty")
-    current_harness = copy.deepcopy(VOI_SEED_HARNESS)
+    seed_harness = copy.deepcopy(initial_harness or VOI_SEED_HARNESS)
+    current_harness = copy.deepcopy(seed_harness)
     available_features = feature_names_from_records(train_records + feedback_records)
     current_model = fit_voi_model(
         train_records, feedback_records, current_harness, alpha=alpha, epochs=epochs, learning_rate=learning_rate, l2=l2
@@ -507,7 +509,7 @@ def train_voi_rhi(
         })
         checkpoints.append({"round": iteration, "harness": copy.deepcopy(current_harness), "model": current_model.to_json(), "accepted": accepted})
     final_eval = evaluate_voi(test_records, current_model, budget_fraction=budget_fraction)
-    initial_model = fit_voi_model(train_records, feedback_records, VOI_SEED_HARNESS, alpha=alpha, epochs=epochs, learning_rate=learning_rate, l2=l2)
+    initial_model = fit_voi_model(train_records, feedback_records, seed_harness, alpha=alpha, epochs=epochs, learning_rate=learning_rate, l2=l2)
     initial_test = evaluate_voi(test_records, initial_model, budget_fraction=budget_fraction)
     for checkpoint in checkpoints:
         checkpoint_model = fit_model_from_json(checkpoint["model"])
@@ -516,7 +518,7 @@ def train_voi_rhi(
         "method": "Sci-VoI-RHI",
         "component": component,
         "acceptance_policy": acceptance_policy,
-        "initial_harness": VOI_SEED_HARNESS,
+        "initial_harness": seed_harness,
         "final_harness": current_harness,
         "accepted_versions": accepted_versions,
         "history": history,
